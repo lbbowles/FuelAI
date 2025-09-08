@@ -1,127 +1,15 @@
 import { Head, Link } from '@inertiajs/react';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/navbar';
 import { useState } from 'react';
+import { ForumPostInterface, forumPosts, categories } from '@/data/forumData';
 
-interface ForumPost {
-    id: number;
-    title: string;
-    author: string;
-    authorAvatar: string;
-    category: string;
-    tags: string[];
-    excerpt: string;
-    replies: number;
-    views: number;
-    lastActivity: string;
-    lastActivityBy: string;
-    isPinned?: boolean;
-    isAnswered?: boolean;
-}
+type forumPosts = ForumPostInterface;
 
 export default function Forums() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [selectedTag, setSelectedTag] = useState('');
     const [sortBy, setSortBy] = useState('latest');
-
-    // Mock forum data
-    const forumPosts: ForumPost[] = [
-        {
-            id: 1,
-            title: "Best keto recipes for beginners?",
-            author: "Sarah Johnson",
-            authorAvatar: "SJ",
-            category: "Recipes",
-            tags: ["keto", "beginner", "low-carb"],
-            excerpt: "I'm just starting my keto journey and looking for some easy recipes to get started. What are your favorites?",
-            replies: 23,
-            views: 456,
-            lastActivity: "2 hours ago",
-            lastActivityBy: "Mike Chen",
-            isPinned: true
-        },
-        {
-            id: 2,
-            title: "AI-generated recipe turned out amazing!",
-            author: "Alex Rodriguez",
-            authorAvatar: "AR",
-            category: "Success Stories",
-            tags: ["ai-recipes", "success"],
-            excerpt: "Just tried the Mediterranean chicken recipe that FuelAI generated for me and my family loved it! Here's what I learned...",
-            replies: 15,
-            views: 289,
-            lastActivity: "4 hours ago",
-            lastActivityBy: "Emma Wilson",
-            isAnswered: true
-        },
-        {
-            id: 3,
-            title: "Meal prep ideas for busy professionals",
-            author: "David Kim",
-            authorAvatar: "DK",
-            category: "Meal Planning",
-            tags: ["meal-prep", "professional", "time-saving"],
-            excerpt: "Working 60+ hour weeks and struggling to eat healthy. What are your best meal prep strategies?",
-            replies: 31,
-            views: 678,
-            lastActivity: "6 hours ago",
-            lastActivityBy: "Lisa Park"
-        },
-        {
-            id: 4,
-            title: "Vegan protein sources - comprehensive guide",
-            author: "Maya Patel",
-            authorAvatar: "MP",
-            category: "Nutrition",
-            tags: ["vegan", "protein", "nutrition"],
-            excerpt: "Complete guide to plant-based proteins with nutritional breakdowns and recipe suggestions.",
-            replies: 42,
-            views: 892,
-            lastActivity: "8 hours ago",
-            lastActivityBy: "Tom Anderson"
-        },
-        {
-            id: 5,
-            title: "Feature request: Grocery list generation",
-            author: "Jennifer Lee",
-            authorAvatar: "JL",
-            category: "Feature Requests",
-            tags: ["feature-request", "grocery"],
-            excerpt: "Would love to see automatic grocery list generation based on selected recipes. Anyone else interested?",
-            replies: 18,
-            views: 234,
-            lastActivity: "12 hours ago",
-            lastActivityBy: "Kevin Brown"
-        },
-        {
-            id: 6,
-            title: "Troubleshooting recipe scaling issues",
-            author: "Robert Taylor",
-            authorAvatar: "RT",
-            category: "Support",
-            tags: ["support", "scaling", "bug"],
-            excerpt: "Having trouble with recipe scaling feature. Measurements don't seem to calculate correctly for larger servings.",
-            replies: 7,
-            views: 156,
-            lastActivity: "1 day ago",
-            lastActivityBy: "Support Team"
-        }
-    ];
-
-    const categories = [
-        { id: 'all', name: 'All Categories', count: forumPosts.length },
-        { id: 'recipes', name: 'Recipes', count: 5 },
-        { id: 'nutrition', name: 'Nutrition', count: 8 },
-        { id: 'meal-planning', name: 'Meal Planning', count: 12 },
-        { id: 'success-stories', name: 'Success Stories', count: 6 },
-        { id: 'support', name: 'Support', count: 4 },
-        { id: 'feature-requests', name: 'Feature Requests', count: 3 }
-    ];
-
-    const popularTags = [
-        'keto', 'vegan', 'meal-prep', 'beginner', 'protein', 'low-carb',
-        'gluten-free', 'quick-meals', 'healthy', 'budget-friendly'
-    ];
 
     const filteredPosts = forumPosts.filter(post => {
         const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -147,7 +35,9 @@ export default function Forums() {
 
     return (
         <>
-            <Head title="Community Forums" />
+            <Head title="Forums">
+                <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
+            </Head>
             <Navbar />
 
             <div className="pt-16 min-h-screen bg-gray-50">
@@ -217,47 +107,6 @@ export default function Forums() {
                                                 </li>
                                             ))}
                                         </ul>
-                                    </div>
-                                </div>
-
-                                {/* Popular Tags */}
-                                <div className="card bg-white shadow-lg">
-                                    <div className="card-body p-4">
-                                        <h3 className="font-semibold text-lg mb-3">Popular Tags</h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {popularTags.map(tag => (
-                                                <button
-                                                    key={tag}
-                                                    onClick={() => setSelectedTag(selectedTag === tag ? '' : tag)}
-                                                    className={`badge badge-outline cursor-pointer hover:badge-primary text-xs ${
-                                                        selectedTag === tag ? 'badge-primary' : ''
-                                                    }`}
-                                                >
-                                                    #{tag}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Forum Stats */}
-                                <div className="card bg-white shadow-lg">
-                                    <div className="card-body p-4">
-                                        <h3 className="font-semibold text-lg mb-3">Forum Stats</h3>
-                                        <div className="space-y-3">
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-gray-600">Total Posts</span>
-                                                <span className="font-semibold text-blue-600">1,234</span>
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-gray-600">Active Users</span>
-                                                <span className="font-semibold text-green-600">89</span>
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-gray-600">New Today</span>
-                                                <span className="font-semibold text-orange-600">12</span>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -358,16 +207,9 @@ export default function Forums() {
                                                                 </svg>
                                                                 {post.replies} replies
                                                             </div>
-                                                            <div className="flex items-center gap-1">
-                                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                                </svg>
-                                                                {post.views} views
-                                                            </div>
                                                         </div>
                                                         <div className="text-right">
-                                                            Last activity {post.lastActivity} by {post.lastActivityBy}
+                                                            Last activity {post.lastActivity}
                                                         </div>
                                                     </div>
                                                 </div>

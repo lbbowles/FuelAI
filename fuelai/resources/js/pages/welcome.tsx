@@ -1,10 +1,13 @@
 import { Head, Link } from '@inertiajs/react';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/navbar';
 
 export default function Welcome() {
     return (
         <>
-            <Head title="Welcome to FuelAI" />
+            <Head title="FuelAI">
+                <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
+            </Head>
+
             <Navbar />
 
             {/* Hero Section */}

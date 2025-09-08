@@ -1,10 +1,12 @@
 import { Head } from '@inertiajs/react';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/navbar';
 
 export default function Calendar() {
     return (
         <>
-            <Head title="Calendar" />
+            <Head title="Calendar">
+                <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
+            </Head>
             <Navbar />
             <div className="min-h-screen bg-gray-50">
                 <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">

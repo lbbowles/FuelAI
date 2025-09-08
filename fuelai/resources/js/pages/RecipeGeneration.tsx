@@ -1,20 +1,9 @@
 import { Head } from '@inertiajs/react';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/navbar';
 import { useState } from 'react';
+import {RecipeFormData, commonAllergies, dietaryOptions, proteinOptions} from '@/data/recipeData';
 
-interface RecipeFormData {
-    dietaryRequirements: string[];
-    allergies: string[];
-    proteins: string[];
-    caloriesTarget: string;
-    proteinsTarget: string;
-    servings: string;
-    cookingTime: string;
-    difficulty: string;
-    cuisine: string;
-    mealType: string;
-    additionalNotes: string;
-}
+
 
 export default function RecipeGeneration() {
     const [formData, setFormData] = useState<RecipeFormData>({
@@ -35,19 +24,7 @@ export default function RecipeGeneration() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string>('');
 
-    const dietaryOptions = [
-        'Vegetarian', 'Vegan', 'Gluten-Free', 'Halal', 'Kosher', 'Diabetes'
-    ];
 
-    const commonAllergies = [
-        'Nuts', 'Peanuts', 'Shellfish', 'Fish', 'Eggs', 'Dairy',
-        'Soy', 'Wheat', 'Sesame', 'Lactose'
-    ];
-
-    const proteinOptions = [
-        'Chicken', 'Beef', 'Pork', 'Fish', 'Shrimp', 'Turkey',
-        'Tofu', 'Beans', 'Eggs', 'Cheese'
-    ];
 
     const handleCheckboxChange = (
         category: 'dietaryRequirements' | 'allergies' | 'proteins',
@@ -86,27 +63,27 @@ export default function RecipeGeneration() {
         try {
             const prompt = `Generate a detailed recipe with the following requirements:
 
-Dietary Requirements: ${formData.dietaryRequirements.join(', ') || 'None specified'}
-Allergies to avoid: ${formData.allergies.join(', ') || 'None'}
-Preferred proteins: ${formData.proteins.join(', ') || 'Any'}
-Target calories: ${formData.caloriesTarget} calories
-Target Proteins: ${formData.proteinsTarget} proteins
-Servings: ${formData.servings}
-Cooking time: ${formData.cookingTime || 'Any'}
-Difficulty level: ${formData.difficulty || 'Any'}
-Cuisine type: ${formData.cuisine || 'Any'}
-Meal type: ${formData.mealType || 'Any'}
-Additional notes: ${formData.additionalNotes || 'None'}
+            Dietary Requirements: ${formData.dietaryRequirements.join(', ') || 'None specified'}
+            Allergies to avoid: ${formData.allergies.join(', ') || 'None'}
+            Preferred proteins: ${formData.proteins.join(', ') || 'Any'}
+            Target calories: ${formData.caloriesTarget} calories
+            Target Proteins: ${formData.proteinsTarget} proteins
+            Servings: ${formData.servings}
+            Cooking time: ${formData.cookingTime || 'Any'}
+            Difficulty level: ${formData.difficulty || 'Any'}
+            Cuisine type: ${formData.cuisine || 'Any'}
+            Meal type: ${formData.mealType || 'Any'}
+            Additional notes: ${formData.additionalNotes || 'None'}
 
-Please provide:
-1. Recipe name
-2. Complete ingredient list with measurements
-3. Step-by-step cooking instructions
-4. Estimated nutritional information (calories, protein, carbs, fat)
-5. Cooking time and difficulty
-6. Any helpful tips or variations
+            Please provide:
+            1. Recipe name
+            2. Complete ingredient list with measurements
+            3. Step-by-step cooking instructions
+            4. Estimated nutritional information (calories, protein, carbs, fat)
+            5. Cooking time and difficulty
+            6. Any helpful tips or variations
 
-Make sure the recipe is safe, healthy, and realistic to prepare at home.`;
+            Make sure the recipe is safe, healthy, and realistic to prepare at home.`;
 
             const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
 
@@ -166,7 +143,9 @@ Make sure the recipe is safe, healthy, and realistic to prepare at home.`;
 
     return (
         <>
-            <Head title="Recipe Generation" />
+            <Head title="Recipe Generator">
+                <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
+            </Head>
             <Navbar />
 
             <div className="pt-16 min-h-screen bg-background">
