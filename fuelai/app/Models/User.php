@@ -6,27 +6,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens; // <-- ADD THIS LINE
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable; // <-- ADD HasApiTokens HERE
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
+        'role',
+        'profile_image_url',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -44,5 +46,47 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // ... all the relationship methods are below and do not need to be changed ...
+
+    public function mealPlans()
+    {
+        return $this->hasMany(MealPlan::class);
+    }
+
+    public function mealLogs()
+    {
+        return $this->hasMany(UserMealLog::class);
+    }
+
+    public function createdMeals()
+    {
+        return $this->hasMany(Meal::class, 'created_by');
+    }
+
+    public function threads()
+    {
+        return $this->hasMany(ForumThread::class);
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(ForumPost::class);
+    }
+
+    public function imageRecognitionResults()
+    {
+        return $this->hasMany(ImageRecognitionResult::class);
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'following_user_id', 'followed_user_id')->withTimestamps();
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'following_user_id')->withTimestamps();
     }
 }
