@@ -1,5 +1,7 @@
 # FuelAI
 
+## Content
+
 While the concept of consuming nutritious food and staying a healthy weight is widely appealing, only a small percentage of the population actually does; this is due to three mitigating factors: the seemingly inexplicable amount of effort it takes to actually track one’s macros appropriately, consume them, and simultaneously still actually enjoy the food being eaten. FuelAI is the solution. 
 
  Our goal is to create an application accessible via the web on computers and mobile devices. For the application to resolve such a grand issue for as many people as physically possible, it has to be simultaneously intuitive and feature-rich. For example, it is imperative that we make the creation of meal plans an inexplicably easy but extremely accurate process that meets not only caloric and macronutrient needs, but accommodates dietary restrictions and preferred flavor palates as well. Moreover, we need to set up the aforementioned meal plans in such a way that they are visually appealing and easy to change if not feasible or desired that day for the user. Lastly, success, while mostly something internalized, is most easily accomplished within a community - due to this, we want to culminate one. We will facilitate this via the creation of a forum page where users can post advice, questions, goals, recipes, etc. In synopsis, our goal is simply stated: make people healthy in an effective way, keep them thriving, and encourages them to come back or recommend it to others. 
@@ -7,3 +9,23 @@ While the concept of consuming nutritious food and staying a healthy weight is w
   Achieving this goal may seem outwardly ostentatious, but it is actually extremely feasible. To manage the goals, dietary restrictions, and preferences of the user, we will utilize our database, which will use PostgreSQL. This aforementioned database will also include all of our recipes—both implemented by the staff and other users along with their nutrition information; from that point, we just create algorithms and functions to gather recipes that fit user specifications and display them back to the applicable user in an easy-to-follow and appealing calendar format.  The user would have the ability to revise or completely alter their plan with utilization of our LLM’s we plan on integrating, which ultimately puts the power the of plan in the users hands, realistically making success more feasible. From a programming perspective, we will utilize Laravel and react for the web application, Swift for mobile application development, and we actually plan on utilizing a multitude of LLMs so that if the user does not appreciate the feedback, recipes, or restructuring of their plan by the LLM, they can simply change it to another for something that works better for them.  
   
  In conclusion, health doesn’t have to be hard; follow FuelAI and stick to your diet, and you’re destined to reach your goals.
+
+## Work Load:
+
+### Arsal: 
+
+fuelai/resources/js/pages/* (all but dashboard)
+
+fuelai/resources/js/data/* (all)
+
+fuelai/resources/js/components/navbar.tsx
+
+fuelai/resources/views/app.blade.php
+
+fuelai/routes/web.php
+
+### Yahir
+
+### Logan
+
+### Steven
