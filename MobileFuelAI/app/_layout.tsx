@@ -5,7 +5,7 @@ export default function RootLayout() {
   return (
       <Stack>
 
-          // Hide folder headers
+          {/*// Hide folder headers*/}
 
           <Stack.Screen
             name="(tabs)"

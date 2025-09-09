@@ -28,7 +28,7 @@ const TabIcon = ({
     />
 );
 
-const _layout = () => {
+const Layout = () => {
     const colorScheme = useColorScheme();
 
     return (
@@ -97,6 +97,6 @@ const _layout = () => {
     );
 };
 
-export default _layout
+export default Layout
 
 const styles = StyleSheet.create({})
