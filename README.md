@@ -27,5 +27,16 @@ fuelai/routes/web.php
 ### Yahir
 
 ### Logan
+MobileFuelAI/app/(tabs)/* (all)
+
+MobileFuelAI/assets/* (all)
+
+MobileFuelAI/tailwind.config.js
+
+MobileFuelAI/constants/* (all)
+
+MobileFuelAI/app/recipes/* (all - though it is just has placeholder files)
+
+MobileFuelAI/app.json (changes a few lines for logo on mobile launch)
 
 ### Steven
