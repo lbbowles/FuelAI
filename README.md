@@ -39,3 +39,17 @@ MobileFuelAI/app/recipes/* (all - though it is just has placeholder files)
 
 
 ### Steven
+09/09/25
+modelApi/*
+My responsibility is the image recognition model for food.
+app.py:
+    The application that will run and provide api services.
+        endpoints:
+            get(/heath): status of server , what device is being used for computation(mac cpu,gpu,or cpu), model being used.
+            put(/predict food): params(int top_k,file file)  will take image file and run it through the model and returns a list of size top_k of the highest confidence score
+
+render.yaml/deploy.sh: scripts that will be used to actually deploy my application. yaml file most likely to be scrapped due to hardware limitations on render. looking into azure and other services to deploy currently using uvicorn to run locally.
+
+Dockerfile: might use instead of deploying from GH repo
+
+req.txt: Dependencies to be installed
