@@ -10,21 +10,21 @@ class ImageRecognitionResult extends Model
     use HasFactory;
 
     /**
-     * The table associated with the model.
+     * The table associated with the model
      *
      * @var string
      */
     protected $table = 'image_recognition_results';
 
     /**
-     * Indicates if the model should be timestamped.
+     * Indicates if the model should have a timestamp
      *
      * @var bool
      */
     public $timestamps = false;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass assignable
      *
      * @var array<int, string>
      */
@@ -38,7 +38,7 @@ class ImageRecognitionResult extends Model
     ];
 
     /**
-     * The attributes that should be cast.
+     * The attributes that should be cast
      *
      * @var array<string, string>
      */

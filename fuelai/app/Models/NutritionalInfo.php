@@ -10,21 +10,21 @@ class NutritionalInfo extends Model
     use HasFactory;
 
     /**
-     * The table associated with the model.
+     * The table associated with the model
      *
      * @var string
      */
     protected $table = 'nutritional_info';
 
     /**
-     * Indicates if the model should be timestamped.
+     * Indicates if the model should have a timestamp
      *
      * @var bool
      */
     public $timestamps = false;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass assignable
      *
      * @var array<int, string>
      */

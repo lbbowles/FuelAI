@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     /**
-     * Allow the authenticated user to follow another user.
+     * Allow the authenticated user to follow another user
      */
     public function follow(Request $request, User $user)
     {
@@ -21,7 +21,7 @@ class UserController extends Controller
     }
 
     /**
-     * Get the list of users who are following the given user.
+     * Get the list of users who are following the given user
      */
     public function followers(User $user)
     {

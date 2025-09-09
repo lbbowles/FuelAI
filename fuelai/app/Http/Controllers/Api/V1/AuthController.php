@@ -12,7 +12,7 @@ use Illuminate\Validation\Rules;
 class AuthController extends Controller
 {
     /**
-     * Handle an incoming registration request.
+     * Handles all incoming registration requests
      */
     public function register(Request $request)
     {
@@ -38,7 +38,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Handles all incoming authentication requests
      */
     public function login(Request $request)
     {

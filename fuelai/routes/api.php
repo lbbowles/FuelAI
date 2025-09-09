@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\V1\UserController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/users/{user}/followers', [UserController::class, 'followers']); // <-- Add this line
+Route::get('/users/{user}/followers', [UserController::class, 'followers']);
 
 
 Route::middleware('auth:sanctum')->group(function () {

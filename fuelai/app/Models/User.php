@@ -6,14 +6,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; // <-- ADD THIS LINE
+use Laravel\Sanctum\HasApiTokens; //
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable; // <-- ADD HasApiTokens HERE
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass assignable
      *
      * @var array<int, string>
      */
@@ -26,7 +26,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * The attributes that should be hidden
      *
      * @var array<int, string>
      */
@@ -36,7 +36,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * Get the attributes that should be cast
      *
      * @return array<string, string>
      */
@@ -48,7 +48,7 @@ class User extends Authenticatable
         ];
     }
 
-    // ... all the relationship methods are below and do not need to be changed ...
+    // relationships
 
     public function mealPlans()
     {
