@@ -24,7 +24,27 @@ fuelai/resources/views/app.blade.php
 
 fuelai/routes/web.php
 
-### Yahir
+### Yahir:
+
+app/Http/Controllers/Api/V1/*
+
+app/Models/*
+
+app/Providers/RouteServiceProvider.php
+
+config/app.php
+
+config/sanctum.php
+
+database/migrations/*
+
+database/seeders/*
+
+routes/api.php
+
+composer.json 
+
+composer.lock
 
 ### Logan
 MobileFuelAI/app/(tabs)/* (all)
