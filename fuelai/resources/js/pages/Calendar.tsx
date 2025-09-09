@@ -1,6 +1,12 @@
 import { Head } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 
+// To DO:
+// Create the calendar (maybe use some open source software)
+// Send data to database
+// Pull from other parts to show on the calendar
+// Add Gradients to keep it consist
+
 export default function Calendar() {
     return (
         <>

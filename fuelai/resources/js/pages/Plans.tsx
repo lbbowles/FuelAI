@@ -2,8 +2,13 @@ import { Head } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 import { plans } from '@/data/plansData';
 
+// To Do
+// Add in a most popular feature
+// Change out placeholder text with sensible words
+// Starter has issue where text is not proper
+// Add Gradients to keep it consist
+
 export default function Plans() {
-    console.log('Plans component mounted!');
     return (
         <>
             <Head title="Plans">
@@ -11,8 +16,7 @@ export default function Plans() {
             </Head>
             <Navbar />
             <div className="min-h-screen bg-base-100 pt-16">
-                {/* Header */}
-                <div className="hero bg-gradient-to-br from-primary/10 to-secondary/10 py-20">
+                <div className="hero bg-gradient-to-br from-primary to-secondary py-20">
                     <div className="hero-content text-center max-w-4xl">
                         <div>
                             <h1 className="text-5xl font-bold mb-6 text-base-content">
@@ -77,7 +81,7 @@ export default function Plans() {
                     </div>
                 </div>
 
-                {/* FAQ Section */}
+                {/* FAQ */}
                 <div className="bg-base-200 py-16">
                     <div className="max-w-4xl mx-auto px-4">
                         <h2 className="text-3xl font-bold text-center mb-12 text-base-content">

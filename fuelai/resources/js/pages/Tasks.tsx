@@ -3,7 +3,19 @@ import Navbar from '@/components/navbar';
 import { useState } from 'react';
 import { TaskInterface, initialTasks } from '@/data/tasksData';
 
+// TO DO:
+// Change the color of the outline of Checkbox to be black so it stands out
+// Get rid of badges (why did I use these)
+// Add in more categories
+// Send data to database
+// Add in a description of tasks, that you can click on
+// Add in deadline for tasks
+// Move add tasks to be a popup window
+// Connection with calendar
+// Add Gradients to keep it consist
+
 type Task = TaskInterface;
+
 
 export default function Tasks() {
 
@@ -86,7 +98,6 @@ export default function Tasks() {
                     </div>
 
                     <div className="p-4 pt-20 lg:pt-4">
-                        {/* Hero Section */}
                         <div className="hero bg-gradient-to-r from-primary to-secondary rounded-box mb-8 pt-8">
                         <div className="hero-content text-center text-primary-content py-12">
                                 <div className="max-w-md">
@@ -112,7 +123,7 @@ export default function Tasks() {
                             </div>
                         </div>
 
-                        {/* Filter Tabs */}
+                        {/* Filter */}
                         <div className="tabs tabs-boxed bg-base-100 mb-6 p-1">
                             <button
                                 onClick={() => setFilter('all')}

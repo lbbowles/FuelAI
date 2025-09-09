@@ -1,6 +1,14 @@
 import { Head, Link } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 
+
+// To Do:
+// Get rid of placeholder data
+// Make the data consistent between pages
+// Add in a login feature / register feature
+// Expand on the page so it looks better
+// Add Gradients to keep it consist
+
 export default function Welcome() {
     return (
         <>
@@ -9,8 +17,6 @@ export default function Welcome() {
             </Head>
 
             <Navbar />
-
-            {/* Hero Section */}
             <div className="pt-16 min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                     <div className="text-center">
@@ -38,7 +44,7 @@ export default function Welcome() {
                         </div>
                     </div>
 
-                    {/* Features Grid */}
+                    {/* Features */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-20">
                         <div className="bg-card p-6 rounded-lg shadow-lg border border-border">
                             <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">

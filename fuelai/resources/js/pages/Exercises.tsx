@@ -4,7 +4,12 @@ import { useState } from 'react';
 import {WorkoutSchedule, fitnessLevels, workoutTypes, equipmentOptions, timeOptions}  from '@/data/exerciseData';
 
 
-
+// To Do:
+// Tweak the prompt to provide better data
+// Add in error handling that isn't useless
+// Add in text validation to prevent prompt injection
+// Add in the ability to regenerate exercise
+// Add Gradients to keep it consist
 
 export default function Exercise() {
 
@@ -99,7 +104,7 @@ export default function Exercise() {
             const data = await response.json();
             const workoutData = JSON.parse(data.choices[0].message.content);
             setWorkoutSchedule(workoutData);
-        } catch (err) {
+        } catch (err) { // Add in better error handling (maybe a placeholder list of workouts ?
             console.error('Error generating workout:', err);
             setError('Unable to generate personalized workout. Please verify your inputs and try again.');
         } finally {
@@ -116,6 +121,7 @@ export default function Exercise() {
         }
     };
 
+    // Get rid of badges due to no flexibility
     const getDifficultyBadge = (difficulty: string) => {
         switch (difficulty) {
             case 'beginner': return 'badge-success';
@@ -160,7 +166,6 @@ export default function Exercise() {
 
             <div className="min-h-screen bg-base-200 pt-16">
                 <div className="container mx-auto p-4 max-w-7xl">
-                    {/* Header Section */}
                     <div className="hero bg-gradient-to-r from-primary to-secondary rounded-box mb-8">
                         <div className="hero-content text-center text-primary-content py-16">
                             <div className="max-w-2xl">
@@ -168,7 +173,7 @@ export default function Exercise() {
                                 <p className="mb-6 text-lg">
                                     Generate personalized, evidence-based workout routines powered by advanced AI.
                                     Input your fitness goals and receive scientifically-designed training protocols.
-                                </p>
+                                </p> {/* I dislike this text and I should change it */}
                             </div>
                         </div>
                     </div>
@@ -181,8 +186,9 @@ export default function Exercise() {
                                     <div className="card-body">
                                         <h2 className="card-title text-2xl mb-6">Workout Configuration</h2>
 
-                                        {/* Primary Goal */}
+                                        {/* Primary */}
                                         <div className="form-control w-full mb-6">
+                                            {/* Fix Primary Training Objection collision, the text box collides with the text on the left and right */}
                                             <label className="label">
                                                 <span className="label-text text-lg font-semibold">Primary Training Objective</span>
                                             </label>
@@ -198,7 +204,7 @@ export default function Exercise() {
                                             </label>
                                         </div>
 
-                                        {/* Fitness Level Assessment */}
+                                        {/* Fitness Level */}
                                         <div className="form-control w-full mb-6">
                                             <label className="label">
                                                 <span className="label-text text-lg font-semibold">Current Fitness Level</span>
@@ -226,7 +232,7 @@ export default function Exercise() {
                                             </div>
                                         </div>
 
-                                        {/* Workout Type Selection */}
+                                        {/* Workout Selection */}
                                         <div className="form-control w-full mb-6">
                                             <label className="label">
                                                 <span className="label-text text-lg font-semibold">Training Focus</span>
@@ -264,6 +270,7 @@ export default function Exercise() {
 
                                         {/* Considerations */}
                                         <div className="form-control w-full mb-6">
+                                            {/* Fix the text box collision */}
                                             <label className="label">
                                                 <span className="label-text text-lg font-semibold">Injury History or Physical Limitations</span>
                                                 <span className="label-text-alt">Optional</span>
@@ -312,7 +319,7 @@ export default function Exercise() {
                                                 </svg>
                                                 <span className="text-sm">{error}</span>
                                             </div>
-                                        )}
+                                        )} {/* Get clearer error handling */}
 
                                         {/* Generate */}
                                         <div className="card-actions justify-end">

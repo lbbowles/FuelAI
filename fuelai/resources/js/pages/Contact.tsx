@@ -4,6 +4,11 @@ import { useState } from 'react';
 import { ContactFormData, faqs } from '@/data/contactData';
 
 
+// TO DO:
+// Send data to database
+// Change placeholder data to be actually useful
+// Add Gradients to keep it consist
+
 export default function Contact() {
     const [formData, setFormData] = useState<ContactFormData>({
         name: '',
@@ -24,6 +29,8 @@ export default function Contact() {
         }));
     };
 
+
+    // Tweak to send data to database instead of the air
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -48,6 +55,8 @@ export default function Contact() {
             setIsSubmitting(false);
         }
     };
+
+
 
     const contactMethods = [
         {
@@ -117,7 +126,6 @@ export default function Contact() {
 
             <div className="min-h-screen bg-background pt-16">
                 <div className="mx-auto max-w-7xl px-4 py-12">
-                    {/* Header */}
                     <div className="mb-16 text-center">
                         <h1 className="mb-4 text-4xl font-bold text-foreground">Get in Touch</h1>
                         <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
@@ -249,7 +257,7 @@ export default function Contact() {
                                 </div>
                             </div>
 
-                            {/* FAQ Section */}
+                            {/* FAQ */}
                             <div>
                                 <h2 className="mb-6 text-2xl font-semibold">Frequently Asked Questions</h2>
                                 <div className="space-y-4">
@@ -263,26 +271,6 @@ export default function Contact() {
                                     ))}
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Bottom CTA */}
-                    <div className="mt-16 rounded-lg border border-border bg-card p-8 text-center">
-                        <h3 className="mb-4 text-2xl font-semibold">Ready to start cooking with AI?</h3>
-                        <p className="mb-6 text-muted-foreground">Join thousands of users who are already creating amazing recipes with FuelAI.</p>
-                        <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                            <a
-                                href="/register"
-                                className="rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-                            >
-                                Get Started Free
-                            </a>
-                            <a
-                                href="/plans"
-                                className="rounded-lg border border-primary px-6 py-3 font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
-                            >
-                                View Plans
-                            </a>
                         </div>
                     </div>
                 </div>

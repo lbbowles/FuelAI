@@ -3,6 +3,16 @@ import Navbar from '@/components/navbar';
 import { useState } from 'react';
 import { ForumPostInterface, forumPosts, categories } from '@/data/forumData';
 
+// TO DO:
+// Add in ability to create and delete forums
+// Send data to the database (instead of placeholder)
+// Swap off badges for pinned/answered (looks bad)
+// Add in proper view count
+// Add in view of forums
+// Add in commenting in forums
+// Add in being able to call the AI.
+// Add Gradients to keep it consist
+
 type forumPosts = ForumPostInterface;
 
 export default function Forums() {
@@ -42,7 +52,6 @@ export default function Forums() {
 
             <div className="pt-16 min-h-screen bg-gray-50">
                 <div className="container mx-auto px-4 py-8 max-w-7xl">
-                    {/* Header */}
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 gap-4">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 mb-2">Community Forums</h1>
@@ -114,7 +123,7 @@ export default function Forums() {
 
                         {/* Main Content */}
                         <div className="lg:col-span-9">
-                            {/* Filters and Sort */}
+                            {/* Filters */}
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                                 <div className="flex items-center gap-2 flex-wrap">
                                     {selectedCategory !== 'all' && (

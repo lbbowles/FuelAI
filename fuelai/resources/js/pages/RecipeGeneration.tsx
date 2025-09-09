@@ -3,7 +3,13 @@ import Navbar from '@/components/navbar';
 import { useState } from 'react';
 import {RecipeFormData, commonAllergies, dietaryOptions, proteinOptions} from '@/data/recipeData';
 
-
+// TO DO:
+// Add in ability to regenerate responses
+// Add ability to save recipes
+// Send recipes to database
+// Add in more requirements/Allergies/Proteins and such
+// Tweak the bars so they are in order and do not have an issue.
+// Add Gradients to keep it consist
 
 export default function RecipeGeneration() {
     const [formData, setFormData] = useState<RecipeFormData>({
@@ -159,7 +165,7 @@ export default function RecipeGeneration() {
                         </p>
                     </div>
 
-                    {/* Form Section - Top Half */}
+                    {/* Form Section */}
                     <div className="bg-card p-8 rounded-lg border border-border mb-8">
                         <h2 className="text-2xl font-semibold mb-8 text-center">Recipe Preferences</h2>
 
@@ -232,7 +238,7 @@ export default function RecipeGeneration() {
                                     className="w-full p-3 border border-border rounded-lg bg-background"
                                 />
                             </div>
-
+                            {/* Proteins Target */}
                             <div>
                                 <label className="block text-sm font-medium mb-2">Target Proteins (required)</label>
                                 <input
@@ -349,7 +355,7 @@ export default function RecipeGeneration() {
                         )}
                     </div>
 
-                    {/* Generated Recipe Section - Bottom Half */}
+                    {/* Generated Recipe Section */}
                     <div className="bg-card p-8 rounded-lg border border-border">
                         <h2 className="text-2xl font-semibold mb-6 text-center">Your Generated Recipe</h2>
 
