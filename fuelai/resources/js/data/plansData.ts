@@ -1,3 +1,4 @@
+// This needs to make sense later on 
 export const plans = [
     {
         name: 'Starter',

@@ -35,6 +35,7 @@ export const workoutTypes = [
     { value: 'endurance', label: 'Endurance Building' }
 ];
 
+// Change to type of equipment the user has
 export const equipmentOptions = [
     { value: 'none', label: 'No Equipment (Bodyweight)' },
     { value: 'basic', label: 'Basic Equipment (Dumbbells, Resistance Bands)' },

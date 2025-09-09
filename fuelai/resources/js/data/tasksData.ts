@@ -8,6 +8,8 @@ export interface TaskInterface {
     category: string;
 }
 
+export const categories = ['General', 'Cooking', 'Meal Planning', 'Shopping', 'Fitness', 'Research', 'Health'];
+
 export const initialTasks: TaskInterface[] = [
     {
         id: 1,

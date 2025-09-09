@@ -17,6 +17,7 @@ export interface ForumPostInterface {
     isAnswered?: boolean;
 }
 
+// Tags here are useless for now (?)
 export const forumPosts = [
     {
         id: 1,

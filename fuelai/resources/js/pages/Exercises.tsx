@@ -33,9 +33,12 @@ export default function Exercise() {
             return;
         }
 
+
+        /* Set initial state */
         setIsLoading(true);
         setError('');
 
+        // This json object is much better than straight sending the prompt to it
         try {
             const prompt = `Generate a comprehensive ${availableTime}-minute ${workoutType} workout plan for a ${fitnessLevel} level individual with ${equipment} equipment available.
 
@@ -71,19 +74,20 @@ export default function Exercise() {
 
             Include 6-10 exercises with proper progression. Ensure exercise selection aligns with available equipment and injury considerations. Provide scientifically-backed training principles.`;
 
-            const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+            const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;  /* Import API key from ENV file*/
 
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json',
-                    'X-Title': 'FuelAI Exercise Generator'
+                headers: { // Sets headers so I can find out on Openrouter what is being called
+                    "Authorization": `Bearer ${apiKey}`,
+                    "HTTP-Referer": window.location.origin,
+                    "X-Title": "FuelAI Exercise Generator",
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     "model": "openai/gpt-4o-mini",
                     "messages": [
-                        {
+                        { // Prompt needs tweaking
                             role: 'system',
                             content: 'You are a certified personal trainer with expertise in exercise science and kinesiology. Provide safe, effective, evidence-based workout recommendations. Always return valid JSON without markdown formatting or code blocks.'
                         },
@@ -97,14 +101,10 @@ export default function Exercise() {
                 })
             });
 
-            if (!response.ok) {
-                throw new Error(`API request failed: ${response.status}`);
-            }
-
             const data = await response.json();
             const workoutData = JSON.parse(data.choices[0].message.content);
             setWorkoutSchedule(workoutData);
-        } catch (err) { // Add in better error handling (maybe a placeholder list of workouts ?
+        } catch (err) { // Add in better error handling (maybe a placeholder list of workouts ?)
             console.error('Error generating workout:', err);
             setError('Unable to generate personalized workout. Please verify your inputs and try again.');
         } finally {
@@ -157,6 +157,7 @@ export default function Exercise() {
         }
     };
 
+    /* Actual HTML Page (uses pure Tailwind) */
     return (
         <>
             <Head title="Exercise Training Platform">
@@ -178,6 +179,7 @@ export default function Exercise() {
                         </div>
                     </div>
 
+                    {/* If workout doesn't exist, create forum */}
                     {!workoutSchedule ? (
                         /* Workout Form */
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -287,7 +289,7 @@ export default function Exercise() {
                                 </div>
                             </div>
 
-                            {/* Parameters Sidebar */}
+                            {/* Parameters Sidebar, adjust to be a part of the main bar, also tweak to slider by 9/12 */}
                             <div className="lg:col-span-1">
                                 <div className="card bg-base-100 shadow-xl sticky top-24">
                                     <div className="card-body">
@@ -337,7 +339,7 @@ export default function Exercise() {
                             </div>
                         </div>
                     ) : (
-                        /* Workout Display */
+                        /* ELSE display Workout table */
                         <div className="space-y-6">
                             {/* Workout Overview */}
                             <div className="card bg-base-100 shadow-xl">

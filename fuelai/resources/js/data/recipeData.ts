@@ -13,12 +13,12 @@ export interface RecipeFormData {
 }
 
 export const dietaryOptions = [
-    'Vegetarian', 'Vegan', 'Gluten-Free', 'Halal', 'Kosher', 'Diabetes'
+    'Vegetarian', 'Vegan', 'Gluten-Free', 'Halal', 'Kosher'
 ];
 
 export const commonAllergies = [
     'Nuts', 'Peanuts', 'Shellfish', 'Fish', 'Eggs', 'Dairy',
-    'Soy', 'Wheat', 'Sesame', 'Lactose'
+    'Soy', 'Wheat', 'Sesame', 'Lactose', 'Diabetic'
 ];
 
 export const proteinOptions = [

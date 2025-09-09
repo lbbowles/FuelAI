@@ -13,14 +13,17 @@ import { ForumPostInterface, forumPosts, categories } from '@/data/forumData';
 // Add in being able to call the AI.
 // Add Gradients to keep it consist
 
-type forumPosts = ForumPostInterface;
+type forumPosts = ForumPostInterface; // pull from @/data/forumsData
 
 export default function Forums() {
+
+    // Set initial state
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [selectedTag, setSelectedTag] = useState('');
     const [sortBy, setSortBy] = useState('latest');
 
+    // Filter Post (doesn't even work half the time)
     const filteredPosts = forumPosts.filter(post => {
         const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
@@ -31,6 +34,7 @@ export default function Forums() {
         return matchesSearch && matchesCategory && matchesTag;
     });
 
+    //
     const sortedPosts = [...filteredPosts].sort((a, b) => {
         switch (sortBy) {
             case 'popular':
@@ -43,6 +47,7 @@ export default function Forums() {
         }
     });
 
+    // fuck tailwind
     return (
         <>
             <Head title="Forums">
@@ -59,6 +64,7 @@ export default function Forums() {
                                 Connect with fellow food enthusiasts, share recipes, and get cooking advice
                             </p>
                         </div>
+                        {/* Not implemented yet */}
                         <Link
                             href="/forums/create"
                             className="btn btn-primary inline-flex items-center gap-2 w-fit"
@@ -185,6 +191,7 @@ export default function Forums() {
                                                             {post.category}
                                                         </div>
                                                     </div>
+                                                    {/* Not implemented yet */}
                                                     <Link
                                                         href={`/forums/${post.id}`}
                                                         className="link link-hover no-underline"
@@ -227,6 +234,7 @@ export default function Forums() {
                                     </div>
                                 ))}
                             </div>
+                            {/* Error Display */}
                             <div className="mt-8 text-center">
                                 <button className="btn btn-outline btn-lg">
                                     Load More Posts

@@ -8,6 +8,7 @@ import { plans } from '@/data/plansData';
 // Starter has issue where text is not proper
 // Add Gradients to keep it consist
 
+// Uses Tailwind + DaisyUI
 export default function Plans() {
     return (
         <>

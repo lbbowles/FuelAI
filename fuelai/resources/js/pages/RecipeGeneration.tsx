@@ -26,6 +26,7 @@ export default function RecipeGeneration() {
         additionalNotes: ''
     });
 
+    // Set initial state
     const [generatedRecipe, setGeneratedRecipe] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string>('');
@@ -66,7 +67,7 @@ export default function RecipeGeneration() {
         setError('');
         setGeneratedRecipe('');
 
-        try {
+        try { // /pages/Exercises.tsx has much better way to send / recieve the prompt
             const prompt = `Generate a detailed recipe with the following requirements:
 
             Dietary Requirements: ${formData.dietaryRequirements.join(', ') || 'None specified'}
@@ -91,7 +92,7 @@ export default function RecipeGeneration() {
 
             Make sure the recipe is safe, healthy, and realistic to prepare at home.`;
 
-            const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+            const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY; //Pull from .env file
 
             if (!apiKey) {
                 throw new Error('OpenRouter API key not found. Please add VITE_OPENROUTER_API_KEY to your .env file.');

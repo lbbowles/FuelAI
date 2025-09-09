@@ -57,7 +57,7 @@ export default function Contact() {
     };
 
 
-
+    // Cannot move data to @/data/... because icons :(
     const contactMethods = [
         {
             icon: (
@@ -117,7 +117,7 @@ export default function Contact() {
         },
     ];
 
-    return (
+    return ( // Uses pure Tailwind templates
         <>
             <Head title="Contact Us">
                 <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />

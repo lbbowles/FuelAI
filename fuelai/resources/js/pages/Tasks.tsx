@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 import { useState } from 'react';
-import { TaskInterface, initialTasks } from '@/data/tasksData';
+import { TaskInterface, initialTasks, categories } from '@/data/tasksData';
 
 // TO DO:
 // Change the color of the outline of Checkbox to be black so it stands out
@@ -19,16 +19,18 @@ type Task = TaskInterface;
 
 export default function Tasks() {
 
+    // Set initial states
     const [tasks, setTasks] = useState<Task[]>(initialTasks);
-
     const [newTaskText, setNewTaskText] = useState('');
     const [newTaskPriority, setNewTaskPriority] = useState<'low' | 'medium' | 'high'>('medium');
     const [newTaskCategory, setNewTaskCategory] = useState('General');
     const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
 
-    const categories = ['General', 'Cooking', 'Meal Planning', 'Shopping', 'Fitness', 'Research', 'Health'];
+    const completedCount = tasks.filter(task => task.completed).length;
+    const pendingCount = tasks.filter(task => !task.completed).length;
 
-
+    // TEMP FUNCTIONS
+    //      Tweak when database added by Yahir
     const addTask = () => {
         if (newTaskText.trim()) {
             const newTask: Task = {
@@ -62,9 +64,9 @@ export default function Tasks() {
         return true;
     });
 
-    const completedCount = tasks.filter(task => task.completed).length;
-    const pendingCount = tasks.filter(task => !task.completed).length;
+    // End Temp function
 
+    // I hate badges
     const getPriorityBadge = (priority: string) => {
         switch (priority) {
             case 'high': return 'badge-error';
@@ -74,6 +76,7 @@ export default function Tasks() {
         }
     };
 
+    // Uses DaisyUI + Tailwind
     return (
         <>
             <Head title="Tasks">
@@ -232,7 +235,7 @@ export default function Tasks() {
                     </div>
                 </div>
 
-                {/* Drawer Sidebar */}
+                {/* Sidebar */}
                 <div className="drawer-side">
                     <label htmlFor="drawer-toggle" className="drawer-overlay"></label>
                     <aside className="w-80 min-h-full bg-base-100">

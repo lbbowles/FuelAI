@@ -10,6 +10,7 @@ import Navbar from '@/components/navbar';
 export default function Calendar() {
     return (
         <>
+            {/* Template for an outline box */}
             <Head title="Calendar">
                 <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
             </Head>
