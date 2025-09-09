@@ -40,7 +40,9 @@ MobileFuelAI/app/recipes/* (all - though it is just has placeholder files)
 
 ### Steven
 09/09/25
+
 modelApi/*
+
 My responsibility is the image recognition model for food.
 app.py:
     The application that will run and provide api services.
