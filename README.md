@@ -44,6 +44,7 @@ MobileFuelAI/app/recipes/* (all - though it is just has placeholder files)
 modelApi/*
 
 My responsibility is the image recognition model for food.
+
 app.py:
     The application that will run and provide api services.
         endpoints:
