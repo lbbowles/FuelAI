@@ -27,13 +27,14 @@ Route::get('/tasks', function () {
     return Inertia::render('Tasks');
 })->name('tasks');
 
-Route::get('/plans', function () {
-    return Inertia::render('Plans');
-})->name('plans');
+Route::get('/image_rec', function () {
+    return Inertia::render('image_rec');
+})->name('image_rec');
 
-Route::get('/contact', function () {
-    return Inertia::render('Contact');
-})->name('contact');
+
+Route::get('/admin', function () {
+    return Inertia::render('admin');
+})->name('admin');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

@@ -37,10 +37,10 @@ export default function Welcome() {
                                 Get Started Free
                             </Link>
                             <Link
-                                href="/plans"
+                                href="/login"
                                 className="border-2 border-primary text-primary px-8 py-4 rounded-lg text-lg font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
                             >
-                                View Plans
+                                Already have an account?
                             </Link>
                         </div>
                     </div>
