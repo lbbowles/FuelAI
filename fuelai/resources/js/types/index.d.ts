@@ -1,9 +1,23 @@
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
 
+export interface User {
+    id: number;
+    username: string;
+    email: string;
+    role: string;
+    email_verified_at?: string;
+}
+
 export interface Auth {
     user: User;
 }
+// Global props
+export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
+    auth: {
+        user: User;
+    };
+};
 
 export interface BreadcrumbItem {
     title: string;

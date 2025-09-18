@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
+import NavbarTop from '@/components/navbar';
 import { useState } from 'react';
 import { TaskInterface, initialTasks, categories } from '@/data/tasksData';
 
@@ -82,7 +82,7 @@ export default function Tasks() {
             <Head title="Tasks">
                 <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
             </Head>
-            <Navbar />
+            <NavbarTop />
 
             <div className="drawer lg:drawer-open">
                 <input id="drawer-toggle" type="checkbox" className="drawer-toggle" />

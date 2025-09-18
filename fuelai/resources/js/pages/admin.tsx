@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
+import NavbarTop from '@/components/navbar';
 
 
 export default function Calendar() {
@@ -9,7 +9,7 @@ export default function Calendar() {
             <Head title="Calendar">
                 <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
             </Head>
-            <Navbar />
+            <NavbarTop />
             <div className="min-h-screen bg-gray-50">
                 <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                     <div className="px-4 py-6 sm:px-0">

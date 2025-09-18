@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
+import NavbarTop from '@/components/navbar';
 import { useState } from 'react';
 import {WorkoutSchedule, fitnessLevels, workoutTypes, equipmentOptions, timeOptions}  from '@/data/exerciseData';
 
@@ -163,7 +163,7 @@ export default function Exercise() {
             <Head title="Exercise Training Platform">
                 <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
             </Head>
-            <Navbar />
+            <NavbarTop />
 
             <div className="min-h-screen bg-base-200 pt-16">
                 <div className="container mx-auto p-4 max-w-7xl">

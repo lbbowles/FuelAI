@@ -1,11 +1,13 @@
 import { Head, Link } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
+import NavbarTop from '@/components/navbar';
 import { useState } from 'react';
-import { ForumPostInterface, forumPosts, categories } from '@/data/forumData';
+
+// DONE:
+// Send data to the database - DONE
+
 
 // TO DO:
 // Add in ability to create and delete forums
-// Send data to the database (instead of placeholder)
 // Swap off badges for pinned/answered (looks bad)
 // Add in proper view count
 // Add in view of forums
@@ -13,23 +15,22 @@ import { ForumPostInterface, forumPosts, categories } from '@/data/forumData';
 // Add in being able to call the AI.
 // Add Gradients to keep it consist
 
-type forumPosts = ForumPostInterface; // pull from @/data/forumsData
-
-export default function Forums() {
+export default function Forums({ initialPosts = [], categories = []}) {
 
     // Set initial state
+    const [posts] = useState(initialPosts);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [selectedTag, setSelectedTag] = useState('');
     const [sortBy, setSortBy] = useState('latest');
 
     // Filter Post (doesn't even work half the time)
-    const filteredPosts = forumPosts.filter(post => {
+    const filteredPosts = posts.filter(post => {
         const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = selectedCategory === 'all' ||
             post.category.toLowerCase().replace(' ', '-') === selectedCategory;
-        const matchesTag = !selectedTag || post.tags.includes(selectedTag);
+        const matchesTag = !selectedTag || (post.tags && post.tags.includes(selectedTag));
 
         return matchesSearch && matchesCategory && matchesTag;
     });
@@ -53,13 +54,13 @@ export default function Forums() {
             <Head title="Forums">
                 <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
             </Head>
-            <Navbar />
+            <NavbarTop />
 
-            <div className="pt-16 min-h-screen bg-gray-50">
+            <div className="mt-25 pt-16 min-h-screen bg-gray-50">
                 <div className="container mx-auto px-4 py-8 max-w-7xl">
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 gap-4">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900 mb-2">Community Forums</h1>
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">Forums</h1>
                             <p className="text-gray-600">
                                 Connect with fellow food enthusiasts, share recipes, and get cooking advice
                             </p>
@@ -78,6 +79,8 @@ export default function Forums() {
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                         {/* Sidebar */}
+                        <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-10">
+
                         <div className="lg:col-span-3">
                             <div className="space-y-6 sticky top-24">
                                 {/* Search */}
@@ -126,6 +129,7 @@ export default function Forums() {
                                 </div>
                             </div>
                         </div>
+                        </div>
 
                         {/* Main Content */}
                         <div className="lg:col-span-9">
@@ -162,82 +166,93 @@ export default function Forums() {
 
                             {/* Forum Posts */}
                             <div className="space-y-4">
-                                {sortedPosts.map(post => (
-                                    <div key={post.id} className="card bg-white shadow-lg hover:shadow-xl transition-shadow">
-                                        <div className="card-body p-6">
-                                            <div className="flex gap-4">
-                                                <div className="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
-                                                    <span className="text-sm font-semibold">{post.authorAvatar}</span>
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                                        {post.isPinned && (
-                                                            <div className="badge badge-warning gap-1">
-                                                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                                    <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
-                                                                </svg>
-                                                                Pinned
-                                                            </div>
-                                                        )}
-                                                        {post.isAnswered && (
-                                                            <div className="badge badge-success gap-1">
-                                                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                                </svg>
-                                                                Answered
-                                                            </div>
-                                                        )}
-                                                        <div className="badge badge-ghost">
-                                                            {post.category}
-                                                        </div>
+                                {sortedPosts.length > 0 ? (
+                                    sortedPosts.map(post => (
+                                        <div key={post.id} className="card bg-white shadow-lg hover:shadow-xl transition-shadow">
+                                            <div className="card-body p-6">
+                                                <div className="flex gap-4">
+                                                    <div className="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
+                                                        <span className="text-sm font-semibold">{post.authorAvatar}</span>
                                                     </div>
-                                                    {/* Not implemented yet */}
-                                                    <Link
-                                                        href={`/forums/${post.id}`}
-                                                        className="link link-hover no-underline"
-                                                    >
-                                                        <h3 className="text-xl font-semibold text-gray-900 hover:text-blue-600 mb-2">
-                                                            {post.title}
-                                                        </h3>
-                                                    </Link>
-                                                    <p className="text-gray-600 mb-3 leading-relaxed">
-                                                        {post.excerpt}
-                                                    </p>
-                                                    <div className="flex flex-wrap gap-2 mb-4">
-                                                        {post.tags.map(tag => (
-                                                            <button
-                                                                key={tag}
-                                                                onClick={() => setSelectedTag(tag)}
-                                                                className="badge badge-outline badge-sm cursor-pointer hover:badge-primary"
-                                                            >
-                                                                #{tag}
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-gray-500">
-                                                        <div className="flex items-center gap-4">
-                                                            <span>by {post.author}</span>
-                                                            <div className="flex items-center gap-1">
-                                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                                                </svg>
-                                                                {post.replies} replies
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                                            {post.isPinned && (
+                                                                <div className="badge badge-warning gap-1">
+                                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                                        <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
+                                                                    </svg>
+                                                                    Pinned
+                                                                </div>
+                                                            )}
+                                                            {post.isAnswered && (
+                                                                <div className="badge badge-success gap-1">
+                                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                                    </svg>
+                                                                    Answered
+                                                                </div>
+                                                            )}
+                                                            <div className="badge badge-ghost">
+                                                                {post.category}
                                                             </div>
                                                         </div>
-                                                        <div className="text-right">
-                                                            Last activity {post.lastActivity}
+                                                        <Link
+                                                            href={`/forums/${post.id}`}
+                                                            className="link link-hover no-underline"
+                                                        >
+                                                            <h3 className="text-xl font-semibold text-gray-900 hover:text-blue-600 mb-2">
+                                                                {post.title}
+                                                            </h3>
+                                                        </Link>
+                                                        <p className="text-gray-600 mb-3 leading-relaxed">
+                                                            {post.excerpt}
+                                                        </p>
+                                                        <div className="flex flex-wrap gap-2 mb-4">
+                                                            {post.tags && post.tags.map(tag => (
+                                                                <button
+                                                                    key={tag}
+                                                                    onClick={() => setSelectedTag(tag)}
+                                                                    className="badge badge-outline badge-sm cursor-pointer hover:badge-primary"
+                                                                >
+                                                                    #{tag}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-gray-500">
+                                                            <div className="flex items-center gap-4">
+                                                                <span>by {post.author}</span>
+                                                                <div className="flex items-center gap-1">
+                                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                                                    </svg>
+                                                                    {post.replies} replies
+                                                                </div>
+                                                            </div>
+                                                            <div className="text-right">
+                                                                Last activity {post.lastActivity}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-12">
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No posts found</h3>
+                                        <p className="text-gray-600">
+                                            {posts.length === 0 ?
+                                                'There are no forum posts in the database yet.' :
+                                                'Try adjusting your search criteria.'
+                                            }
+                                        </p>
                                     </div>
-                                ))}
+                                )}
                             </div>
                             {/* Error Display */}
                             <div className="mt-8 text-center">
                                 <button className="btn btn-outline btn-lg">
-                                    Load More Posts
+                                    No More Posts
                                 </button>
                             </div>
                         </div>

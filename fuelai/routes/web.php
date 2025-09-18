@@ -2,6 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
+
+// Controllers
+
+use App\Http\Controllers\ForumController;
+
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -11,9 +18,7 @@ Route::get('/recipe-generation', function () {
     return Inertia::render('RecipeGeneration');
 })->name('recipe-generation');
 
-Route::get('/forums', function () {
-    return Inertia::render('Forums');
-})->name('forums');
+Route::get('/forums', [ForumController::class, 'index'])->name('forums');
 
 Route::get('/calendar', function () {
     return Inertia::render('Calendar');
@@ -41,6 +46,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 });
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->name('logout');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

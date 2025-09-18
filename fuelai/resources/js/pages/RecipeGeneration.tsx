@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
+import NavbarTop from '@/components/navbar';
 import { useState } from 'react';
 import {RecipeFormData, commonAllergies, dietaryOptions, proteinOptions} from '@/data/recipeData';
 
@@ -153,7 +153,7 @@ export default function RecipeGeneration() {
             <Head title="Recipe Generator">
                 <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
             </Head>
-            <Navbar />
+            <NavbarTop />
 
             <div className="pt-16 min-h-screen bg-background">
                 <div className="max-w-6xl mx-auto px-4 py-8">
