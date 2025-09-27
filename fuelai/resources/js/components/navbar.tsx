@@ -76,7 +76,7 @@ export default function NavbarTop() {
                             // Show when logged in
                             <>
                         <span className="text-gray-700">
-                            {auth.user.email}
+                            {auth.user.username}
                         </span>
                                 <NavbarButton
                                     onClick={handleSignOut}
@@ -84,6 +84,7 @@ export default function NavbarTop() {
                                 >
                                     Sign Out
                                 </NavbarButton>
+
                             </>
                         ) : (
                             // Show when not logged in

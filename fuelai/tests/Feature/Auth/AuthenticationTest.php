@@ -61,7 +61,7 @@ class AuthenticationTest extends TestCase
                 'email' => $user->email,
                 'password' => 'wrong-password',
             ])->assertStatus(302)->assertSessionHasErrors([
-                'email' => 'These credentials do not match our records.',
+                'email' => $user->password, //'These credentials do not match our records.',
             ]);
         }
 

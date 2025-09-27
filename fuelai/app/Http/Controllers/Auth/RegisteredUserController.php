@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use function Psy\debug;
 
 class RegisteredUserController extends Controller
 {
@@ -28,18 +29,26 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
+
+
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => 'required|string|max:255',
+            'profile_image_url' => 'required|string|max:255',
         ]);
 
+
+
         $user = User::create([
-            'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'password_hash' => Hash::make($request->password),
+            'role' => $request->role,
+            'profile_image_url' => $request->profile_image_url,
         ]);
 
         event(new Registered($user));

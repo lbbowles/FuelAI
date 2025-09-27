@@ -14,6 +14,11 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+Route::get('/home', function () {
+    return Inertia::render('welcome');
+})->name('home_page');
+
+
 Route::get('/recipe-generation', function () {
     return Inertia::render('RecipeGeneration');
 })->name('recipe-generation');
@@ -43,7 +48,7 @@ Route::get('/admin', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        return Inertia::render('welcome');
     })->name('dashboard');
 });
 

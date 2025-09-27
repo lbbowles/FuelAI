@@ -36,7 +36,7 @@ class ForumController extends Controller
                 'forum_posts.content',
                 'forum_posts.created_at',
                 'forum_threads.title',
-                'users.email as author', // Add a name field to user
+                'users.username as author', // Add a name field to user
                 'forums.name as category'
             ])
             ->orderBy('forum_posts.created_at', 'desc')
@@ -86,7 +86,7 @@ class ForumController extends Controller
 
     // Shorten the content so we can display it
     // Length, CHARs
-    private function createExcerpt($content, $length = 150)
+    private function createExcerpt($content, $length = 200)
     {
         $stripped = strip_tags($content);
         return strlen($stripped) > $length ? substr($stripped, 0, $length) . '...' : $stripped;

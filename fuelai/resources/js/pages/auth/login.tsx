@@ -24,7 +24,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
             <AuthLayout title="Log in to your account" description="Enter your email and password below to log in">
                 <Head title="Log in" />
 
-                <Form {...AuthenticatedSessionController.store.form()} resetOnSuccess={['password_hash']} className="flex flex-col gap-6">
+                <Form {...AuthenticatedSessionController.store.form()} resetOnSuccess={['password']} className="flex flex-col gap-6">
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-6">
@@ -45,7 +45,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
                                 <div className="grid gap-2">
                                     <div className="flex items-center">
-                                        <Label htmlFor="password">Password</Label>
+                                        <Label htmlFor="password_hash">Password</Label>
                                         {canResetPassword && (
                                             <TextLink href={request()} className="ml-auto text-sm" tabIndex={5}>
                                                 Forgot password?
@@ -53,9 +53,9 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                         )}
                                     </div>
                                     <Input
-                                        id="password_hash"
-                                        type="password_hash"
-                                        name="password_hash"
+                                        id="password"
+                                        type="password"
+                                        name="password"
                                         required
                                         tabIndex={2}
                                         autoComplete="current-password"

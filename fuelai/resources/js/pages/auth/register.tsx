@@ -19,6 +19,7 @@ export default function Register() {
             <AuthLayout title="Create an account" description="Enter your details below to create your account">
                 <Head title="Register" />
 
+
                 <Form
                     {...RegisteredUserController.store.form()}
                     resetOnSuccess={['password', 'password_confirmation']}
@@ -29,15 +30,15 @@ export default function Register() {
                         <>
                             <div className="grid gap-6">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
+                                    <Label htmlFor="username">Name</Label>
                                     <Input
-                                        id="name"
+                                        id="username"
                                         type="text"
                                         required
                                         autoFocus
                                         tabIndex={1}
-                                        autoComplete="name"
-                                        name="name"
+                                        autoComplete="username"
+                                        name="username"
                                         placeholder="Full name"
                                     />
                                     <InputError message={errors.name} className="mt-2" />
@@ -84,6 +85,37 @@ export default function Register() {
                                     />
                                     <InputError message={errors.password_confirmation} />
                                 </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="role">Role</Label>
+                                    <Input
+                                        id="role"
+                                        type="role"
+                                        required
+                                        tabIndex={3}
+                                        autoComplete="role"
+                                        name="role"
+                                        placeholder="user"
+                                    />
+                                    <InputError message={errors.email} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="profile_image_url">Image</Label>
+                                    <Input
+                                        id="profile_image_url"
+                                        type="profile_image_url"
+                                        required
+                                        tabIndex={3}
+                                        autoComplete="profile_image_url"
+                                        name="profile_image_url"
+                                        placeholder="profile_image_url"
+                                    />
+                                    <InputError message={errors.email} />
+                                </div>
+
+
+
 
                                 <Button type="submit" className="mt-2 w-full" tabIndex={5}>
                                     {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}

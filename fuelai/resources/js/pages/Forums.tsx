@@ -77,7 +77,7 @@ export default function Forums({ initialPosts = [], categories = []}) {
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Sidebar */}
                         <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-10">
 
@@ -111,6 +111,7 @@ export default function Forums({ initialPosts = [], categories = []}) {
                                     <div className="card-body p-4">
                                         <h3 className="font-semibold text-lg mb-3">Categories</h3>
                                         <ul className="menu menu-compact w-full">
+                                            <li>All</li>
                                             {categories.map(category => (
                                                 <li key={category.id}>
                                                     <button
