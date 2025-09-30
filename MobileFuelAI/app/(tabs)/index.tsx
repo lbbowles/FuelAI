@@ -1,120 +1,117 @@
-import {View, useColorScheme, Image, ScrollView, Text, Button, Alert} from "react-native";
+import React from "react";
+import { View, useColorScheme, Image, ScrollView, Text, TouchableOpacity } from "react-native";
 import { ThemeProvider, DarkTheme, DefaultTheme } from "@react-navigation/native";
-import { useState } from "react";
-import { icons } from "@/constants/icons";
+import { images } from "@/constants/images";
+
+//New inclusions
+import { Link } from "expo-router";
+import { getAllUsers } from "@/services/appwrite";
 
 export default function Index() {
-    // Check whether in light or dark mode apply to colorScheme
-    const colorScheme = useColorScheme();
-
-    // State to toggle between "Choose Your Plan" and "Change Your Life".  Just a silly lil easter egg tool I found in
-    // documentation, it holds no real purpose.
-    const [titleText, setTitleText] = useState("Choose Your Plan");
-    const onPressTitle = () => {
-        setTitleText((prev) => (prev === "Choose Your Plan" ? "Change Your Life" : "Choose Your Plan"));
-    };
-
-    // Options for FuelAI plans in the form of cards.
-    const cards = [
-        {
-            id: "starter",
-            title: "Starter                                                             $5/month",
-            bullets: [
-                "Expanded AI Credits",
-                "Access to better models",
-                "Basic recipe generation",
-                "Forum access",
-                "Email support",
-                "Up to 100 AI queries/month",
-            ],
-        },
-        {
-            id: "pro",
-            title: "Pro                                                                  $10/month",
-            bullets: [
-                "Everything in Starter",
-                "Advanced AI models",
-                "Unlimited recipe generation",
-                "Exercise recommendations",
-                "Priority support",
-                "Up to 500 AI queries/month",
-                "Custom meal planning",
-            ],
-        },
-        {
-            id: "premium",
-            title: "Premium                                                       $20/month",
-            bullets: [
-                "Everything in Pro",
-                "Latest AI models",
-                "Unlimited AI queries",
-                "Advanced analytics",
-                "24/7 priority support",
-                "Custom integrations",
-                "Advanced meal analytics",
-                "Nutritionist consultations",
-            ],
-        },
-    ];
-
-    // Detect whether the app is in light or dark mode.
     const isDark = useColorScheme() === "dark";
 
-    return (
-        // Wrap in ThemeProvider to apply the correct background color.
-        <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
-            <View
-                className={`flex-1 ${
-                    // Display different backsplash depending on whether the theme detected is light or dark
-                    isDark ? "bg-primary" : "bg-secondary"}`}
-            >
-                {/*Allows Scrolling*/}
-                <ScrollView className="flex-1 px-5" contentContainerClassName="pb-16">
-                    <Image source={icons.logo} className="w-14 h-14 mt-16 mx-auto" />
+    // Created profile data right now display is just arbitrary information later can pull session information.
+    const username = "@raheem";
 
-                    <Text
-                        className={`text-[22px] font-semibold text-center mt-4 ${isDark ? 'text-secondary' : 'text-primary'}`}
-                        onPress={onPressTitle}
-                    >
-                        {titleText}
+    return (
+        <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
+
+            <View className={`flex-1 ${isDark ? "bg-primary" : "bg-secondary"}`}>
+
+                <ScrollView className="flex-1 px-6 py-12" contentContainerClassName="items-center pb-20">
+
+                    {/* Avatar */}
+                    <View className="w-28 h-28 rounded-full overflow-hidden items-center justify-center border"
+                          style={{ borderColor: isDark ? "#ffffff22" : "#00000022" }}>
+                        <Image source={images.profile} className="w-20 h-20" />
+                    </View>
+
+                    {/* Username */}
+                    <Text className={`mt-4 text-2xl font-bold ${isDark ? "text-secondary" : "text-primary"}`}>{username}</Text>
+                    {/*Little bio section*/}
+                    <Text className={`${isDark ? "text-secondary/70" : "text-primary/70"} mt-1`}>
+                        Fueling your day with better choices
                     </Text>
 
-                    {/*Start card display*/}
-                    <View className="mt-6 space-y-4">
-                        {cards.map((card) => (
-                            <View
-                                // Display card information depending on light or dark mode.
-                                key={card.id}
-                                className={`rounded-2xl p-4 ${isDark ? "bg-white/10" : "bg-black/5"} border ${
-                                    isDark ? "border-white/15" : "border-black/10"
-                                }`}
+                    {/* Actions */}
+                    <View className="w-full max-w-md mt-8">
+
+                        {/* Go to Calendar */}
+                        <Link href="/(tabs)/calendar" asChild>
+
+                            <TouchableOpacity
+                                className="rounded-2xl px-4 py-4"
+                                style={{
+                                    backgroundColor: isDark ? "#ffffff0f" : "#00000008",
+                                    borderWidth: 1
+                                }}
                             >
-                                <Text className={`text-lg mb-2 ${isDark ? "text-white" : "text-black"}`}>
-                                    {card.title}
+                                <Text className={`text-lg font-semibold ${isDark ? "text-secondary" : "text-primary"}`}>
+                                    Open Calendar
                                 </Text>
-                                <View className="gap-2">
-                                    {/*Loop through each bullet in the list*/}
-                                    {card.bullets.map((b, idx) => (
-                                        // React requires a unique key for lists
-                                        <View key={idx} className="flex-row items-start">
-                                            {/*actual bullet symbol*/}
-                                            <Text className={`mr-2 ${isDark ? "text-white" : "text-black"}`}>•</Text>
-                                            {/*contents of bullet*/}
-                                            <Text className={`${isDark ? "text-white/90" : "text-black/80"}`}>{b}</Text>
-                                        </View>
-                                    ))}
+                            </TouchableOpacity>
 
+                        </Link>
 
-                                    {/*There are a lot of buttons we can use, this is an easy one that works no matter the device, but is ugly*/}
-                                    <Button
-                                        title="Purchase"
-                                        onPress={() => Alert.alert('Sucker 💀')}
-                                    />
-
-                                </View>
-                            </View>
-                        ))}
                     </View>
+
+                    {/* Most popular thread (arbitrary) */}
+                    <View className="w-full max-w-md mt-10 rounded-2xl p-4 border"
+
+                          style={{ backgroundColor: isDark ? "#ffffff0f" : "#00000008" }}>
+
+                        <Text className={`text-base ${isDark ? "text-secondary/70" : "text-primary/60"}`}>Most popular thread</Text>
+
+                        <Text className={`mt-1 text-xl font-semibold ${isDark ? "text-secondary" : "text-primary"}`}>
+                            Best post‑workout meals?
+                        </Text>
+
+                        <Text className={`${isDark ? "text-secondary/80" : "text-primary/80"} mt-1`} numberOfLines={2}>
+                            What are your go‑to meals after lifting? Looking for high protein but easy...
+                        </Text>
+
+                        <View className="mt-3">
+                            <Link href="/(tabs)/forum" asChild>
+
+                                <TouchableOpacity
+                                    className="px-4 py-2 rounded-full self-start"
+                                    style={{ backgroundColor: isDark ? "#ffffff0f" : "#00000008" }}
+                                >
+                                    <Text className={`${isDark ? "text-secondary" : "text-primary"}`}>Open Forum</Text>
+                                </TouchableOpacity>
+                            </Link>
+                        </View>
+                    </View>
+
+                    {/* Showcase Database Connection */}
+                    <View className="w-full max-w-md mt-6">
+                        <TouchableOpacity
+                            onPress={async () => {
+                                try {
+                                    console.log("Fetching all users from Appwrite...");
+                                    const users = await getAllUsers();
+                                    console.log("All users:", users);
+                                } catch (e) {
+                                    console.error("Failed to fetch users:", e);
+                                }
+                            }}
+
+                            className="rounded-2xl px-4 py-4"
+                            style={{
+                                backgroundColor: isDark ? "#38bdf81a" : "#0284c71a",
+                                borderWidth: 1
+                            }}
+                        >
+                            <Text className={`text-lg font-semibold ${isDark ? "text-secondary" : "text-primary"}`}>
+                                Test Database
+                            </Text>
+                            <Text className={`${isDark ? "text-secondary/70" : "text-primary/60"}`}>
+                                Tap to query Appwrite users
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View className="h-10" />
                 </ScrollView>
             </View>
         </ThemeProvider>

@@ -1,22 +1,13 @@
-import { Stack } from "expo-router";
-import './globals.css';
+import { Slot } from "expo-router";
+import { AuthProvider } from "./context/AuthContext";
+import "./globals.css";
+
+// wraps the entire app in authentication context and dynamically renders the correct route using Expo Router's
 
 export default function RootLayout() {
-  return (
-      <Stack>
-
-          {/*// Hide folder headers*/}
-
-          <Stack.Screen
-            name="(tabs)"
-            options = {{ headerShown: false }}
-          />
-
-
-        <Stack.Screen
-        name={"recipes/[id]"}
-        options={{ headerShown: false }}
-        />
-
-      </Stack>);
+    return (
+        <AuthProvider>
+            <Slot />
+        </AuthProvider>
+    );
 }

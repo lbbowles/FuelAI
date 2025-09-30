@@ -1,102 +1,96 @@
-import {StyleSheet, Image, ImageSourcePropType, useColorScheme} from 'react-native'
-import React from 'react'
-import {Tabs} from "expo-router";
-import {icons} from "@/constants/icons";
+import React from 'react';
 import {
-    ThemeProvider,
-    DarkTheme,
-    DefaultTheme,
-} from "@react-navigation/native";
+    Image,
+    ImageSourcePropType,
+    useColorScheme,
+    StyleSheet
+} from 'react-native';
+import { Tabs, Redirect } from 'expo-router';
+import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { useAuth } from '@/app/context/AuthContext.js';
+import { icons } from '@/constants/icons';
 
 const TabIcon = ({
-                     source,  // The icon to display
-                     focused, // Is this tab currently selected?
+                     source,
+                     focused,
                  }: {
     source: ImageSourcePropType;
     focused: boolean;
 }) => (
     <Image
         source={source}
-        // Fixed size, change color depending on whether it's focused or not.
         style={{
             width: 24,
             height: 24,
             tintColor: focused ? '#030014' : '#9CA4AB',
         }}
-        // Maintain aspect ratio
         resizeMode="contain"
     />
 );
 
-const Layout = () => {
+const AuthenticatedLayout = () => {
     const colorScheme = useColorScheme();
 
     return (
-        // Wrap page in light / dark mode detection.
         <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Tabs
-            screenOptions={{
-                // Hide header and tab bar labels.  May revert these later.
-                headerShown: false,
-                tabBarShowLabel: true,
-                // Set label color depending on whether it's dark or light mode.'
-                tabBarActiveTintColor: colorScheme === "dark" ? '#e8e5e3' : '#030014',
-                tabBarInactiveTintColor: colorScheme === "dark" ? '#9CA4AB' : '#221F3D',
-                // Set background color depending on whether it's dark or light mode.'
-                tabBarStyle: {
-                    backgroundColor: colorScheme === "dark" ? '#0F0D23' : '#e8e5e3',
-                },
-            }}
-        >
-            {/*https://docs.expo.dev/router/advanced/tabs/ is a CHEAT code*/}
-            <Tabs.Screen
-                name="index"
-                options={{
-                    title: "Home",
-                    tabBarIcon: ({ focused }) => (
-                        <TabIcon source={icons.home} focused={focused} />
-                    ),
-                }}
-            />
-
-            <Tabs.Screen
-                name="calendar"
-
-                options={{
-                    title: "Calendar",
+            <Tabs
+                initialRouteName="profile"
+                screenOptions={{
                     headerShown: false,
-                    tabBarIcon: ({ focused }) => (
-                        <TabIcon source={icons.calendar} focused={focused} />
-                    ),
+                    tabBarShowLabel: true,
+                    tabBarActiveTintColor: colorScheme === "dark" ? '#e8e5e3' : '#030014',
+                    tabBarInactiveTintColor: colorScheme === "dark" ? '#9CA4AB' : '#221F3D',
+                    tabBarStyle: {
+                        backgroundColor: colorScheme === "dark" ? '#0F0D23' : '#e8e5e3',
+                    },
                 }}
-            />
-
-            <Tabs.Screen
-                name="profile"
-
-                options={{
-                    title: "Profile",
-                    tabBarIcon: ({ focused }) => (
-                        <TabIcon source={icons.user} focused={focused} />
-                    ),
-                }}
-            />
-
-
-            <Tabs.Screen
-                name="forum"
-                options={{
-                    title: "Forum",
-                    tabBarIcon: ({ focused }) => (
-                        <TabIcon source={icons.forum} focused={focused} />
-                    ),
-                }}
-            />
-        </Tabs>
+            >
+                <Tabs.Screen
+                    name="index"
+                    options={{
+                        title: "Home",
+                        tabBarIcon: ({ focused }) => (
+                            <TabIcon source={icons.home} focused={focused} />
+                        ),
+                    }}
+                />
+                <Tabs.Screen
+                    name="calendar"
+                    options={{
+                        title: "Calendar",
+                        tabBarIcon: ({ focused }) => (
+                            <TabIcon source={icons.calendar} focused={focused} />
+                        ),
+                    }}
+                />
+                <Tabs.Screen
+                    name="profile"
+                    options={{
+                        title: "Profile",
+                        tabBarIcon: ({ focused }) => (
+                            <TabIcon source={icons.user} focused={focused} />
+                        ),
+                    }}
+                />
+                <Tabs.Screen
+                    name="forum"
+                    options={{
+                        title: "Forum",
+                        tabBarIcon: ({ focused }) => (
+                            <TabIcon source={icons.forum} focused={focused} />
+                        ),
+                    }}
+                />
+            </Tabs>
         </ThemeProvider>
     );
 };
 
-export default Layout
+// Recent Implementation since last push; check if there is a session (corresponds to AuthContext file), if not, redirect.
 
-const styles = StyleSheet.create({})
+export default function Layout() {
+    const { session } = useAuth();
+    return session ? <AuthenticatedLayout /> : <Redirect href="/signin" />;
+}
+
+const styles = StyleSheet.create({});
