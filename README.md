@@ -10,7 +10,7 @@ While the concept of consuming nutritious food and staying a healthy weight is w
   
  In conclusion, health doesn’t have to be hard; follow FuelAI and stick to your diet, and you’re destined to reach your goals.
 
-## Work Load:
+## Work Load for 2nd Check-In:
 
 ### Arsal: 
 
@@ -43,16 +43,13 @@ composer.json
 composer.lock
 
 ### Logan
-MobileFuelAI/app/(tabs)/* (all)
+Updates to the following files completely by me: 
+-calendar.tsx, _layout.tsx (app and root layer), index.tsx, food/[date].tsx, images.ts, .env, config.plist, services/appwrite.ts, part of signin.jsx
 
-MobileFuelAI/assets/* (all)
-
-MobileFuelAI/tailwind.config.js
-
-MobileFuelAI/constants/* (all)
-
-MobileFuelAI/app/recipes/* (all - though it is just has placeholder files)
-
+Other updates: 
+-Integration with the backend service Appwrite including creation of 'organization', adding table and authentication.
+It also created hundreds of new files within the starter-for-ios directory--therefore, I did not do ANYTHING in those ones besides config.plist which I had to update.
+For the other files (which includes signin.jsx, AuthContext.js, App.tsx), I followed documentation and videos posted by AppWrite so not directly my programming--albeit I made slight alterations to signin.jsx to be more tailored to my style.
 
 ### Steven
 09/09/25
