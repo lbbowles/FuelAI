@@ -14,14 +14,10 @@ While the concept of consuming nutritious food and staying a healthy weight is w
 
 ### Arsal: 
 
-fuelai/resources/js/pages/* (all but dashboard)
-
-fuelai/resources/js/data/* (all)
-
-fuelai/resources/js/components/navbar.tsx
-
+fuelai/app/Http/Controllers/ForumController.php
+fuelai/app/Http/Controllers/TaskController.php
+fuelai/resources/js/pages/* (all but dashboard and auth folder)
 fuelai/resources/views/app.blade.php
-
 fuelai/routes/web.php
 
 ### Yahir:
