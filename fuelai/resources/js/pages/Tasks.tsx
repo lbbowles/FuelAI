@@ -1,78 +1,72 @@
 import { Head } from '@inertiajs/react';
 import NavbarTop from '@/components/navbar';
-import { useState } from 'react';
-import { TaskInterface, initialTasks, categories } from '@/data/tasksData';
+import { useState, FormEvent } from 'react';
+
 
 // TO DO:
-// Change the color of the outline of Checkbox to be black so it stands out
-// Get rid of badges (why did I use these)
-// Add in more categories
-// Send data to database
 // Add in a description of tasks, that you can click on
 // Add in deadline for tasks
 // Move add tasks to be a popup window
 // Connection with calendar
-// Add Gradients to keep it consist
-
-type Task = TaskInterface;
 
 
-export default function Tasks() {
+interface DatabaseTask {
+    task_id: number;
+    user_id: number;
+    content: string;
+    difficulty: 'easy' | 'medium' | 'hard' | 'expert' | null;
+    category: string | null;
+    is_completed: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+
+interface TasksProps {
+    tasks: DatabaseTask[];
+    auth: {
+        user: {
+            id: number;
+        }
+    };
+}
+
+const categories = ['General', 'Work', 'Personal', 'Shopping', 'Health', 'Finance', 'Education', 'Other'];
+
+
+
+export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
 
     // Set initial states
-    const [tasks, setTasks] = useState<Task[]>(initialTasks);
+    const [tasks, setTasks] = useState<DatabaseTask[]>(initialTasks);
     const [newTaskText, setNewTaskText] = useState('');
-    const [newTaskPriority, setNewTaskPriority] = useState<'low' | 'medium' | 'high'>('medium');
+    const [newTaskDifficulty, setNewTaskDifficulty] = useState<'easy' | 'medium' | 'hard' | 'expert'>('medium');
     const [newTaskCategory, setNewTaskCategory] = useState('General');
     const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
 
-    const completedCount = tasks.filter(task => task.completed).length;
-    const pendingCount = tasks.filter(task => !task.completed).length;
-
-    // TEMP FUNCTIONS
-    //      Tweak when database added by Yahir
-    const addTask = () => {
-        if (newTaskText.trim()) {
-            const newTask: Task = {
-                id: Math.max(...tasks.map(t => t.id), 0) + 1,
-                text: newTaskText.trim(),
-                completed: false,
-                createdAt: new Date(),
-                priority: newTaskPriority,
-                category: newTaskCategory
-            };
-            setTasks([newTask, ...tasks]);
-            setNewTaskText('');
-            setNewTaskPriority('medium');
-            setNewTaskCategory('General');
-        }
-    };
-
-    const toggleTask = (id: number) => {
-        setTasks(tasks.map(task =>
-            task.id === id ? { ...task, completed: !task.completed } : task
-        ));
-    };
-
-    const deleteTask = (id: number) => {
-        setTasks(tasks.filter(task => task.id !== id));
-    };
+    const completedCount = tasks.filter(task => task.is_completed).length;
+    const pendingCount = tasks.filter(task => !task.is_completed).length;
 
     const filteredTasks = tasks.filter(task => {
-        if (filter === 'pending') return !task.completed;
-        if (filter === 'completed') return task.completed;
+        if (filter === 'pending') return !task.is_completed;
+        if (filter === 'completed') return task.is_completed;
         return true;
     });
 
-    // End Temp function
+    const getDifficultyColor = (difficulty: string | null) => {
+        switch (difficulty) {
+            case 'expert': return 'text-error font-semibold';
+            case 'hard': return 'text-warning font-semibold';
+            case 'medium': return 'text-info font-medium';
+            case 'easy': return 'text-success font-medium';
+            default: return 'text-base-content/70';
+        }
+    };
 
-    // I hate badges
-    const getPriorityBadge = (priority: string) => {
-        switch (priority) {
-            case 'high': return 'badge-error';
-            case 'medium': return 'badge-warning';
-            case 'low': return 'badge-success';
-            default: return 'badge-neutral';
+    const handleAddTaskSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        if (newTaskText.trim()) {
+            (e.target as HTMLFormElement).submit();
         }
     };
 
@@ -100,9 +94,11 @@ export default function Tasks() {
                         </div>
                     </div>
 
-                    <div className="p-4 pt-20 lg:pt-4">
-                        <div className="hero bg-gradient-to-r from-primary to-secondary rounded-box mb-8 pt-8">
-                        <div className="hero-content text-center text-primary-content py-12">
+                    {/* Main content */}
+                    <div className="p-4 pt-32 lg:pt-32">
+                    {/* Hero section*/}
+                        <div className="hero bg-primary rounded-box mb-8">
+                            <div className="hero-content text-center text-primary-content py-12">
                                 <div className="max-w-md">
                                     <h1 className="mb-5 text-5xl font-bold">Tasks</h1>
                                     <p className="mb-5">
@@ -156,7 +152,6 @@ export default function Tasks() {
                             {filteredTasks.length === 0 ? (
                                 <div className="card bg-base-100 shadow-xl">
                                     <div className="card-body text-center py-16">
-                                        <div className="text-6xl mb-4">📝</div>
                                         <h3 className="text-2xl font-bold mb-2">No tasks here!</h3>
                                         <p className="text-base-content/60">
                                             {filter === 'all'
@@ -168,35 +163,49 @@ export default function Tasks() {
                                 </div>
                             ) : (
                                 filteredTasks.map(task => (
-                                    <div key={task.id} className="card bg-base-100 shadow-lg hover:shadow-xl transition-all">
+                                    <div key={task.task_id} className="card bg-base-100 shadow-lg hover:shadow-xl transition-all">
                                         <div className="card-body">
                                             <div className="flex items-start gap-4">
-                                                <div className="form-control">
-                                                    <label className="cursor-pointer label">
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={task.completed}
-                                                            onChange={() => toggleTask(task.id)}
-                                                            className="checkbox checkbox-primary checkbox-lg"
-                                                        />
-                                                    </label>
-                                                </div>
+                                                {/* Toggle completion form */}
+                                                <form method="POST" action={`/tasks/${task.task_id}`}>
+                                                    <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
+                                                    <input type="hidden" name="_method" value="PATCH" />
+                                                    <input type="hidden" name="is_completed" value={task.is_completed ? '0' : '1'} />
+                                                    <div className="form-control">
+                                                        <label className="cursor-pointer label">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={task.is_completed}
+                                                                onChange={(e) => e.currentTarget.form?.submit()}
+                                                                className="checkbox checkbox-primary checkbox-lg border-2 border-black"
+                                                            />
+                                                        </label>
+                                                    </div>
+                                                </form>
 
                                                 <div className="flex-1">
-                                                    <div className={`text-lg ${task.completed ? 'line-through opacity-60' : ''}`}>
-                                                        {task.text}
+                                                    <div className={`text-lg ${task.is_completed ? 'line-through opacity-60' : ''}`}>
+                                                        {task.content}
                                                     </div>
-                                                    <div className="flex items-center gap-2 mt-2">
-                                                        <div className={`font-medium ${getPriorityBadge(task.priority)}`}>
-                                                            {task.priority}
-                                                        </div>
-                                                        <span className="text-base-content/50">•</span>
-                                                        <div className="text-sm text-base-content/70">
-                                                            {task.category}
-                                                        </div>
-                                                        <span className="text-base-content/50">•</span>
+                                                    <div className="flex items-center gap-2 mt-2 flex-wrap">
+                                                        {task.difficulty && (
+                                                            <>
+                                                                <div className={`text-sm ${getDifficultyColor(task.difficulty)}`}>
+                                                                    {task.difficulty.charAt(0).toUpperCase() + task.difficulty.slice(1)}
+                                                                </div>
+                                                                <span className="text-base-content/50">•</span>
+                                                            </>
+                                                        )}
+                                                        {task.category && (
+                                                            <>
+                                                                <div className="text-sm text-base-content/70">
+                                                                    {task.category}
+                                                                </div>
+                                                                <span className="text-base-content/50">•</span>
+                                                            </>
+                                                        )}
                                                         <div className="text-xs text-base-content/50">
-                                                            {task.createdAt.toLocaleDateString()}
+                                                            {new Date(task.created_at).toLocaleDateString()}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -207,22 +216,29 @@ export default function Tasks() {
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                                                         </svg>
                                                     </label>
-                                                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+                                                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-50">
                                                         <li>
-                                                            <button
-                                                                onClick={() => toggleTask(task.id)}
-                                                                className="text-left"
-                                                            >
-                                                                {task.completed ? 'Mark as Pending' : 'Mark as Complete'}
-                                                            </button>
+                                                            <form method="POST" action={`/tasks/${task.task_id}`}>
+                                                                <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
+                                                                <input type="hidden" name="_method" value="PATCH" />
+                                                                <input type="hidden" name="is_completed" value={task.is_completed ? '0' : '1'} />
+                                                                <button type="submit" className="w-full text-left">
+                                                                    {task.is_completed ? 'Mark as Pending' : 'Mark as Complete'}
+                                                                </button>
+                                                            </form>
                                                         </li>
                                                         <li>
-                                                            <button
-                                                                onClick={() => deleteTask(task.id)}
-                                                                className="text-error text-left"
-                                                            >
-                                                                Delete Task
-                                                            </button>
+                                                            <form method="POST" action={`/tasks/${task.task_id}`} onSubmit={(e) => {
+                                                                if (!confirm('Are you sure you want to delete this task?')) {
+                                                                    e.preventDefault();
+                                                                }
+                                                            }}>
+                                                                <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
+                                                                <input type="hidden" name="_method" value="DELETE" />
+                                                                <button type="submit" className="w-full text-left text-error">
+                                                                    Delete Task
+                                                                </button>
+                                                            </form>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -236,10 +252,10 @@ export default function Tasks() {
                 </div>
 
                 {/* Sidebar */}
-                <div className="drawer-side">
+                <div className="drawer-side z-40">
                     <label htmlFor="drawer-toggle" className="drawer-overlay"></label>
                     <aside className="w-80 min-h-full bg-base-100">
-                        <div className="p-4 pt-20 lg:pt-4">
+                        <div className="sticky top-0 p-4 pt-24 lg:pt-8">
                             <div className="card bg-base-200 shadow-xl">
                                 <div className="card-body">
                                     <h2 className="card-title text-xl">
@@ -249,80 +265,84 @@ export default function Tasks() {
                                         Quick Add
                                     </h2>
 
-                                    <div className="form-control w-full">
-                                        <label className="label">
-                                            <span className="label-text">Task Description</span>
-                                        </label>
-                                        <textarea
-                                            placeholder="What needs to be done?"
-                                            value={newTaskText}
-                                            onChange={(e) => setNewTaskText(e.target.value)}
-                                            className="textarea textarea-bordered h-24 resize-none"
-                                            onKeyPress={(e) => {
-                                                if (e.key === 'Enter' && !e.shiftKey) {
-                                                    e.preventDefault();
-                                                    addTask();
-                                                }
-                                            }}
-                                        />
-                                    </div>
+                                    <form method="POST" action="/tasks" onSubmit={handleAddTaskSubmit}>
+                                        <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
 
-                                    <div className="form-control w-full">
-                                        <label className="label">
-                                            <span className="label-text">Category</span>
-                                        </label>
-                                        <select
-                                            value={newTaskCategory}
-                                            onChange={(e) => setNewTaskCategory(e.target.value)}
-                                            className="select select-bordered"
-                                        >
-                                            {categories.map(category => (
-                                                <option key={category} value={category}>{category}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div className="form-control w-full">
-                                        <label className="label">
-                                            <span className="label-text">Priority</span>
-                                        </label>
-                                        <div className="join w-full">
-                                            <input
-                                                type="radio"
-                                                name="priority"
-                                                className="join-item btn"
-                                                aria-label="Low"
-                                                checked={newTaskPriority === 'low'}
-                                                onChange={() => setNewTaskPriority('low')}
-                                            />
-                                            <input
-                                                type="radio"
-                                                name="priority"
-                                                className="join-item btn"
-                                                aria-label="Medium"
-                                                checked={newTaskPriority === 'medium'}
-                                                onChange={() => setNewTaskPriority('medium')}
-                                            />
-                                            <input
-                                                type="radio"
-                                                name="priority"
-                                                className="join-item btn"
-                                                aria-label="High"
-                                                checked={newTaskPriority === 'high'}
-                                                onChange={() => setNewTaskPriority('high')}
+                                        <div className="form-control w-full">
+                                            <label className="label">
+                                                <span className="label-text">Task Description</span>
+                                            </label>
+                                            <textarea
+                                                name="content"
+                                                placeholder="What needs to be done?"
+                                                value={newTaskText}
+                                                onChange={(e) => setNewTaskText(e.target.value)}
+                                                className="textarea textarea-bordered h-24 resize-none"
+                                                required
                                             />
                                         </div>
-                                    </div>
 
-                                    <div className="card-actions justify-end mt-4">
-                                        <button
-                                            onClick={addTask}
-                                            disabled={!newTaskText.trim()}
-                                            className="btn btn-primary btn-block"
-                                        >
-                                            Add Task
-                                        </button>
-                                    </div>
+                                        <div className="form-control w-full">
+                                            <label className="label">
+                                                <span className="label-text">Category</span>
+                                            </label>
+                                            <select
+                                                name="category"
+                                                value={newTaskCategory}
+                                                onChange={(e) => setNewTaskCategory(e.target.value)}
+                                                className="select select-bordered"
+                                            >
+                                                {categories.map(category => (
+                                                    <option key={category} value={category}>{category}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="form-control w-full">
+                                            <label className="label">
+                                                <span className="label-text">Difficulty</span>
+                                            </label>
+                                            <div className="join w-full">
+                                                <input
+                                                    type="radio"
+                                                    name="difficulty"
+                                                    value="easy"
+                                                    className="join-item btn"
+                                                    aria-label="Easy"
+                                                    checked={newTaskDifficulty === 'easy'}
+                                                    onChange={() => setNewTaskDifficulty('easy')}
+                                                />
+                                                <input
+                                                    type="radio"
+                                                    name="difficulty"
+                                                    value="medium"
+                                                    className="join-item btn"
+                                                    aria-label="Medium"
+                                                    checked={newTaskDifficulty === 'medium'}
+                                                    onChange={() => setNewTaskDifficulty('medium')}
+                                                />
+                                                <input
+                                                    type="radio"
+                                                    name="difficulty"
+                                                    value="hard"
+                                                    className="join-item btn"
+                                                    aria-label="Hard"
+                                                    checked={newTaskDifficulty === 'hard'}
+                                                    onChange={() => setNewTaskDifficulty('hard')}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="card-actions justify-end mt-4">
+                                            <button
+                                                type="submit"
+                                                disabled={!newTaskText.trim()}
+                                                className="btn btn-primary btn-block"
+                                            >
+                                                Add Task
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
