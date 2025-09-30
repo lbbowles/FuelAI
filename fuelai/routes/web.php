@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 // Controllers
 
 use App\Http\Controllers\ForumController;
+use App\Http\Controllers\TaskController;
 
 
 Route::get('/', function () {
@@ -23,7 +24,21 @@ Route::get('/recipe-generation', function () {
     return Inertia::render('RecipeGeneration');
 })->name('recipe-generation');
 
-Route::get('/forums', [ForumController::class, 'index'])->name('forums');
+// Allow for user who aren't logged in to view forums
+Route::get('/forums', [ForumController::class, 'index'])->name('forums.index');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/forums/create', [ForumController::class, 'create'])->name('forums.create');
+    Route::post('/forums', [ForumController::class, 'store'])->name('forums.store');
+    Route::post('/forums/{id}/reply', [ForumController::class, 'reply'])->name('forums.reply');
+    Route::post('/forums/{id}/ai-reply', [ForumController::class, 'aiReply'])->name('forums.ai-reply');
+    Route::delete('/forums/{id}', [ForumController::class, 'destroy'])->name('forums.destroy');
+    Route::delete('/forums/{threadId}/posts/{postId}', [ForumController::class, 'destroyPost'])->name('forums.posts.destroy');
+    Route::put('/forums/{threadId}/posts/{postId}', [ForumController::class, 'updatePost'])->name('forums.posts.update');
+});
+
+// Same here
+Route::get('/forums/{id}', [ForumController::class, 'show'])->name('forums.show');
 
 Route::get('/calendar', function () {
     return Inertia::render('Calendar');
@@ -33,9 +48,12 @@ Route::get('/exercises', function () {
     return Inertia::render('Exercises');
 })->name('exercises');
 
-Route::get('/tasks', function () {
-    return Inertia::render('Tasks');
-})->name('tasks');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::patch('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+});
 
 Route::get('/image_rec', function () {
     return Inertia::render('image_rec');
