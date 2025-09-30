@@ -33,12 +33,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/forums/{id}/reply', [ForumController::class, 'reply'])->name('forums.reply');
     Route::post('/forums/{id}/ai-reply', [ForumController::class, 'aiReply'])->name('forums.ai-reply');
     Route::delete('/forums/{id}', [ForumController::class, 'destroy'])->name('forums.destroy');
+    Route::get('/forums/{id}', [ForumController::class, 'show'])->name('forums.show');
     Route::delete('/forums/{threadId}/posts/{postId}', [ForumController::class, 'destroyPost'])->name('forums.posts.destroy');
     Route::put('/forums/{threadId}/posts/{postId}', [ForumController::class, 'updatePost'])->name('forums.posts.update');
 });
 
-// Same here
-Route::get('/forums/{id}', [ForumController::class, 'show'])->name('forums.show');
+
 
 Route::get('/calendar', function () {
     return Inertia::render('Calendar');

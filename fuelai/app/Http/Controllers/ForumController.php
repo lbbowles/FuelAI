@@ -330,7 +330,7 @@ class ForumController extends Controller
             // Create AI post
             DB::table('forum_posts')->insert([
                 'thread_id' => $id,
-                'user_id' => 6,
+                'user_id' => 6, // This needs to become dynamic, as the ID isn't the same on all devices
                 'content' => "AI Assistant:\n\n" . $aiResponse,
                 'created_at' => now()
             ]);
@@ -371,8 +371,6 @@ class ForumController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Thread deletion failed: ' . $e->getMessage());
-
             return back()->withErrors(['error' => 'Failed to delete thread: ' . $e->getMessage()]);
         }
     }
@@ -437,7 +435,6 @@ class ForumController extends Controller
             return back();
 
         } catch (\Exception $e) {
-            \Log::error('Post update failed: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Failed to update post: ' . $e->getMessage()]);
         }
     }

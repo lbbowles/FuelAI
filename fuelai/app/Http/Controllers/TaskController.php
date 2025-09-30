@@ -29,7 +29,7 @@ class TaskController extends Controller
     {
         $validated = $request->validate([
             'content' => 'required|string|max:1000',
-            'difficulty' => 'nullable|in:easy,medium,hard,expert',
+            'difficulty' => 'nullable|in:easy,medium,hard',
             'category' => 'nullable|string|max:50',
         ]);
 
@@ -53,7 +53,7 @@ class TaskController extends Controller
 
         $validated = $request->validate([
             'content' => 'sometimes|string|max:1000',
-            'difficulty' => 'sometimes|nullable|in:easy,medium,hard,expert',
+            'difficulty' => 'sometimes|nullable|in:easy,medium,hard',
             'category' => 'sometimes|nullable|string|max:50',
             'is_completed' => 'sometimes|boolean',
         ]);
