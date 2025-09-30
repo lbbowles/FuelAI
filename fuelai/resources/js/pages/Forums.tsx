@@ -7,19 +7,14 @@ import { useState } from 'react';
 
 
 // TO DO:
-// Add in ability to create and delete forums
-// Swap off badges for pinned/answered (looks bad)
 // Add in proper view count
-// Add in view of forums
-// Add in commenting in forums
-// Add in being able to call the AI.
-// Add Gradients to keep it consist
+
 
 export default function Forums({ initialPosts = [], categories = []}) {
 
     // Set initial state
     const [posts] = useState(initialPosts);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [selectedTag, setSelectedTag] = useState('');
     const [sortBy, setSortBy] = useState('latest');
@@ -56,7 +51,7 @@ export default function Forums({ initialPosts = [], categories = []}) {
             </Head>
             <NavbarTop />
 
-            <div className="mt-25 pt-16 min-h-screen bg-gray-50">
+            <div className="mt-16 pt-16 min-h-screen bg-gray-50">
                 <div className="container mx-auto px-4 py-8 max-w-7xl">
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 gap-4">
                         <div>
@@ -65,7 +60,6 @@ export default function Forums({ initialPosts = [], categories = []}) {
                                 Connect with fellow food enthusiasts, share recipes, and get cooking advice
                             </p>
                         </div>
-                        {/* Not implemented yet */}
                         <Link
                             href="/forums/create"
                             className="btn btn-primary inline-flex items-center gap-2 w-fit"
@@ -83,28 +77,6 @@ export default function Forums({ initialPosts = [], categories = []}) {
 
                         <div className="lg:col-span-3">
                             <div className="space-y-6 sticky top-24">
-                                {/* Search */}
-                                <div className="card bg-white shadow-lg">
-                                    <div className="card-body p-4">
-                                        <h3 className="font-semibold text-lg mb-3">Search Forums</h3>
-                                        <div className="form-control">
-                                            <div className="input-group">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Search posts..."
-                                                    value={searchQuery}
-                                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                                    className="input input-bordered flex-1"
-                                                />
-                                                <button className="btn btn-square btn-primary">
-                                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 {/* Categories */}
                                 <div className="card bg-white shadow-lg">
