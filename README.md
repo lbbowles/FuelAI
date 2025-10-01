@@ -61,3 +61,9 @@ render.yaml/deploy.sh: scripts that will be used to actually deploy my applicati
 Dockerfile: might use instead of deploying from GH repo
 
 req.txt: Dependencies to be installed
+
+09/30/25
+
+image_rec.tsx
+working on further training pretrained model using hugging face lib
+figuring out how to deploy the first version of the application to azure or anyother web service
