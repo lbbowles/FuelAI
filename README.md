@@ -22,25 +22,17 @@ fuelai/routes/web.php
 
 ### Yahir:
 
-app/Http/Controllers/Api/V1/*
-
-app/Models/*
-
-app/Providers/RouteServiceProvider.php
-
-config/app.php
-
-config/sanctum.php
-
-database/migrations/*
-
-database/seeders/*
-
-routes/api.php
-
-composer.json 
-
-composer.lock
+fuelai/app/Models/User.php
+fuelai/app/Http/Controllers/Api/V1/AuthController.php
+fuelai/app/Http/Controllers/Api/V1/SettingsController.php
+fuelai/app/Http/Controllers/Api/V1/ForumThreadController.php
+fuelai/app/Http/Controllers/Api/V1/MealPlanController.php
+fuelai/app/Http/Resources/* (UserResource, ForumThreadResource, ForumPostResource)
+fuelai/database/factories/UserFactory.php
+fuelai/database/factories/ForumFactory.php
+fuelai/database/seeders/DatabaseSeeder.php
+fuelai/routes/api.php
+fuelai/routes/web.php
 
 ### Logan
 Updates to the following files completely by me: 
