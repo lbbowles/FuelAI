@@ -9,10 +9,12 @@ cmds = [
 
 [phases.build]
 cmds = [
-    "cp .env.example .env || true",
-    "php artisan key:generate --force || true",
+    "cp .env.example .env",
+    "php artisan key:generate --force",
     "touch database/database.sqlite",
-    "php artisan wayfinder:generate --with-form || echo 'Wayfinder generation skipped'",
+    "sed -i 's/DB_CONNECTION=pgsql/DB_CONNECTION=sqlite/' .env",
+    "sed -i 's/DB_DATABASE=.*/DB_DATABASE=database\\/database.sqlite/' .env",
+    "php artisan wayfinder:generate --with-form",
     "npm run build"
 ]
 
