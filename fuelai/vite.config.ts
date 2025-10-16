@@ -13,9 +13,12 @@ export default defineConfig({
         }),
         react(),
         tailwindcss(),
-        wayfinder({
-            formVariants: true,
-        }),
+        // This was messing up its ability to interact with Expo as it was only allowing local builds.
+        ...(process.env.NODE_ENV !== 'production' ? [
+            wayfinder({
+                formVariants: true,
+            })
+        ] : []),
     ],
     esbuild: {
         jsx: 'automatic',
