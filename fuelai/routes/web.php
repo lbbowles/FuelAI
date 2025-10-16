@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 use App\Http\Controllers\ForumController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\CalendarController;
 
 
 Route::get('/', function () {
@@ -40,9 +41,9 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-Route::get('/calendar', function () {
-    return Inertia::render('Calendar');
-})->name('calendar');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+});
 
 Route::get('/exercises', function () {
     return Inertia::render('Exercises');
@@ -62,7 +63,7 @@ Route::get('/image_rec', function () {
 
 Route::get('/admin', function () {
     return Inertia::render('admin');
-})->name('admin');
+})->middleware(['auth', 'admin'])->name('admin');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

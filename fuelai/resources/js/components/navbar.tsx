@@ -23,7 +23,7 @@ export default function NavbarTop() {
         router.post('/logout');
     };
 
-    const navItems = [
+    const baseNavItems = [
         {
           name: "Home",
           link: "/",
@@ -56,12 +56,11 @@ export default function NavbarTop() {
             link: "/image_rec",
         },
 
-        {
-            name: "Admin",
-            link: "/admin",
-        },
     ];
 
+    const navItems = auth.user?.role === 'admin' // We rebuild navItems with admin if the user is an admin
+        ? [...baseNavItems, { name: "Admin", link: "/admin" }]
+        : baseNavItems;
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
