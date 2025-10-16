@@ -11,7 +11,9 @@ cmds = [
 cmds = [
     "cp .env.example .env || true",
     "php artisan key:generate --force || true",
-    "npm run build || true"
+    "touch database/database.sqlite",
+    "php artisan wayfinder:generate --with-form || echo 'Wayfinder generation skipped'",
+    "npm run build"
 ]
 
 [start]
