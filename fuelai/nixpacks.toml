@@ -9,7 +9,9 @@ cmds = [
 
 [phases.build]
 cmds = [
-    "npm run build"
+    "cp .env.example .env || true",
+    "php artisan key:generate --force || true",
+    "npm run build || true"
 ]
 
 [start]
