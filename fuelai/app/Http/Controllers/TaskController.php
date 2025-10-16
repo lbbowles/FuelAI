@@ -31,6 +31,7 @@ class TaskController extends Controller
             'content' => 'required|string|max:1000',
             'difficulty' => 'nullable|in:easy,medium,hard',
             'category' => 'nullable|string|max:50',
+            'deadline' => 'nullable|date',
         ]);
 
         Task::create([
@@ -39,6 +40,7 @@ class TaskController extends Controller
             'difficulty' => $validated['difficulty'] ?? 'medium',
             'category' => $validated['category'] ?? 'General',
             'is_completed' => false,
+            'deadline' => $validated['deadline'] ?? null,
         ]);
 
         return redirect()->route('tasks.index');
@@ -56,6 +58,7 @@ class TaskController extends Controller
             'difficulty' => 'sometimes|nullable|in:easy,medium,hard',
             'category' => 'sometimes|nullable|string|max:50',
             'is_completed' => 'sometimes|boolean',
+            'deadline' => 'sometimes|nullable|date',
         ]);
 
         $task->update($validated);

@@ -21,10 +21,12 @@ class Task extends Model
         'difficulty',
         'category',
         'is_completed',
+        'deadline',
     ];
 
     protected $casts = [
         'is_completed' => 'boolean',
+        'deadline' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

@@ -17,6 +17,7 @@ interface DatabaseTask {
     difficulty: 'easy' | 'medium' | 'hard' | 'expert' | null;
     category: string | null;
     is_completed: boolean;
+    deadline: string | null;
     created_at: string;
     updated_at: string;
 }
@@ -42,6 +43,7 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
     const [newTaskText, setNewTaskText] = useState('');
     const [newTaskDifficulty, setNewTaskDifficulty] = useState<'easy' | 'medium' | 'hard' | 'expert'>('medium');
     const [newTaskCategory, setNewTaskCategory] = useState('General');
+    const [newTaskDeadline, setNewTaskDeadline] = useState('');
     const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
 
     const completedCount = tasks.filter(task => task.is_completed).length;
@@ -60,6 +62,33 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
             case 'medium': return 'text-info font-medium';
             case 'easy': return 'text-success font-medium';
             default: return 'text-base-content/70';
+        }
+    };
+
+    const isOverdue = (deadline: string | null) => {
+        if (!deadline) return false;
+        return new Date(deadline) < new Date();
+    };
+
+    const formatDeadline = (deadline: string | null) => {
+        if (!deadline) return null;
+        const date = new Date(deadline);
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        // Reset time for comparison
+        today.setHours(0, 0, 0, 0);
+        tomorrow.setHours(0, 0, 0, 0);
+        const deadlineDate = new Date(date);
+        deadlineDate.setHours(0, 0, 0, 0);
+
+        if (deadlineDate.getTime() === today.getTime()) {
+            return 'Today';
+        } else if (deadlineDate.getTime() === tomorrow.getTime()) {
+            return 'Tomorrow';
+        } else {
+            return date.toLocaleDateString();
         }
     };
 
@@ -204,6 +233,21 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
                                                                 <span className="text-base-content/50">•</span>
                                                             </>
                                                         )}
+                                                        {task.deadline && (
+                                                            <>
+                                                                <div className={`badge badge-sm ${
+                                                                    isOverdue(task.deadline) && !task.is_completed
+                                                                        ? 'badge-error'
+                                                                        : 'badge-ghost'
+                                                                }`}>
+                                                                    <svg className="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                                    </svg>
+                                                                    {formatDeadline(task.deadline)}
+                                                                </div>
+                                                                <span className="text-base-content/50">•</span>
+                                                            </>
+                                                        )}
                                                         <div className="text-xs text-base-content/50">
                                                             {new Date(task.created_at).toLocaleDateString()}
                                                         </div>
@@ -296,6 +340,19 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
                                                     <option key={category} value={category}>{category}</option>
                                                 ))}
                                             </select>
+                                        </div>
+
+                                        <div className="form-control w-full">
+                                            <label className="label">
+                                                <span className="label-text">Deadline (Optional)</span>
+                                            </label>
+                                            <input
+                                                type="date"
+                                                name="deadline"
+                                                value={newTaskDeadline}
+                                                onChange={(e) => setNewTaskDeadline(e.target.value)}
+                                                className="input input-bordered"
+                                            />
                                         </div>
 
                                         <div className="form-control w-full">
