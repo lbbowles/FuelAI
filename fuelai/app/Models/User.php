@@ -20,6 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'username',
         'email',
+        'password',
         'password_hash', //Since we are hashing we need this to be hash
         'role',
         'profile_image_url',
