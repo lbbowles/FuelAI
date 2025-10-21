@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
         // Was missing api for middleware
         api: __DIR__.'/../routes/api.php',
+        apiPrefix: 'api',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         //Currently getting a csrf token error when trying to utilize different APIs.
          $middleware->validateCsrfTokens(except: [
+                '/api/*',
                 'api/*',
          ]);
 
