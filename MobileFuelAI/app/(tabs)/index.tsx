@@ -4,14 +4,20 @@ import { ThemeProvider, DarkTheme, DefaultTheme } from "@react-navigation/native
 import { images } from "@/constants/images";
 
 //New inclusions
-import { Link } from "expo-router";
-import { getAllUsers } from "@/services/appwrite";
+import {Link, router} from "expo-router";
+import {useAuth} from "../context/AuthContext.js";
 
 export default function Index() {
     const isDark = useColorScheme() === "dark";
 
-    // Created profile data right now display is just arbitrary information later can pull session information.
-    const username = "@raheem";
+    // Allow for signing out / forgetting token and user data.
+    const { user, signout } = useAuth();
+
+    // Updated consts to contain non-dummy values with user information ascertained from AuthContext.js
+    const username = user?.username ? `@${user.username}` : "@guest";
+    const email = user?.email || "No email";
+    const role = user?.role || "user";
+    const profileImage = user?.profile_image_url || images.profile;
 
     return (
         <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
@@ -23,15 +29,36 @@ export default function Index() {
                     {/* Avatar */}
                     <View className="w-28 h-28 rounded-full overflow-hidden items-center justify-center border"
                           style={{ borderColor: isDark ? "#ffffff22" : "#00000022" }}>
-                        <Image source={images.profile} className="w-20 h-20" />
+                        <Image
+                            source={user?.profile_image_url ? { uri: profileImage } : profileImage}
+                            className="w-full h-full"
+                            resizeMode="cover"
+                        />
                     </View>
 
                     {/* Username */}
-                    <Text className={`mt-4 text-2xl font-bold ${isDark ? "text-secondary" : "text-primary"}`}>{username}</Text>
-                    {/*Little bio section*/}
+                    <Text className={`mt-4 text-2xl font-bold ${isDark ? "text-secondary" : "text-primary"}`}>
+                        {username}
+                    </Text>
+
+                    {/* Email */}
+                    <Text className={`${isDark ? "text-secondary/70" : "text-primary/70"} mt-1 text-sm`}>
+                        {email}
+                    </Text>
+
+                    {/* Bio section */}
                     <Text className={`${isDark ? "text-secondary/70" : "text-primary/70"} mt-1`}>
                         Fueling your day with better choices
                     </Text>
+
+                    {/* Showcase user role */}
+                    <View className="mt-2 px-3 py-1 rounded-full"
+                          style={{ backgroundColor: isDark ? "#ffffff0f" : "#00000008" }}>
+                        <Text className={`text-xs ${isDark ? "text-secondary" : "text-primary"}`}>
+                            {role}
+                        </Text>
+
+                    </View>
 
                     {/* Actions */}
                     <View className="w-full max-w-md mt-8">
@@ -83,35 +110,30 @@ export default function Index() {
                         </View>
                     </View>
 
-                    {/* Showcase Database Connection */}
+                    {/*Sign out by calling AuthContext signout*/}
                     <View className="w-full max-w-md mt-6">
                         <TouchableOpacity
                             onPress={async () => {
-                                try {
-                                    console.log("Fetching all users from Appwrite...");
-                                    const users = await getAllUsers();
-                                    console.log("All users:", users);
-                                } catch (e) {
-                                    console.error("Failed to fetch users:", e);
-                                }
+                                await signout();
+                                // Force to sign in page
+                                router.replace('/signin');
                             }}
-
                             className="rounded-2xl px-4 py-4"
                             style={{
-                                backgroundColor: isDark ? "#38bdf81a" : "#0284c71a",
-                                borderWidth: 1
+                                backgroundColor: isDark ? "#ffffff0f" : "#00000008",
+                                borderWidth: 1,
+                                borderColor: "#ef4444"
                             }}
                         >
-                            <Text className={`text-lg font-semibold ${isDark ? "text-secondary" : "text-primary"}`}>
-                                Test Database
+                            <Text className="text-lg font-semibold text-red-500 text-center">
+                                Sign Out
                             </Text>
-                            <Text className={`${isDark ? "text-secondary/70" : "text-primary/60"}`}>
-                                Tap to query Appwrite users
-                            </Text>
+
                         </TouchableOpacity>
                     </View>
 
                     <View className="h-10" />
+
                 </ScrollView>
             </View>
         </ThemeProvider>
