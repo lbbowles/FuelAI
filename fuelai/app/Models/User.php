@@ -21,7 +21,6 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'password_hash', //Since we are hashing we need this to be hash
         'role',
         'profile_image_url',
     ];
@@ -32,7 +31,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password_hash',
+        'password',
         'remember_token',
     ];
 
@@ -47,18 +46,6 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    // password hash
-
-    public function getAuthPassword()
-    {
-        return $this->password_hash;
-    }
-
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password_hash'] = bcrypt($value);
     }
 
     // relationships

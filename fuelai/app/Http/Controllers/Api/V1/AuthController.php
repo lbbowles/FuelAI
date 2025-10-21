@@ -25,7 +25,6 @@ class AuthController extends Controller
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
-//             Logan: added hash here to match the newpasswordcontroller / hash the password
             'password' => Hash::make($request->password),
         ]);
 
