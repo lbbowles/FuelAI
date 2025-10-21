@@ -20,6 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
+        //Currently getting a csrf token error when trying to utilize different APIs.
+         $middleware->validateCsrfTokens(except: [
+                'api/*',
+         ]);
+
         $middleware->web(append: [
             HandleAppearance::class,
             HandleInertiaRequests::class,
