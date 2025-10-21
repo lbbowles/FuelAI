@@ -44,17 +44,21 @@ export default function ImageRecognition() {
         setApiResponse(null);
 
         try {
-            // TODO: Replace with your real API call
-            // Example using fetch:
-            // const formData = new FormData();
-            // formData.append('image', selectedFile);
-            // const response = await fetch('/api/image-recognition', { method: 'POST', body: formData });
-            // const data = await response.json();
-            // setApiResponse(data);
+            const formData = new FormData();
+            formData.append('file', selectedFile);
 
-            // Placeholder JSON response
-            await new Promise(res => setTimeout(res, 1000));
-            setApiResponse({ name: 'Example Item', category: 'General', description: 'Detected object description ' });
+
+            const response = await fetch('https://web-production-c0e3d.up.railway.app/predict_food', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setApiResponse(data);
         } catch (err) {
             console.error(err);
             setApiResponse({ error: 'Error processing image' });
@@ -113,11 +117,20 @@ export default function ImageRecognition() {
                         </div>
                     </div>
                 )}
-                    
-                {apiResponse && (  // to be removed
+
+                {apiResponse?.predictions && (
                     <div className="mt-6 p-4 bg-base-200 rounded shadow">
-                        <h2 className="text-xl font-semibold mb-2">Detected Food</h2>
-                        <pre className="text-sm">{JSON.stringify(apiResponse, null, 2)}</pre>
+                        <h2 className="text-xl font-semibold mb-2">Detected Foods</h2>
+                        <ul className="space-y-2">
+                            {apiResponse.predictions.map((item: any, index: number) => (
+                                <li key={index} className="flex justify-between border-b border-base-300 pb-1">
+                                    <span className="capitalize">{item.label.replace(/_/g, ' ')}</span>
+                                    <span className="text-sm text-gray-500">
+                                        {(item.confidence * 100).toFixed(2)}%
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 )}
             </div>

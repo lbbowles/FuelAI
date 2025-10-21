@@ -14,7 +14,6 @@ export default function Welcome() {
             </Head>
 
             <NavbarTop />
-            <FeaturesSectionDemo />
         </>
     );
 }

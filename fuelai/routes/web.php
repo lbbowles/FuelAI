@@ -10,6 +10,10 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ForumController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\MealController;
+use App\Http\Controllers\MealPlanController;
+use App\Http\Controllers\MealPlanMealController;
+
 
 
 Route::get('/', function () {
@@ -20,10 +24,36 @@ Route::get('/home', function () {
     return Inertia::render('welcome');
 })->name('home_page');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/recipe-generation', function () {
+        return Inertia::render('RecipeGeneration');
+    })->name('recipe-generation');
 
-Route::get('/recipe-generation', function () {
-    return Inertia::render('RecipeGeneration');
-})->name('recipe-generation');
+    // Meal List
+    Route::get('/meal_list', [MealController::class, 'index']);
+
+    // Meal Plans
+    Route::get('/meal_plans', [MealPlanController::class, 'index']);
+    Route::post('/meal_plans', [MealPlanController::class, 'store']);
+    Route::delete('/meal_plans/{id}', [MealPlanController::class, 'destroy']);
+    Route::get('/meal_plans/{id}', [MealPlanController::class, 'show']);
+
+    // Meal Plan Meals
+    Route::delete('/meal_plan_meals/{id}', [MealPlanMealController::class, 'destroy']);
+    Route::post('/meal_plan_meals', [MealPlanMealController::class, 'store']);
+
+    // Meals
+    Route::get('/meals', function () {
+        return Inertia::render('meals');
+    })->name('meals');
+    Route::post('/meals', [MealController::class, 'store']);
+    Route::get('/meals/create', [MealController::class, 'create']);
+    Route::get('/meals/{id}', [MealController::class, 'show']);
+    Route::put('/meals/{id}', [MealController::class, 'update']);
+    Route::delete('/meals/{id}', [MealController::class, 'destroy']);
+
+
+});
 
 // Allow for user who aren't logged in to view forums
 Route::get('/forums', [ForumController::class, 'index'])->name('forums.index');

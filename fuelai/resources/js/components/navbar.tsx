@@ -33,8 +33,8 @@ export default function NavbarTop() {
             link: "/forums",
         },
         {
-            name: "Recipes",
-            link: "/recipe-generation",
+            name: "Meals",
+            link: "/meals",
         },
         {
             name: "Calendar",

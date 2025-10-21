@@ -1,15 +1,7 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import NavbarTop from '@/components/navbar';
 import { useState } from 'react';
 import {RecipeFormData, commonAllergies, dietaryOptions, proteinOptions} from '@/data/recipeData';
-
-// TO DO:
-// Add in ability to regenerate responses
-// Add ability to save recipes
-// Send recipes to database
-// Add in more requirements/Allergies/Proteins and such
-// Tweak the bars so they are in order and do not have an issue.
-// Add Gradients to keep it consist
 
 export default function RecipeGeneration() {
     const [formData, setFormData] = useState<RecipeFormData>({
@@ -28,10 +20,10 @@ export default function RecipeGeneration() {
 
     // Set initial state
     const [generatedRecipe, setGeneratedRecipe] = useState<string>('');
+    const [setRecipeName] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string>('');
-
-
 
     const handleCheckboxChange = (
         category: 'dietaryRequirements' | 'allergies' | 'proteins',
@@ -52,6 +44,22 @@ export default function RecipeGeneration() {
         }));
     };
 
+    const extractRecipeName = (recipeText: string): string => {
+        const nameMatch = recipeText.match(/RECIPE_NAME:\s*(.+?)(?:\n|$)/i);
+        if (nameMatch && nameMatch[1]) {
+            return nameMatch[1].trim();
+        }
+        return 'Generated Recipe';
+    };
+
+    const extractRecipeDescription = (recipeText: string): string => {
+        const descMatch = recipeText.match(/RECIPE_DESCRIPTION:\s*([\s\S]+)/i);
+        if (descMatch && descMatch[1]) {
+            return descMatch[1].trim();
+        }
+        return recipeText;
+    };
+
     const generateRecipe = async () => {
         if (!formData.caloriesTarget) {
             setError('Please specify a calorie target');
@@ -67,14 +75,14 @@ export default function RecipeGeneration() {
         setError('');
         setGeneratedRecipe('');
 
-        try { // /pages/Exercises.tsx has much better way to send / recieve the prompt
-            const prompt = `Generate a detailed recipe with the following requirements:
+        try {
+            const prompt = `Generate a recipe with the following requirements:
 
             Dietary Requirements: ${formData.dietaryRequirements.join(', ') || 'None specified'}
             Allergies to avoid: ${formData.allergies.join(', ') || 'None'}
             Preferred proteins: ${formData.proteins.join(', ') || 'Any'}
             Target calories: ${formData.caloriesTarget} calories
-            Target Proteins: ${formData.proteinsTarget} proteins
+            Target Proteins: ${formData.proteinsTarget} (g) proteins
             Servings: ${formData.servings}
             Cooking time: ${formData.cookingTime || 'Any'}
             Difficulty level: ${formData.difficulty || 'Any'}
@@ -82,13 +90,10 @@ export default function RecipeGeneration() {
             Meal type: ${formData.mealType || 'Any'}
             Additional notes: ${formData.additionalNotes || 'None'}
 
-            Please provide:
-            1. Recipe name
-            2. Complete ingredient list with measurements
-            3. Step-by-step cooking instructions
-            4. Estimated nutritional information (calories, protein, carbs, fat)
-            5. Cooking time and difficulty
-            6. Any helpful tips or variations
+            Please respond EXACTLY in this format with no extra headers, labels, or formatting:
+
+            RECIPE_NAME: [Just the recipe name, nothing else]
+            RECIPE_DESCRIPTION: [Complete recipe including: ingredient list with measurements, step-by-step cooking instructions, estimated nutritional information (calories, protein, carbs, fat), cooking time, and difficulty level]
 
             Make sure the recipe is safe, healthy, and realistic to prepare at home.`;
 
@@ -130,7 +135,9 @@ export default function RecipeGeneration() {
                 throw new Error('Invalid response format from API');
             }
 
-            setGeneratedRecipe(data.choices[0].message.content);
+            const recipeContent = data.choices[0].message.content;
+            setGeneratedRecipe(recipeContent);
+            setRecipeName(extractRecipeName(recipeContent));
 
         } catch (error) {
             console.error('Recipe generation error:', error);
@@ -148,6 +155,29 @@ export default function RecipeGeneration() {
         }
     };
 
+    const saveRecipeToMeals = () => {
+        if (!generatedRecipe) return;
+
+        const name = extractRecipeName(generatedRecipe);
+        const description = extractRecipeDescription(generatedRecipe);
+
+        setIsSaving(true);
+        router.post('/meals', {
+            name: name,
+            description: description
+        }, {
+            onSuccess: () => {
+                alert('Recipe saved to meals successfully!');
+            },
+            onError: () => {
+                alert('Failed to save recipe. Please try again.');
+            },
+            onFinish: () => {
+                setIsSaving(false);
+            }
+        });
+    };
+
     return (
         <>
             <Head title="Recipe Generator">
@@ -155,141 +185,199 @@ export default function RecipeGeneration() {
             </Head>
             <NavbarTop />
 
-            <div className="pt-16 min-h-screen bg-background">
-                <div className="max-w-6xl mx-auto px-4 py-8">
-                    <div className="text-center mb-8">
-                        <h1 className="text-4xl font-bold text-foreground mb-4">
-                            Recipe Generator
-                        </h1>
-                        <p className="text-muted-foreground text-lg">
-                            Tell us your preferences and we'll create the perfect recipe for you
-                        </p>
+            {/* Container for everything*/}
+
+            <div className="min-h-screen bg-base-200 pt-32 lg:pt-32">
+                <div className="container mx-auto p-4 max-w-7xl">
+                    <div className="card bg-base-100 shadow-xl mb-6">
+                        <div className="card-body text-center">
+                            <h1 className="text-4xl font-bold">Recipe Generator</h1>
+                            <p className="text-base-content/60 text-lg">
+                                Tell us your preferences and we'll create the perfect recipe for you
+                            </p>
+                        </div>
                     </div>
 
                     {/* Form Section */}
-                    <div className="bg-card p-8 rounded-lg border border-border mb-8">
-                        <h2 className="text-2xl font-semibold mb-8 text-center">Recipe Preferences</h2>
+                    <div className="card bg-base-100 shadow-xl mb-6">
+                        <div className="card-body">
+                            <h2 className="text-2xl font-semibold mb-6">Recipe Preferences</h2>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {/* Dietary Requirements */}
-                            <div>
-                                <label className="block text-sm font-medium mb-3">Dietary Requirements</label>
-                                <div className="space-y-2">
-                                    {dietaryOptions.map(option => (
-                                        <label key={option} className="flex items-center">
-                                            <input
-                                                type="checkbox"
-                                                checked={formData.dietaryRequirements.includes(option)}
-                                                onChange={() => handleCheckboxChange('dietaryRequirements', option)}
-                                                className="mr-2"
-                                            />
-                                            <span className="text-sm">{option}</span>
-                                        </label>
-                                    ))}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="form-control">
+                                    <label className="label">
+                                        <span className="label-text font-semibold">Dietary Requirements</span>
+                                    </label>
+                                    <div className="space-y-2">
+                                        {dietaryOptions.map(option => (
+                                            <label key={option} className="label cursor-pointer justify-start gap-2 mr-4">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.dietaryRequirements.includes(option)}
+                                                    onChange={() => handleCheckboxChange('dietaryRequirements', option)}
+                                                    className="checkbox checkbox-sm border-2 border-black"
+                                                />
+                                                <span className="label-text">{option}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Allergies */}
+                                <div className="form-control">
+                                    <label className="label">
+                                        <span className="label-text font-semibold">Allergies & Restrictions</span>
+                                    </label>
+                                    <div className="space-y-2">
+                                        {commonAllergies.map(allergy => (
+                                            <label key={allergy} className="label cursor-pointer justify-start gap-2 mr-4">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.allergies.includes(allergy)}
+                                                    onChange={() => handleCheckboxChange('allergies', allergy)}
+                                                    className="checkbox checkbox-sm border-2 border-black"
+                                                />
+                                                <span className="label-text">{allergy}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Proteins */}
+                                <div className="form-control">
+                                    <label className="label">
+                                        <span className="label-text font-semibold">Preferred Proteins</span>
+                                    </label>
+                                    <div className="space-y-2">
+                                        {proteinOptions.map(protein => (
+                                            <label key={protein} className="label cursor-pointer justify-start gap-2 mr-4">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.proteins.includes(protein)}
+                                                    onChange={() => handleCheckboxChange('proteins', protein)}
+                                                    className="checkbox checkbox-sm border-2 border-black"
+                                                />
+                                                <span className="label-text">{protein}</span>
+                                            </label>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Allergies */}
-                            <div>
-                                <label className="block text-sm font-medium mb-3">Allergies & Restrictions</label>
-                                <div className="space-y-2">
-                                    {commonAllergies.map(allergy => (
-                                        <label key={allergy} className="flex items-center">
-                                            <input
-                                                type="checkbox"
-                                                checked={formData.allergies.includes(allergy)}
-                                                onChange={() => handleCheckboxChange('allergies', allergy)}
-                                                className="mr-2"
-                                            />
-                                            <span className="text-sm">{allergy}</span>
-                                        </label>
-                                    ))}
+                            <div className="divider"></div>
+
+                            {/* Additional Settings Row */}
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div className="form-control">
+                                    {/* Calories Target  */}
+                                    <label className="label">
+                                        <span className="label-text">Target Calories</span>
+                                        <span className="label-text-alt text-error">Required</span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={formData.caloriesTarget}
+                                        onChange={(e) => handleInputChange('caloriesTarget', e.target.value)}
+                                        placeholder="e.g. 500"
+                                        className="input input-bordered"
+                                    />
+                                </div>
+
+                                <div className="form-control">
+                                    {/* Proteins Target */}
+                                    <label className="label">
+                                        <span className="label-text">Target Proteins (g)</span>
+                                        <span className="label-text-alt text-error">Required</span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={formData.proteinsTarget}
+                                        onChange={(e) => handleInputChange('proteinsTarget', e.target.value)}
+                                        placeholder="e.g. 40"
+                                        className="input input-bordered"
+                                    />
+                                </div>
+
+                                <div className="form-control">
+                                    {/* Cooking Time */}
+                                    <label className="label">
+                                        <span className="label-text">Cooking Time</span>
+                                    </label>
+                                    <select
+                                        value={formData.cookingTime}
+                                        onChange={(e) => handleInputChange('cookingTime', e.target.value)}
+                                        className="select select-bordered"
+                                    >
+                                        <option value="">Any time</option>
+                                        <option value="15 minutes">Under 15 min</option>
+                                        <option value="30 minutes">Under 30 min</option>
+                                        <option value="1 hour">Under 1 hour</option>
+                                        <option value="2 hours">Under 2 hours</option>
+                                    </select>
+                                </div>
+
+                                <div className="form-control">
+                                    {/* Serving Number */}
+                                    <label className="label">
+                                        <span className="label-text">Number of Servings</span>
+                                    </label>
+                                    <select
+                                        value={formData.servings}
+                                        onChange={(e) => handleInputChange('servings', e.target.value)}
+                                        className="select select-bordered"
+                                    >
+                                        <option value="1">1 serving</option>
+                                        <option value="2">2 servings</option>
+                                        <option value="4">4 servings</option>
+                                        <option value="6">6 servings</option>
+                                        <option value="8">8 servings</option>
+                                    </select>
+                                </div>
+
+                                <div className="form-control">
+                                    {/* Food Type */}
+                                    <label className="label">
+                                        <span className="label-text">Cuisine Type</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.cuisine}
+                                        onChange={(e) => handleInputChange('cuisine', e.target.value)}
+                                        placeholder="e.g. Italian, Asian"
+                                        className="input input-bordered"
+                                    />
+                                </div>
+
+                                <div className="form-control">
+                                    {/* Meal Type */}
+                                    <label className="label">
+                                        <span className="label-text">Meal Type</span>
+                                    </label>
+                                    <select
+                                        value={formData.mealType}
+                                        onChange={(e) => handleInputChange('mealType', e.target.value)}
+                                        className="select select-bordered"
+                                    >
+                                        <option value="">Any meal</option>
+                                        <option value="Breakfast">Breakfast</option>
+                                        <option value="Lunch">Lunch</option>
+                                        <option value="Dinner">Dinner</option>
+                                        <option value="Snack">Snack</option>
+                                        <option value="Dessert">Dessert</option>
+                                    </select>
                                 </div>
                             </div>
 
-                            {/* Proteins */}
-                            <div>
-                                <label className="block text-sm font-medium mb-3">Preferred Proteins</label>
-                                <div className="space-y-2">
-                                    {proteinOptions.map(protein => (
-                                        <label key={protein} className="flex items-center">
-                                            <input
-                                                type="checkbox"
-                                                checked={formData.proteins.includes(protein)}
-                                                onChange={() => handleCheckboxChange('proteins', protein)}
-                                                className="mr-2"
-                                            />
-                                            <span className="text-sm">{protein}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Additional Settings Row */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-                            {/* Calories Target */}
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Target Calories (required)</label>
-                                <input
-                                    type="number"
-                                    value={formData.caloriesTarget}
-                                    onChange={(e) => handleInputChange('caloriesTarget', e.target.value)}
-                                    placeholder="e.g. 500, 800, 1200"
-                                    className="w-full p-3 border border-border rounded-lg bg-background"
-                                />
-                            </div>
-                            {/* Proteins Target */}
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Target Proteins (required)</label>
-                                <input
-                                    type="number"
-                                    value={formData.proteinsTarget}
-                                    onChange={(e) => handleInputChange('proteinsTarget', e.target.value)}
-                                    placeholder="e.g. 20, 40, 80"
-                                    className="w-full p-3 border border-border rounded-lg bg-background"
-                                />
-                            </div>
-
-                            {/* Servings */}
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Number of Servings</label>
-                                <select
-                                    value={formData.servings}
-                                    onChange={(e) => handleInputChange('servings', e.target.value)}
-                                    className="w-full p-3 border border-border rounded-lg bg-background"
-                                >
-                                    <option value="1">1 serving</option>
-                                    <option value="2">2 servings</option>
-                                    <option value="4">4 servings</option>
-                                    <option value="6">6 servings</option>
-                                    <option value="8">8 servings</option>
-                                </select>
-                            </div>
-
-                            {/* Cooking Time */}
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Cooking Time</label>
-                                <select
-                                    value={formData.cookingTime}
-                                    onChange={(e) => handleInputChange('cookingTime', e.target.value)}
-                                    className="w-full p-3 border border-border rounded-lg bg-background"
-                                >
-                                    <option value="">Any time</option>
-                                    <option value="15 minutes">Under 15 min</option>
-                                    <option value="30 minutes">Under 30 min</option>
-                                    <option value="1 hour">Under 1 hour</option>
-                                    <option value="2 hours">Under 2 hours</option>
-                                </select>
-                            </div>
-
-                            {/* Difficulty */}
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Difficulty</label>
+                            <div className="form-control">
+                                {/* Difficulty */}
+                                <label className="label">
+                                    <span className="label-text">Difficulty</span>
+                                </label>
                                 <select
                                     value={formData.difficulty}
                                     onChange={(e) => handleInputChange('difficulty', e.target.value)}
-                                    className="w-full p-3 border border-border rounded-lg bg-background"
+                                    className="select select-bordered"
                                 >
                                     <option value="">Any difficulty</option>
                                     <option value="Beginner">Beginner</option>
@@ -297,92 +385,104 @@ export default function RecipeGeneration() {
                                     <option value="Advanced">Advanced</option>
                                 </select>
                             </div>
-                        </div>
 
-                        {/* Bottom Row */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Cuisine Type</label>
-                                <input
-                                    type="text"
-                                    value={formData.cuisine}
-                                    onChange={(e) => handleInputChange('cuisine', e.target.value)}
-                                    placeholder="e.g. Italian, Asian, Mexican"
-                                    className="w-full p-3 border border-border rounded-lg bg-background"
+                            <div className="form-control mt-4">
+                                {/* Additional Notes */}
+                                <label className="label">
+                                    <span className="label-text">Additional Notes</span>
+                                </label>
+                                <textarea
+                                    value={formData.additionalNotes}
+                                    onChange={(e) => handleInputChange('additionalNotes', e.target.value)}
+                                    placeholder="Any special requests, ingredients you want to use, or cooking methods..."
+                                    rows={3}
+                                    className="textarea textarea-bordered"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Meal Type</label>
-                                <select
-                                    value={formData.mealType}
-                                    onChange={(e) => handleInputChange('mealType', e.target.value)}
-                                    className="w-full p-3 border border-border rounded-lg bg-background"
-                                >
-                                    <option value="">Any meal</option>
-                                    <option value="Breakfast">Breakfast</option>
-                                    <option value="Lunch">Lunch</option>
-                                    <option value="Dinner">Dinner</option>
-                                    <option value="Snack">Snack</option>
-                                    <option value="Dessert">Dessert</option>
-                                </select>
-                            </div>
-                            <div className="flex items-end">
-                                <button
-                                    onClick={generateRecipe}
-                                    disabled={isLoading || !formData.caloriesTarget}
-                                    className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    {isLoading ? 'Generating Recipe...' : 'Generate Recipe'}
-                                </button>
-                            </div>
-                        </div>
 
-                        {/* Additional Notes */}
-                        <div className="mt-6">
-                            <label className="block text-sm font-medium mb-2">Additional Notes</label>
-                            <textarea
-                                value={formData.additionalNotes}
-                                onChange={(e) => handleInputChange('additionalNotes', e.target.value)}
-                                placeholder="Any special requests, ingredients you want to use, or cooking methods..."
-                                rows={3}
-                                className="w-full p-3 border border-border rounded-lg bg-background"
-                            />
-                        </div>
+                            {error && (
+                                <div className="alert alert-error mt-4">
+                                    <span>{error}</span>
+                                </div>
+                            )}
 
-                        {error && (
-                            <div className="mt-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                                {error}
-                            </div>
-                        )}
+                            <button
+                                onClick={generateRecipe}
+                                disabled={isLoading || !formData.caloriesTarget || !formData.proteinsTarget}
+                                className="btn btn-primary btn-block mt-6"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <span className="loading loading-spinner"></span>
+                                        Generating Recipe...
+                                    </>
+                                ) : (
+                                    'Generate Recipe'
+                                )}
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Generated Recipe Section */}
-                    <div className="bg-card p-8 rounded-lg border border-border">
-                        <h2 className="text-2xl font-semibold mb-6 text-center">Your Generated Recipe</h2>
+                    <div className="card bg-base-100 shadow-xl">
+                        <div className="card-body">
+                            <h2 className="text-2xl font-semibold mb-4">Your Generated Recipe</h2>
 
-                        {!generatedRecipe && !isLoading && (
-                            <div className="text-center text-muted-foreground py-12">
-                                <svg className="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-                                </svg>
-                                <p>Fill out your preferences above and generate a personalized recipe</p>
-                            </div>
-                        )}
-
-                        {isLoading && (
-                            <div className="text-center py-12">
-                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                                <p className="text-muted-foreground">Creating your perfect recipe...</p>
-                            </div>
-                        )}
-
-                        {generatedRecipe && (
-                            <div className="prose prose-sm max-w-none">
-                                <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                                    {generatedRecipe}
+                            {!generatedRecipe && !isLoading && (
+                                <div className="text-center py-12">
+                                    <p className="text-base-content/60">Fill out your preferences above and generate a personalized recipe</p>
                                 </div>
-                            </div>
-                        )}
+                            )}
+
+                            {isLoading && (
+                                <div className="text-center py-12">
+                                    <span className="loading loading-spinner loading-lg text-primary"></span>
+                                    <p className="text-base-content/60 mt-4">Creating your perfect recipe...</p>
+                                </div>
+                            )}
+
+                            {generatedRecipe && (
+                                <>
+                                    <div className="prose max-w-none">
+                                        <div className="whitespace-pre-wrap">
+                                            {generatedRecipe}
+                                        </div>
+                                    </div>
+                                    <div className="divider"></div>
+                                    <div className="flex gap-3 justify-end">
+                                        <button
+                                            onClick={() => {
+                                                setGeneratedRecipe('');
+                                                setRecipeName('');
+                                            }}
+                                            className="btn btn-ghost"
+                                        >
+                                            Clear
+                                        </button>
+                                        <button
+                                            onClick={generateRecipe}
+                                            disabled={isLoading}
+                                            className="btn btn-outline"
+                                        >
+                                            Regenerate
+                                        </button>
+                                        <button
+                                            onClick={saveRecipeToMeals}
+                                            disabled={isSaving}
+                                            className="btn btn-primary"
+                                        >
+                                            {isSaving ? (
+                                                <>
+                                                    <span className="loading loading-spinner loading-sm"></span>
+                                                    Saving...
+                                                </>
+                                            ) : (
+                                                'Save to Meals'
+                                            )}
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
