@@ -43,3 +43,4 @@ class ForumController extends Controller
            ], 500);
        }
    }
+}
