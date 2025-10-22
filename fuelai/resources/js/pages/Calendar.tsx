@@ -43,7 +43,7 @@ export default function Calendar({ events }: CalendarProps) {
 
     const handleDateClick = (info: any) => {
         const dateStr = info.dateStr;
-        // Optionally navigate to tasks page with date filter
+        // For future use, navigate to tasks page with date filter
         console.log('Date clicked:', dateStr);
     };
 
