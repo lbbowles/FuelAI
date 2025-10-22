@@ -18,6 +18,10 @@ class ForumController extends Controller
        ]);
 
        try {
+       // Getting a 500 error after dropping a column.  Trying to diagnose it
+        Log::info('Creating post with:', $validated);
+        Log::info('User ID:', ['user_id' => $request->user()->id]);
+
            $postId = DB::table('forum_posts')->insertGetId([
                'forum_id' => $validated['forum_id'],
                'user_id' => $request->user()->id,
