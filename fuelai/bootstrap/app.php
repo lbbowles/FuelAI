@@ -12,11 +12,20 @@ use App\Http\Middleware\AdminMiddleware;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
+        // Was missing api for middleware
+        api: __DIR__.'/../routes/api.php',
+        apiPrefix: 'api',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+
+        //Currently getting a csrf token error when trying to utilize different APIs.
+         $middleware->validateCsrfTokens(except: [
+                '/api/*',
+                'api/*',
+         ]);
 
         $middleware->web(append: [
             HandleAppearance::class,

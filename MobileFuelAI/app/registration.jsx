@@ -1,48 +1,66 @@
-import {ImageBackground, ScrollView, View, TextInput, Text, TouchableOpacity, Image, useColorScheme, Alert} from 'react-native';
+import {
+    ScrollView,
+    View,
+    TextInput,
+    Text,
+    TouchableOpacity,
+    Image,
+    useColorScheme,
+    Alert,
+    ImageBackground
+} from 'react-native';
 import React, { useState } from 'react';
-// Important for authentication and persistence
-import { useAuth } from './context/AuthContext.js';
 import { Redirect, router } from 'expo-router';
-import { icons } from "../constants/icons";
+import {icons} from "../constants/icons";
 import { images } from '../constants/images';
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
+// API services.
+import { useAuth } from './context/AuthContext.js';
 
-// Sign in page
-export default function SignIn() {
-    // We are going to use the sign in function and the hook established in AuthContext to establish a session.
-    const {session, signin} = useAuth();
-    // Input values
-    const [loginValue, setLoginValue] = useState('');
+// Register account page
+export default function CreateAccount() {
+    // all AuthContext hook to utilize function and variable
+    const {session, signup} = useAuth();
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    // Local loading state for this sign-in form / button changes.
+    const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // Register handler
     const handleSubmit = async () => {
-        // Make sure all fields are filled, if not complain to the user with an alert (shout out to React Native)
-        if (!loginValue || !password) {
+        // Make sure all fields have been sufficed.
+        if (!username || !email || !password || !passwordConfirmation) {
             Alert.alert('Error', 'Please fill in all fields');
             return;
         }
 
-        // If filled, set loading to true so the button can be updated.
-        setLoading(true);
-        try {
-            console.log('Sign-in attempted:', loginValue);
-            // We are obviously using signin function in AuthContext here, but that is really checking our API endpoint and information within DB on Railway
-            await signin({login: loginValue, password});
+        // Password match check
+        if (password !== passwordConfirmation) {
+            Alert.alert('Error', 'Passwords do not match');
+            return;
+        }
 
-            // Navigate to tabs on success / logged in.
+        setLoading(true);
+        // Attempt to take user information and register.
+        try {
+            console.log('Registration attempted:', username, email);
+            // AuthContext function call.
+            await signup({ username, email, password });
+            console.log('Registration successful:', email);
+
+            // Navigate to tabs
             router.replace('/(tabs)');
         } catch (error) {
-            console.error('Sign-in failed:', error);
-            Alert.alert('Sign In Failed', 'Invalid login credentials. Please try again.');
+            // If failed, throw error.
+            console.error('Registration failed:', error);
+            Alert.alert('Registration Failed', error.message || 'An error occurred during registration');
         } finally {
-            // Reset loading state.
+            // Set loading false again
             setLoading(false);
         }
     };
 
-    // Dark mode support as always
     const isDark = useColorScheme() === "dark";
 
     // Redirect to tabs if a session already exists.
@@ -51,18 +69,20 @@ export default function SignIn() {
     // Set a background.
     const trueBackground = isDark ? images.darkBackground : images.lightBackground;
 
-    // Otherwise show the login form.
+    // Redirect to tabs if already signed in.
+    if (session) return <Redirect href="/(tabs)" />;
+
     return (
-        // Wrap with dark mode if applicable
+        // wrap in dark if dark mode is enabled
         <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
-        {/*Actually place the background*/}
+
+            {/*Actually place the background*/}
             <ImageBackground
                 source={trueBackground}
                 style={{ flex: 1 }}
                 resizeMode="cover"
             >
-
-            <Image source={icons.logo} className="w-20 h-20 mt-16 mx-auto" />
+            <Image source={icons.logo} className="w-14 h-14 mt-16 mx-auto" />
 
                 <ScrollView contentContainerStyle={{ padding: 24, paddingTop: 40 }}>
                     <View style={{
@@ -72,7 +92,6 @@ export default function SignIn() {
                         marginTop: 20,
 
                     }}>
-
                         <Text style={{
                             fontSize: 25,
                             fontWeight: 'bold',
@@ -80,26 +99,45 @@ export default function SignIn() {
                             marginBottom: 24,
                             color: isDark ? '#ffffff' : '#000000'
                         }}>
-                            Sign In
+                            Create Account
                         </Text>
 
+                    {/* Username field */}
                         <Text style={{
                             fontSize: 12,
                             fontWeight: 'bold',
                             marginBottom: 5,
                             color: isDark ? '#ffffff' : '#000000'
                         }}>
-                            Email or Username:
+                            Username:
                         </Text>
 
                     <TextInput
-                        placeholder="Enter your email or username..."
-                        value={loginValue}
-                        onChangeText={(text) => setLoginValue(text)}
+                        placeholder="Enter your username..."
+                        value={username}
+                        onChangeText={(text) => setUsername(text)}
                         autoCapitalize="none"
-                        keyboardType="email-address"
                     />
 
+                    {/* Email field */}
+                        <Text style={{
+                            fontSize: 12,
+                            fontWeight: 'bold',
+                            marginBottom: 5,
+                            color: isDark ? '#ffffff' : '#000000'
+                        }}>
+                            Email:
+                        </Text>
+
+                    <TextInput
+                        placeholder="Enter your email..."
+                        value={email}
+                        onChangeText={(text) => setEmail(text)}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                    />
+
+                    {/* Password field */}
                         <Text style={{
                             fontSize: 12,
                             fontWeight: 'bold',
@@ -116,6 +154,23 @@ export default function SignIn() {
                         secureTextEntry
                     />
 
+                    {/* Password confirmation field */}
+                        <Text style={{
+                            fontSize: 12,
+                            fontWeight: 'bold',
+                            marginBottom: 5,
+                            color: isDark ? '#ffffff' : '#000000'
+                        }}>
+                            Confirm Password:
+                        </Text>
+
+                    <TextInput
+                        placeholder="Confirm your password..."
+                        value={passwordConfirmation}
+                        onChangeText={(text) => setPasswordConfirmation(text)}
+                        secureTextEntry
+                    />
+
                         {/*If loading, showcase one thing, if not then showcase the other*/}
                     <TouchableOpacity
                         onPress={handleSubmit}
@@ -127,26 +182,24 @@ export default function SignIn() {
                             marginTop: 10,
                             marginBottom: 15,
                             color: '#3b82f6',
-                        }}>
-                            {loading ? 'Signing In...' : 'Sign In'}</Text>
+                        }}>{loading ? 'Creating Account...' : 'Create Account'}</Text>
                     </TouchableOpacity>
 
-                    {/* If a user does not have an account, this is the route to registration */}
+                    {/* If a user has an account, this will let them sign in */}
                     <View style={{marginTop: 20, alignItems: 'center'}}>
                         <Text style={{color: isDark ? '#ffffff' : '#000000'}}>
-                            Don't have an account?
+                            Have an account?
                         </Text>
-                        <TouchableOpacity onPress={() => router.push('/registration')}>
+                        <TouchableOpacity onPress={() => router.push('/signin')}>
                             <Text style={{color: '#3b82f6', fontWeight: 'bold', marginTop: 5}}>
-                                Create Account
+                                Sign In
                             </Text>
                         </TouchableOpacity>
                     </View>
 
                 </View>
             </ScrollView>
-
-                </ImageBackground>
+            </ImageBackground>
         </ThemeProvider>
     );
 }
