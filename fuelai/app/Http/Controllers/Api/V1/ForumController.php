@@ -19,7 +19,6 @@ class ForumController extends Controller
        ]);
 
        try {
-       // Getting a 500 error after dropping a column.  Trying to diagnose it
         Log::info('Creating post with:', $validated);
         Log::info('User ID:', ['user_id' => $request->user()->id]);
 
@@ -44,4 +43,53 @@ class ForumController extends Controller
            ], 500);
        }
    }
+
+    public function reply(Request $request, $postId){
+
+    // Confirm minimum length requirements are met
+       $validated = $request->validate([
+           'content' => 'required|string|min:10',
+           ]);
+    }
+
+    try {
+        Log::info('Creating reply', ['post_id' => $postId, 'user_id' => $request->user()->id]);
+
+        // Confirm this is a post that exists
+        $post = DB::table('forum_posts')->where('id', $postID)->first();
+        if(!$post) {
+            return response()->json([
+                'message' => 'Post not found'
+                ], 404);
+        }
+
+        // Attempt table insert
+        $threadID = DB::table('forum_threads')->insertGetId([
+            'post_id' => $postID,
+            'user_id' => $request->user()->id,
+            'content' => $validated['content'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        Log::info('Comment posted successfully', ['thread_id' => $threadId]);
+
+        // Successful
+        return response()->json([
+            'message' => 'Reply created successfully',
+            'thread_id' => $threadId
+            ], 201);
+
+        // Non-successful
+    } catch (\Exception $e) {
+        Log::error('Reply creation failed:', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+            ]);
+
+        return response()->json([
+            'message' => 'Failed to create reply:',
+            'error' => $e->getMessage()
+            ], 500);
+        }
 }
