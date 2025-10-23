@@ -14,6 +14,6 @@ Route::get('/users/{user}/followers', [UserController::class, 'followers']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/{user}/follow', [UserController::class, 'follow']);
     Route::post('/forums', [ForumController::class, 'store']);
-    Route::post('/forums/{post}', [ForumController::class, 'show']);
+    Route::get('/forums/{post}', [ForumController::class, 'show']);
     Route::post('/forums/{post}/reply', [ForumController::class, 'reply']);
 });
