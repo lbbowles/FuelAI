@@ -14,9 +14,11 @@ class ForumController extends Controller
    public function index(){
        try {
            $posts = ForumPost::with('user')
-                ->withCount('Threads as reply_count')
+                ->withCount('threads as reply_count')
                 ->orderBy('created_at', 'desc')
                 ->get();
+
+           return response()->json(['posts' => $posts], 200);
 
        } catch (\Exception $e) {
             Log::error('Failed to fetch posts:', ['error' => $e->getMessage()]);
@@ -107,7 +109,7 @@ class ForumController extends Controller
                 ], 404);
                 }
 
-            $thread - ForumThread::create([
+            $thread = ForumThread::create([
                 'post_id' => $postId,
                 'user_id' => $request->user()->id,
                 'content' => $validated['content'],

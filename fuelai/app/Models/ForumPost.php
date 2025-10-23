@@ -38,7 +38,7 @@ class ForumPost extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function thread()
+    public function threads()
     {
         return $this->hasMany(ForumThread::class, 'post_id');
     }
