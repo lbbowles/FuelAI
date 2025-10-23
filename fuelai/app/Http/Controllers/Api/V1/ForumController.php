@@ -13,10 +13,17 @@ class ForumController extends Controller
     // Show all of the forum posts
    public function index(){
        try {
-           $posts = ForumPost::with('user')
-                ->withCount('threads as reply_count')
-                ->orderBy('created_at', 'desc')
-                ->get();
+           $posts = ForumPost::with('threads')
+           // Had to flatten eloquent was not allowing me to access the username due to it being nested.
+                ->join('users', 'forum_posts.user_id', '=', 'users.id')
+                ->select(
+                    'forum_posts.*',
+                    'users.username',
+                    'users.profile_image_url'
+                    )
+                    ->withCount('threads as reply_count')
+                    ->orderBy('forum_posts.created_at', 'desc')
+                    ->get();
 
            return response()->json(['posts' => $posts], 200);
 
@@ -65,15 +72,19 @@ class ForumController extends Controller
     public function show($postId){
 
         try {
-            $post = ForumPost::with('user')->find($postId);
+            $post = ForumPost::join('users', 'forum_posts.user_id', '=', 'users.id')
+                ->where('forum_posts.id', $postId)
+                ->select('forum_posts.*', 'users.username', 'users.profile_image_url')
+                ->first();
 
             if (!$post) {
                 return response()->json(['message' => 'Post not found'
                 ], 404);}
 
-            $threads = ForumThread::with('user')
-                ->where('post_id', $postId)
-                ->orderBy('created_at', 'desc')
+            $threads = ForumThread::join('users', 'forum_threads.user_id', '=', 'users.id')
+                ->where('forum_threads.post_id', $postId)
+                ->select('forum_threads.*', 'users.username', 'users.profile_image_url')
+                ->orderBy('forum_threads.created_at', 'desc')
                 ->get();
 
             return response()->json([
