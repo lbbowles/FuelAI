@@ -58,8 +58,8 @@ class ForumController extends Controller
                 )
             ->first();
 
-            if (!post) {
-                return response()->json([message => 'Post not found'], 404);
+            if (!$post) {
+                return response()->json(['message' => 'Post not found'], 404);
             }
 
         // Get all replies for the post
