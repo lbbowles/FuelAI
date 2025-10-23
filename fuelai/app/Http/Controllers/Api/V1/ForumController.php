@@ -50,13 +50,12 @@ class ForumController extends Controller
        $validated = $request->validate([
            'content' => 'required|string|min:10',
            ]);
-    }
 
     try {
         Log::info('Creating reply', ['post_id' => $postId, 'user_id' => $request->user()->id]);
 
         // Confirm this is a post that exists
-        $post = DB::table('forum_posts')->where('id', $postID)->first();
+        $post = DB::table('forum_posts')->where('id', $postId)->first();
         if(!$post) {
             return response()->json([
                 'message' => 'Post not found'
@@ -64,8 +63,8 @@ class ForumController extends Controller
         }
 
         // Attempt table insert
-        $threadID = DB::table('forum_threads')->insertGetId([
-            'post_id' => $postID,
+        $threadId = DB::table('forum_threads')->insertGetId([
+            'post_id' => $postId,
             'user_id' => $request->user()->id,
             'content' => $validated['content'],
             'created_at' => now(),
@@ -92,4 +91,5 @@ class ForumController extends Controller
             'error' => $e->getMessage()
             ], 500);
         }
+    }
 }
