@@ -9,6 +9,34 @@ use Illuminate\Support\Facades\Log;
 
 class ForumController extends Controller
 {
+    // Show all of the forum posts
+   public function index(){
+       try {
+            $posts = DB::table('forum_posts')
+                ->join('users', 'forum_posts.user_id', '=', 'users.id')
+                ->leftJoin('forum_threads', 'forum_posts.id', '=', 'forum_threads.post_id')
+                ->select(
+                    'forum_posts.*',
+                    'users.username',
+                    DB:raw('COUNT(forum_threads.id) as reply_count')
+                )
+                ->groupBy('forum_posts.id', 'users.username', 'forum_posts.forum_id', 'forum_posts.user_id', 'forum_posts.title', 'forum_posts.content', 'forum_posts.created_at', 'forum_posts.updated_at')
+                ->orderBy('forum_posts.created_at', 'desc')
+                ->get();
+
+                return response()->json([
+                    'posts' => $posts
+                    ], 200);
+
+       } catch (\Exception $e) {
+       Log::error('failed to fetch posts:', ['error' => $e->getMessage()]);
+       return response()->json([
+            'message' => 'Failed to fetch posts',
+            'error' => $e->getMessage()
+            ], 500);
+       }
+   }
+
     // Store new forum post
    public function store(Request $request)
    {
