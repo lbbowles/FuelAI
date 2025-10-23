@@ -44,6 +44,51 @@ class ForumController extends Controller
        }
    }
 
+    // Show a post and all comments
+    public function show($postId){
+
+        try {
+
+        $post = DB::table('forum_posts')
+            ->join('users', 'forum_posts.user_id', '=', 'users.id')
+            ->where('forum_posts.id', $postId)
+            ->select(
+                'forum_posts.*',
+                'users.username'
+                )
+            ->first();
+
+            if (!post) {
+                return response()->json([message => 'Post not found'], 404);
+            }
+
+        // Get all replies for the post
+        $threads = DB::table('forum_threads')
+            ->join('users', 'forum_threads.user_id', '=', 'users.id')
+            ->where('forum_threads.post_id', $postId)
+            ->select(
+                'forum_threads.*',
+                'users.username'
+            )
+            ->orderBy('forum_threads.created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'post' => $post,
+            'threads' => $threads,
+            'thread_count' => count($threads)
+        ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch post:', ['error' => $e->getMessage()]);
+            return response()->json([
+                'message' => 'Failed to fetch post',
+                'error' => $e->getMessage()
+                ], 500);
+            }
+
+    }
+
     public function reply(Request $request, $postId){
 
     // Confirm minimum length requirements are met
@@ -51,16 +96,16 @@ class ForumController extends Controller
            'content' => 'required|string|min:10',
            ]);
 
-    try {
-        Log::info('Creating reply', ['post_id' => $postId, 'user_id' => $request->user()->id]);
+        try {
+            Log::info('Creating reply', ['post_id' => $postId, 'user_id' => $request->user()->id]);
 
-        // Confirm this is a post that exists
-        $post = DB::table('forum_posts')->where('id', $postId)->first();
-        if(!$post) {
-            return response()->json([
-                'message' => 'Post not found'
-                ], 404);
-        }
+            // Confirm this is a post that exists
+            $post = DB::table('forum_posts')->where('id', $postId)->first();
+            if(!$post) {
+                return response()->json([
+                    'message' => 'Post not found'
+                    ], 404);
+            }
 
         // Attempt table insert
         $threadId = DB::table('forum_threads')->insertGetId([
