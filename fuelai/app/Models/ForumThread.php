@@ -22,14 +22,14 @@ class ForumThread extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'forum_id',
+        'post_id',
         'user_id',
-        'title',
+        'content',
     ];
 
-    public function forum()
+    public function post()
     {
-        return $this->belongsTo(Forum::class);
+        return $this->belongsTo(ForumPost::class, 'post_id');
     }
 
     public function user()
@@ -37,8 +37,4 @@ class ForumThread extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function posts()
-    {
-        return $this->hasMany(ForumPost::class, 'thread_id');
-    }
 }

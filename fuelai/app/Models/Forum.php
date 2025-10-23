@@ -19,13 +19,8 @@ class Forum extends Model
         'description',
     ];
 
-    public function threads()
-    {
-        return $this->hasMany(ForumThread::class);
-    }
-
     public function posts()
     {
-        return $this->hasManyThrough(ForumPost::class, ForumThread::class);
+        return $this->hasMany(ForumPost::class);
     }
 }

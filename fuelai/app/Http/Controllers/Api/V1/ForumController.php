@@ -3,39 +3,28 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\ForumPost;
+use App\Models\ForumThread;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Query\Expression;
 
 class ForumController extends Controller
 {
     // Show all of the forum posts
    public function index(){
        try {
-            $posts = DB::table('forum_posts')
-                ->join('users', 'forum_posts.user_id', '=', 'users.id')
-                ->leftJoin('forum_threads', 'forum_posts.id', '=', 'forum_threads.post_id')
-                ->select(
-                    'forum_posts.*',
-                    'users.username',
-                    DB::raw('COUNT(forum_threads.id) as reply_count')
-                )
-                ->groupBy('forum_posts.id', 'users.username', 'forum_posts.forum_id', 'forum_posts.user_id', 'forum_posts.title', 'forum_posts.content', 'forum_posts.created_at', 'forum_posts.updated_at')
-                ->orderBy('forum_posts.created_at', 'desc')
+           $posts = ForumPost::with('user')
+                ->withCount('Threads as reply_count')
+                ->orderBy('created_at', 'desc')
                 ->get();
 
-                return response()->json([
-                    'posts' => $posts
-                    ], 200);
-
        } catch (\Exception $e) {
-       Log::error('failed to fetch posts:', ['error' => $e->getMessage()]);
-       return response()->json([
-            'message' => 'Failed to fetch posts',
-            'error' => $e->getMessage()
-            ], 500);
-       }
+            Log::error('Failed to fetch posts:', ['error' => $e->getMessage()]);
+            return response()->json([
+                'message' => 'Failed to fetch posts',
+                'error' => $e->getMessage()
+                ], 500);
+            }
    }
 
     // Store new forum post
@@ -49,21 +38,18 @@ class ForumController extends Controller
 
        try {
         Log::info('Creating post with:', $validated);
-        Log::info('User ID:', ['user_id' => $request->user()->id]);
 
-           $postId = DB::table('forum_posts')->insertGetId([
-               'forum_id' => $validated['forum_id'],
-               'user_id' => $request->user()->id,
-               'title' => $validated['title'],
-               'content' => $validated['content'],
-               'created_at' => now(),
-               'updated_at' => now(),
-           ]);
+        $post = ForumPost::create([
+            'forum_id' => $validated['forum_id'],
+            'user_id' => $request->user()->id,
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+        ]);
 
-           return response()->json([
-               'message' => 'Post created successfully',
-               'post_id' => $postId
-           ], 201);
+        return response()->json([
+            'message' => 'Post created successfull',
+            'post_id' => $post->id
+            ], 201);
 
        } catch (\Exception $e) {
            return response()->json([
@@ -77,36 +63,22 @@ class ForumController extends Controller
     public function show($postId){
 
         try {
-
-        $post = DB::table('forum_posts')
-            ->join('users', 'forum_posts.user_id', '=', 'users.id')
-            ->where('forum_posts.id', $postId)
-            ->select(
-                'forum_posts.*',
-                'users.username'
-                )
-            ->first();
+            $post = ForumPost::with('user')->find($postId);
 
             if (!$post) {
-                return response()->json(['message' => 'Post not found'], 404);
-            }
+                return response()->json(['message' => 'Post not found'
+                ], 404);}
 
-        // Get all replies for the post
-        $threads = DB::table('forum_threads')
-            ->join('users', 'forum_threads.user_id', '=', 'users.id')
-            ->where('forum_threads.post_id', $postId)
-            ->select(
-                'forum_threads.*',
-                'users.username'
-            )
-            ->orderBy('forum_threads.created_at', 'desc')
-            ->get();
+            $threads = ForumThread::with('user')
+                ->where('post_id', $postId)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-        return response()->json([
-            'post' => $post,
-            'threads' => $threads,
-            'thread_count' => count($threads)
-        ], 200);
+            return response()->json([
+                'post' => $post,
+                'threads' => $threads,
+                'thread_count' => $threads->count()
+                ], 200);
 
         } catch (\Exception $e) {
             Log::error('Failed to fetch post:', ['error' => $e->getMessage()]);
@@ -128,32 +100,26 @@ class ForumController extends Controller
         try {
             Log::info('Creating reply', ['post_id' => $postId, 'user_id' => $request->user()->id]);
 
-            // Confirm this is a post that exists
-            $post = DB::table('forum_posts')->where('id', $postId)->first();
-            if(!$post) {
-                return response()->json([
-                    'message' => 'Post not found'
-                    ], 404);
-            }
 
-        // Attempt table insert
-        $threadId = DB::table('forum_threads')->insertGetId([
-            'post_id' => $postId,
-            'user_id' => $request->user()->id,
-            'content' => $validated['content'],
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            $post = ForumPost::find($postId);
+            if (!$post) {
+                return response()->json(['message' => 'Post not found'
+                ], 404);
+                }
 
-        Log::info('Comment posted successfully', ['thread_id' => $threadId]);
+            $thread - ForumThread::create([
+                'post_id' => $postId,
+                'user_id' => $request->user()->id,
+                'content' => $validated['content'],
+                ]);
 
-        // Successful
-        return response()->json([
-            'message' => 'Reply created successfully',
-            'thread_id' => $threadId
+            Log::info('Reply posted successfully', ['thread_id' => $thread->id]);
+
+            return response()->json([
+                'message' => 'Reply created successfully',
+                'thread_id' => $thread->id
             ], 201);
 
-        // Non-successful
     } catch (\Exception $e) {
         Log::error('Reply creation failed:', [
             'error' => $e->getMessage(),
