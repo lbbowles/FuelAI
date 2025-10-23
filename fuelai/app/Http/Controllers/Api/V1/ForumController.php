@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Query\Expression;
 
 class ForumController extends Controller
 {
@@ -18,7 +19,7 @@ class ForumController extends Controller
                 ->select(
                     'forum_posts.*',
                     'users.username',
-                    DB:raw('COUNT(forum_threads.id) as reply_count')
+                    DB::raw('COUNT(forum_threads.id) as reply_count')
                 )
                 ->groupBy('forum_posts.id', 'users.username', 'forum_posts.forum_id', 'forum_posts.user_id', 'forum_posts.title', 'forum_posts.content', 'forum_posts.created_at', 'forum_posts.updated_at')
                 ->orderBy('forum_posts.created_at', 'desc')
