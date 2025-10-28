@@ -146,10 +146,10 @@ class MealPlanController extends Controller
         // Determine if the user already owns this meal plan
         $mealPlan = MealPlan::where('id', $id)
             ->where('user_id', auth()->id())
-            ->firstOrFail
+            ->firstOrFail();
 
         // Now determine if a meal is already in the slot
-        $existing = MealPlanMeal:::where('meal_plan_id', $id)
+        $existing = MealPlanMeal::where('meal_plan_id', $id)
             ->where('day_of_week', $validated['day_of_week'])
             ->where('meal_time', $validated['meal_time'])
             ->first();
