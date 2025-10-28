@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Meal;
 use App\Models\MealPlan;
+use App\Models\NutritionalInfo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+
+
 
 class MealController extends Controller
 {
@@ -35,13 +39,35 @@ class MealController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'calories' => 'nullable|numeric',
+            'protein' => 'nullable|numeric',
+            'carbs' => 'nullable|numeric',
+            'fat' => 'nullable|numeric',
+            'fiber' => 'nullable|numeric',
+            'sugar' => 'nullable|numeric',
+            'sodium' => 'nullable|numeric',
+            'other_nutrients' => 'nullable|string',
         ]);
 
-        Meal::create([
+        DB::transaction(function () use ($validated) {
+            $meal = Meal::create([
             'created_by' => auth()->id(),
             'name' => $validated['name'],
             'description' => $validated['description'],
-        ]);
+            ]);
+
+            NutritionalInfo::create([
+            'meal_id' => $meal->id,
+            'calories' => $validated['calories'],
+            'protein' => $validated['protein'],
+            'carbs' => $validated['carbs'],
+            'fat' => $validated['fat'],
+            'fiber' => $validated['fiber'],
+            'sugar' => $validated['sugar'],
+            'sodium' => $validated['sodium'],
+            'other_nutrients' => $validated['other_nutrients'],
+            ]);
+        });
 
         return redirect('/meal_list')->with('success', 'Meal created successfully!');
     }
