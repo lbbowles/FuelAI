@@ -26,9 +26,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/meal-plans/{id}', [MealPlanController::class, 'apiShow']);
     Route::delete('/meal-plans/{id}', [MealPlanController::class, 'apiDestroy']);
     // Actual Meal Routes
-    Route::get('/meals', [MealPlanController::class, 'apiIndex']);
-    Route::post('/meals', [MealPlanController::class, 'apiStore']);
+    Route::get('/meals', [MealController::class, 'apiIndex']);
+    Route::post('/meals', [MealController::class, 'apiStore']);
     // Meal Plan Food Routes
     Route::post('/meal-plans/{id}/add-meal', [MealPlanController::class, 'apiAddMeal']);
-    Route::delete('/meal-plans/{id}', [MealPlanController::class, 'apiRemoveMeal']);
+    Route::delete('/meal-plans-meals/{id}', [MealPlanController::class, 'apiRemoveMeal']);
 });
