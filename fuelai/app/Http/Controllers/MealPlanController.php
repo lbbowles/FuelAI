@@ -71,4 +71,65 @@ class MealPlanController extends Controller
         return redirect()->back()->with('success', 'Meal plan deleted successfully!');
     }
 
+
+    // Mobile functions, pretty much the same as the Intertia but return Json instead.
+    public function apiIndex()
+    {
+        $meal_plans = MealPlan::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'meal_plans' => $meal_plans
+            ], 200);
+    }
+
+    public function apiStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $mealPlan = MealPlan::create([
+            'user_id' => auth()->id(),
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            ]);
+
+        return response()->json([
+            'message' => 'Meal plan created successfully',
+            'meal_plan' => $mealPlan
+            ], 201);
+    }
+
+    public function apiShow($id)
+    {
+        $meal_plan = MealPlan::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $meal_plan_meals = MealPlanMeal::where('meal_plan_id', $id)
+            ->with('meal')
+            ->get();
+
+        return response()->json([
+            'meal_plan' => $meal_plan,
+            'meal_plan_meals' => $meal_plan_meals
+        ], 200);
+    }
+
+    public function apiDestroy($id)
+    {
+        $mealPlan = MealPlan::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $mealPlan->delete();
+
+        return response()->json([
+            'message' => 'Meal plan deleted successfully'
+        ], 200);
+    }
+
 }
