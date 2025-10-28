@@ -132,4 +132,63 @@ class MealPlanController extends Controller
         ], 200);
     }
 
+
+    // Meal Plan Meals Controller Functions
+
+    public function apiAddMeal(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'meal_id' => 'required|exists:meals,id',
+            'day_of_week' => 'required|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            'meal_time' => 'required|in:Breakfast, Lunch, Dinner, Snack',
+        ]);
+
+        // Determine if the user already owns this meal plan
+        $mealPlan = MealPlan::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail
+
+        // Now determine if a meal is already in the slot
+        $existing = MealPlanMeal:::where('meal_plan_id', $id)
+            ->where('day_of_week', $validated['day_of_week'])
+            ->where('meal_time', $validated['meal_time'])
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'message' => 'You already have a meal here.'
+            ], 400);
+        }
+
+        $mealPlanMeal = MealPlanMeal::create([
+            'meal_plan_id' => $id,
+            'meal_id' => $validated['meal_id'],
+            'day_of_week' => $validated['day_of_week'],
+            'meal_time' => $validated['meal_time'],
+        ]);
+
+        $mealPlanMeal->load('meal');
+
+        return response()->json([
+            'message' => 'Meal added successfully!',
+            'meal_plan_meal' => $mealPlanMeal
+        ], 201);
+    }
+
+    public function apiRemoveMeal($mealPlanMealId)
+    {
+        $mealPlanMeal = MealPlanMeal::findOrFail($mealPlanMealId);
+
+        $mealPlan = MealPlan::where('id', $mealPlanMeal->meal_plan_id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $mealPlanMeal->delete();
+
+        return response()->json([
+            'message' => 'Meal Removed'
+        ], 200);
+
+    }
+
 }

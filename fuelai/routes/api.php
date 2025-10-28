@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ForumController;
 use App\Http\Controllers\MealPlanController;
+use App\Http\Controllers\MealController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -24,4 +25,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/meal-plans', [MealPlanController::class, 'apiStore']);
     Route::get('/meal-plans/{id}', [MealPlanController::class, 'apiShow']);
     Route::delete('/meal-plans/{id}', [MealPlanController::class, 'apiDestroy']);
+    // Actual Meal Routes
+    Route::get('/meals', [MealPlanController::class, 'apiIndex']);
+    Route::post('/meals', [MealPlanController::class, 'apiStore']);
+    // Meal Plan Food Routes
+    Route::post('/meal-plans/{id}/add-meal', [MealPlanController::class, 'apiAddMeal']);
+    Route::delete('/meal-plans/{id}', [MealPlanController::class, 'apiRemoveMeal']);
 });
