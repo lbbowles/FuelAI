@@ -36,4 +36,9 @@ Route::middleware('auth:sanctum')->group(function () {
         \Log::info('TEST ENDPOINT');
         return response()->json(['status' => 'success', 'message' => 'App is working']);
     });
+
+    Route::get('/health', function () {
+        return response()->json(['status' => 'ok'], 200);
+    });
+
 });
