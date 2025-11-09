@@ -1,13 +1,11 @@
-cat > fuelai/nixpacks.toml << 'EOF'
 [phases.setup]
-nixPkgs = ["php82", "php82Packages.composer", "nodejs_20"]
+nixPkgs = ['php82', 'php82Extensions.pgsql', 'php82Extensions.pdo', 'nodejs']
 
 [phases.install]
-cmds = [
-    "composer install --no-dev --optimize-autoloader --no-interaction",
-    "npm ci"
-]
+cmds = ['composer install --no-dev --optimize-autoloader']
 
 [phases.build]
-cmds = ["npm run build"]
-EOF
+cmds = ['php artisan config:clear', 'php artisan route:clear', 'php artisan view:clear']
+
+[start]
+cmd = 'php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT'
