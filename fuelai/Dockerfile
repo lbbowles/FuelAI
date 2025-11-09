@@ -21,6 +21,6 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 RUN npm ci && npm run build
 
-EXPOSE 8000
+EXPOSE ${PORT:-8000}
 
 CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
