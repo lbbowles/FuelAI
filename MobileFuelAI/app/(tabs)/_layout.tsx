@@ -34,7 +34,7 @@ const AuthenticatedLayout = () => {
     return (
         <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
             <Tabs
-                initialRouteName="profile"
+                initialRouteName="mealPlans"
                 screenOptions={{
                     headerShown: false,
                     tabBarShowLabel: true,
@@ -64,9 +64,9 @@ const AuthenticatedLayout = () => {
                     }}
                 />
                 <Tabs.Screen
-                    name="profile"
+                    name="mealPlans"
                     options={{
-                        title: "Profile",
+                        title: "Plans",
                         tabBarIcon: ({ focused }) => (
                             <TabIcon source={icons.user} focused={focused} />
                         ),

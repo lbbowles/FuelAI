@@ -63,8 +63,10 @@ export default function Index() {
                     {/* Actions */}
                     <View className="w-full max-w-md mt-8">
 
-                        {/* Go to Calendar */}
-                        <Link href="/(tabs)/calendar" asChild>
+                        {/* Go to todays page*/}
+                        <Link
+                            href={`/food/${new Date().toISOString().split('T')[0]}`} // 👈 formats today as "YYYY-MM-DD"
+                              asChild>
 
                             <TouchableOpacity
                                 className="rounded-2xl px-4 py-4"
@@ -74,7 +76,7 @@ export default function Index() {
                                 }}
                             >
                                 <Text className={`text-lg font-semibold ${isDark ? "text-secondary" : "text-primary"}`}>
-                                    Open Calendar
+                                    Food for today
                                 </Text>
                             </TouchableOpacity>
 
