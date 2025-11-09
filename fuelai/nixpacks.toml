@@ -5,7 +5,7 @@ nixPkgs = ['php82', 'php82Extensions.pgsql', 'php82Extensions.pdo']
 cmds = ['composer install --no-dev --optimize-autoloader']
 
 [phases.build]
-cmds = ['php artisan config:clear']
+cmds = ['php artisan storage:link', 'php artisan config:cache', 'php artisan route:cache', 'php artisan view:cache']
 
 [start]
-cmd = 'php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT'
+cmd = 'php artisan migrate --force && php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=$PORT --max-requests=250'
