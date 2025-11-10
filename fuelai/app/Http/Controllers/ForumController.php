@@ -47,96 +47,88 @@ class ForumController extends Controller
             'forum_id' => 'required|exists:forums,id'
         ]);
 
-        DB::beginTransaction();
-
         try {
-            // Create thread
-            $threadId = DB::table('forum_threads')->insertGetId([
+            // Create post in forum_posts table
+            $postId = DB::table('forum_posts')->insertGetId([
                 'forum_id' => $validated['forum_id'],
                 'user_id' => Auth::id(),
                 'title' => $validated['title'],
-                'created_at' => now()
-            ]);
-
-            // Create first post in thread
-            DB::table('forum_posts')->insert([
-                'thread_id' => $threadId,
-                'user_id' => Auth::id(),
                 'content' => $validated['content'],
-                'created_at' => now()
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
-
-            DB::commit();
 
             return redirect()->route('forums.index')
                 ->with('success', 'Forum post created successfully!');
 
         } catch (\Exception $e) {
-            DB::rollBack();
-
             return back()
                 ->withErrors(['error' => 'Failed to create forum post: ' . $e->getMessage()])
                 ->withInput();
         }
     }
 
-    // Show individual forum thread
+    // Show individual forum post with its threads (replies)
     public function show($id)
     {
-        $thread = DB::table('forum_threads')
-            ->join('forums', 'forum_threads.forum_id', '=', 'forums.id')
-            ->join('users', 'forum_threads.user_id', '=', 'users.id')
-            ->where('forum_threads.id', $id)
+        $post = DB::table('forum_posts')
+            ->join('forums', 'forum_posts.forum_id', '=', 'forums.id')
+            ->join('users', 'forum_posts.user_id', '=', 'users.id')
+            ->where('forum_posts.id', $id)
             ->select([
-                'forum_threads.id',
-                'forum_threads.title',
-                'forum_threads.user_id',
-                'forum_threads.created_at',
+                'forum_posts.id',
+                'forum_posts.title',
+                'forum_posts.content',
+                'forum_posts.user_id',
+                'forum_posts.created_at',
                 'forums.name as category',
                 'users.username as author'
             ])
             ->first();
 
-        if (!$thread) {
+        if (!$post) {
             abort(404);
         }
 
-        $posts = DB::table('forum_posts')
-            ->join('users', 'forum_posts.user_id', '=', 'users.id')
-            ->where('forum_posts.thread_id', $id)
+        // Get all replies (threads) for this post
+        $threads = DB::table('forum_threads')
+            ->join('users', 'forum_threads.user_id', '=', 'users.id')
+            ->where('forum_threads.post_id', $id)
             ->select([
-                'forum_posts.id',
-                'forum_posts.content',
-                'forum_posts.user_id',
-                'forum_posts.created_at',
+                'forum_threads.id',
+                'forum_threads.content',
+                'forum_threads.user_id',
+                'forum_threads.created_at',
                 'users.username as author'
             ])
-            ->orderBy('forum_posts.created_at', 'asc')
+            ->orderBy('forum_threads.created_at', 'asc')
             ->get()
-            ->map(function ($post) {
+            ->map(function ($thread) {
                 return [
-                    'id' => $post->id,
-                    'content' => $post->content,
-                    'author' => $post->author,
-                    'userId' => $post->user_id,
-                    'authorAvatar' => strtoupper(substr($post->author, 0, 1)),
-                    'createdAt' => $this->formatDate($post->created_at)
+                    'id' => $thread->id,
+                    'content' => $thread->content,
+                    'author' => $thread->author,
+                    'userId' => $thread->user_id,
+                    'authorAvatar' => strtoupper(substr($thread->author, 0, 1)),
+                    'createdAt' => $this->formatDate($thread->created_at)
                 ];
             });
 
         return Inertia::render('ForumThread', [
-            'thread' => [
-                'id' => $thread->id,
-                'title' => $thread->title,
-                'category' => $thread->category,
-                'author' => $thread->author,
-                'userId' => $thread->user_id,
-                'createdAt' => $this->formatDate($thread->created_at)
+            'post' => [
+                'id' => $post->id,
+                'title' => $post->title,
+                'content' => $post->content,
+                'category' => $post->category,
+                'author' => $post->author,
+                'userId' => $post->user_id,
+                'createdAt' => $this->formatDate($post->created_at)
             ],
-            'posts' => $posts
+            'threads' => $threads
         ]);
     }
 
+    // Reply to a post (creates a thread)
     public function reply(Request $request, $id)
     {
         $validated = $request->validate([
@@ -144,11 +136,12 @@ class ForumController extends Controller
         ]);
 
         try {
-            DB::table('forum_posts')->insert([
-                'thread_id' => $id,
+            DB::table('forum_threads')->insert([
+                'post_id' => $id,
                 'user_id' => Auth::id(),
                 'content' => $validated['content'],
-                'created_at' => now()
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
 
             return back();
@@ -168,49 +161,44 @@ class ForumController extends Controller
 
     private function getForumPosts()
     {
-        $threads = DB::table('forum_threads')
-            ->join('forums', 'forum_threads.forum_id', '=', 'forums.id')
-            ->join('users', 'forum_threads.user_id', '=', 'users.id')
+        $posts = DB::table('forum_posts')
+            ->join('forums', 'forum_posts.forum_id', '=', 'forums.id')
+            ->join('users', 'forum_posts.user_id', '=', 'users.id')
             ->select(
-                'forum_threads.id as thread_id',
-                'forum_threads.title',
-                'forum_threads.created_at as thread_created_at',
+                'forum_posts.id as post_id',
+                'forum_posts.title',
+                'forum_posts.content',
+                'forum_posts.created_at as post_created_at',
                 'users.username as author',
                 'forums.name as category'
             )
-            ->orderBy('forum_threads.created_at', 'desc')
+            ->orderBy('forum_posts.created_at', 'desc')
             ->limit(20)
             ->get();
 
-        return $threads->map(function ($thread) {
-            // Get the first post content for excerpt
-            $firstPost = DB::table('forum_posts')
-                ->where('thread_id', $thread->thread_id)
-                ->orderBy('created_at', 'asc')
-                ->first();
+        return $posts->map(function ($post) {
+            // Count replies (threads)
+            $replyCount = DB::table('forum_threads')
+                ->where('post_id', $post->post_id)
+                ->count();
 
-            // Count replies (subtract 1 for original post)
-            $replyCount = DB::table('forum_posts')
-                    ->where('thread_id', $thread->thread_id)
-                    ->count() - 1;
-
-
-            $lastPost = DB::table('forum_posts')
-                ->where('thread_id', $thread->thread_id)
+            // Get last reply
+            $lastThread = DB::table('forum_threads')
+                ->where('post_id', $post->post_id)
                 ->orderBy('created_at', 'desc')
                 ->first();
 
             return [
-                'id' => $thread->thread_id,
-                'title' => $thread->title,
-                'excerpt' => $firstPost ? $this->createExcerpt($firstPost->content) : '',
-                'content' => $firstPost ? $firstPost->content : '',
-                'author' => $thread->author,
-                'authorAvatar' => strtoupper(substr($thread->author, 0, 1)),
-                'category' => $thread->category,
-                'replies' => max(0, $replyCount),
+                'id' => $post->post_id,
+                'title' => $post->title,
+                'excerpt' => $this->createExcerpt($post->content),
+                'content' => $post->content,
+                'author' => $post->author,
+                'authorAvatar' => strtoupper(substr($post->author, 0, 1)),
+                'category' => $post->category,
+                'replies' => $replyCount,
                 'views' => 0,
-                'lastActivity' => $this->formatDate($lastPost->created_at ?? $thread->thread_created_at),
+                'lastActivity' => $this->formatDate($lastThread->created_at ?? $post->post_created_at),
                 'tags' => [],
                 'isPinned' => false,
                 'isAnswered' => false
@@ -223,8 +211,8 @@ class ForumController extends Controller
         $forums = DB::table('forums')->get();
 
         return $forums->map(function ($forum) {
-            // Count threads in each forum
-            $count = DB::table('forum_threads')
+            // Count posts in each forum
+            $count = DB::table('forum_posts')
                 ->where('forum_id', $forum->id)
                 ->count();
 
@@ -240,26 +228,29 @@ class ForumController extends Controller
 
     public function aiReply(Request $request, $id)
     {
-        // Get thread and all posts for context
-        $thread = DB::table('forum_threads')
+        // Get post and all threads for context
+        $post = DB::table('forum_posts')
             ->where('id', $id)
             ->first();
 
-        if (!$thread) {
-            return response()->json(['error' => 'Thread not found'], 404);
+        if (!$post) {
+            return response()->json(['error' => 'Post not found'], 404);
         }
 
-        $posts = DB::table('forum_posts')
-            ->join('users', 'forum_posts.user_id', '=', 'users.id')
-            ->where('thread_id', $id)
-            ->orderBy('forum_posts.created_at', 'asc')
-            ->select('forum_posts.content', 'users.username', 'forum_posts.created_at')
+        $threads = DB::table('forum_threads')
+            ->join('users', 'forum_threads.user_id', '=', 'users.id')
+            ->where('post_id', $id)
+            ->orderBy('forum_threads.created_at', 'asc')
+            ->select('forum_threads.content', 'users.username', 'forum_threads.created_at')
             ->get();
 
         // Build conversation context
-        $conversationContext = "Thread Title: {$thread->title}\n\n";
-        foreach ($posts as $post) {
-            $conversationContext .= "{$post->username}: {$post->content}\n\n";
+        $conversationContext = "Original Post Title: {$post->title}\n\n";
+        $conversationContext .= "Original Post Content: {$post->content}\n\n";
+        $conversationContext .= "Replies:\n\n";
+
+        foreach ($threads as $thread) {
+            $conversationContext .= "{$thread->username}: {$thread->content}\n\n";
         }
 
         try {
@@ -268,7 +259,6 @@ class ForumController extends Controller
             if (!$apiKey) {
                 return response()->json(['error' => 'API key not configured'], 500);
             }
-
 
             $prompt = "You are a helpful food and cooking assistant. Based on the following forum discussion, provide a helpful, informative response. Be conversational and friendly.\n\n{$conversationContext}\n\nProvide a helpful response:";
 
@@ -327,18 +317,25 @@ class ForumController extends Controller
                 return response()->json(['error' => 'No response from AI'], 500);
             }
 
-            // Create AI post
-            DB::table('forum_posts')->insert([
-                'thread_id' => $id,
-                'user_id' => 6, // This needs to become dynamic, as the ID isn't the same on all devices
-                'content' => "AI Assistant:\n\n" . $aiResponse,
-                'created_at' => now()
+            // Get or create AI user
+            $aiUser = DB::table('users')->where('username', 'Openrouter')->first();
+
+            if (!$aiUser) { // Should never happen but in case.
+                return response()->json(['error' => 'AI user not configured'], 500);
+            }
+
+            // Create AI reply as a thread
+            DB::table('forum_threads')->insert([
+                'post_id' => $id,
+                'user_id' => $aiUser->id,
+                'content' => $aiResponse,
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
 
             return response()->json(['success' => true]);
 
         } catch (\Exception $e) {
-
             return response()->json(['error' => 'Failed to generate AI response: ' . $e->getMessage()], 500);
         }
     }
@@ -347,40 +344,8 @@ class ForumController extends Controller
 
     public function destroy($id)
     {
-        $thread = DB::table('forum_threads')
-            ->where('id', $id)
-            ->where('user_id', Auth::id())
-            ->first();
-
-        if (!$thread) {
-            return back()->withErrors(['error' => 'Thread not found or you do not have permission to delete it.']);
-        }
-
-        DB::beginTransaction();
-
-        try {
-            // Delete all posts in the thread
-            DB::table('forum_posts')->where('thread_id', $id)->delete();
-
-            // Delete the thread
-            DB::table('forum_threads')->where('id', $id)->delete();
-
-            DB::commit();
-
-            return redirect()->route('forums.index');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withErrors(['error' => 'Failed to delete thread: ' . $e->getMessage()]);
-        }
-    }
-
-    // Delete individual post
-    public function destroyPost($threadId, $postId)
-    {
         $post = DB::table('forum_posts')
-            ->where('id', $postId)
-            ->where('thread_id', $threadId)
+            ->where('id', $id)
             ->where('user_id', Auth::id())
             ->first();
 
@@ -388,37 +353,58 @@ class ForumController extends Controller
             return back()->withErrors(['error' => 'Post not found or you do not have permission to delete it.']);
         }
 
-        // Don't allow deleting the first post (which would orphan the thread)
-        $firstPost = DB::table('forum_posts')
-            ->where('thread_id', $threadId)
-            ->orderBy('created_at', 'asc')
-            ->first();
-
-        if ($firstPost->id == $postId) {
-            return back()->withErrors(['error' => 'Cannot delete the original post. Delete the entire thread instead.']);
-        }
 
         try {
-            DB::table('forum_posts')->where('id', $postId)->delete();
-            return back();
+            // Delete all threads (replies) for this post
+            DB::table('forum_threads')->where('post_id', $id)->delete();
+
+            // Delete the post
+            DB::table('forum_posts')->where('id', $id)->delete();
+
+            DB::commit();
+
+            return redirect()->route('forums.index');
 
         } catch (\Exception $e) {
-            \Log::error('Post deletion failed: ' . $e->getMessage());
+            DB::rollBack();
             return back()->withErrors(['error' => 'Failed to delete post: ' . $e->getMessage()]);
         }
     }
 
-    // Update post
-    public function updatePost(Request $request, $threadId, $postId)
+    // Delete individual thread (reply)
+    public function destroyThread($postId, $threadId)
     {
-        $post = DB::table('forum_posts')
-            ->where('id', $postId)
-            ->where('thread_id', $threadId)
+        $thread = DB::table('forum_threads')
+            ->where('id', $threadId)
+            ->where('post_id', $postId)
             ->where('user_id', Auth::id())
             ->first();
 
-        if (!$post) {
-            return back()->withErrors(['error' => 'Post not found or you do not have permission to edit it.']);
+        if (!$thread) {
+            return back()->withErrors(['error' => 'Reply not found or you do not have permission to delete it.']);
+        }
+
+        try {
+            DB::table('forum_threads')->where('id', $threadId)->delete();
+            return back();
+
+        } catch (\Exception $e) {
+            \Log::error('Thread deletion failed: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Failed to delete reply: ' . $e->getMessage()]);
+        }
+    }
+
+    // Update thread (reply)
+    public function updateThread(Request $request, $postId, $threadId)
+    {
+        $thread = DB::table('forum_threads')
+            ->where('id', $threadId)
+            ->where('post_id', $postId)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$thread) {
+            return back()->withErrors(['error' => 'Reply not found or you do not have permission to edit it.']);
         }
 
         $validated = $request->validate([
@@ -426,16 +412,17 @@ class ForumController extends Controller
         ]);
 
         try {
-            DB::table('forum_posts')
-                ->where('id', $postId)
+            DB::table('forum_threads')
+                ->where('id', $threadId)
                 ->update([
-                    'content' => $validated['content']
+                    'content' => $validated['content'],
+                    'updated_at' => now()
                 ]);
 
             return back();
 
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Failed to update post: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to update reply: ' . $e->getMessage()]);
         }
     }
 
@@ -465,11 +452,4 @@ class ForumController extends Controller
             return $carbon->format('M j, Y');
         }
     }
-
-
-
-
-
-
-
 }

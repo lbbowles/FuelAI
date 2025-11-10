@@ -28,7 +28,7 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'content' => 'required|string|max:1000',
+            'description' => 'required|string|max:1000',
             'difficulty' => 'nullable|in:easy,medium,hard',
             'category' => 'nullable|string|max:50',
             'deadline' => 'nullable|date',
@@ -36,7 +36,7 @@ class TaskController extends Controller
 
         Task::create([
             'user_id' => $request->user()->id,
-            'content' => $validated['content'],
+            'description' => $validated['description'],
             'difficulty' => $validated['difficulty'] ?? 'medium',
             'category' => $validated['category'] ?? 'General',
             'is_completed' => false,
@@ -49,12 +49,12 @@ class TaskController extends Controller
     // Update task
     public function update(Request $request, $id)
     {
-        $task = Task::where('task_id', $id)
+        $task = Task::where('id', $id)
             ->where('user_id', $request->user()->id)
             ->firstOrFail();
 
         $validated = $request->validate([
-            'content' => 'sometimes|string|max:1000',
+            'description' => 'sometimes|string|max:1000',
             'difficulty' => 'sometimes|nullable|in:easy,medium,hard',
             'category' => 'sometimes|nullable|string|max:50',
             'is_completed' => 'sometimes|boolean',
@@ -69,7 +69,7 @@ class TaskController extends Controller
     // Remove task
     public function destroy(Request $request, $id)
     {
-        $task = Task::where('task_id', $id)
+        $task = Task::where('id', $id)
             ->where('user_id', $request->user()->id)
             ->firstOrFail();
 

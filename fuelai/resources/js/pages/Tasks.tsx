@@ -11,9 +11,9 @@ import { useState, FormEvent } from 'react';
 
 
 interface DatabaseTask {
-    task_id: number;
+    id: number;
     user_id: number;
-    content: string;
+    description: string;
     difficulty: 'easy' | 'medium' | 'hard' | 'expert' | null;
     category: string | null;
     is_completed: boolean;
@@ -192,11 +192,11 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
                                 </div>
                             ) : (
                                 filteredTasks.map(task => (
-                                    <div key={task.task_id} className="card bg-base-100 shadow-lg hover:shadow-xl transition-all">
+                                    <div key={task.id} className="card bg-base-100 shadow-lg hover:shadow-xl transition-all">
                                         <div className="card-body">
                                             <div className="flex items-start gap-4">
                                                 {/* Toggle completion form */}
-                                                <form method="POST" action={`/tasks/${task.task_id}`}>
+                                                <form method="POST" action={`/tasks/${task.id}`}>
                                                     <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
                                                     <input type="hidden" name="_method" value="PATCH" />
                                                     <input type="hidden" name="is_completed" value={task.is_completed ? '0' : '1'} />
@@ -214,7 +214,7 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
 
                                                 <div className="flex-1">
                                                     <div className={`text-lg ${task.is_completed ? 'line-through opacity-60' : ''}`}>
-                                                        {task.content}
+                                                        {task.description}
                                                     </div>
                                                     <div className="flex items-center gap-2 mt-2 flex-wrap">
                                                         {task.difficulty && (
@@ -262,7 +262,7 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
                                                     </label>
                                                     <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-50">
                                                         <li>
-                                                            <form method="POST" action={`/tasks/${task.task_id}`}>
+                                                            <form method="POST" action={`/tasks/${task.id}`}>
                                                                 <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
                                                                 <input type="hidden" name="_method" value="PATCH" />
                                                                 <input type="hidden" name="is_completed" value={task.is_completed ? '0' : '1'} />
@@ -272,7 +272,7 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
                                                             </form>
                                                         </li>
                                                         <li>
-                                                            <form method="POST" action={`/tasks/${task.task_id}`} onSubmit={(e) => {
+                                                            <form method="POST" action={`/tasks/${task.id}`} onSubmit={(e) => {
                                                                 if (!confirm('Are you sure you want to delete this task?')) {
                                                                     e.preventDefault();
                                                                 }
@@ -317,7 +317,7 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
                                                 <span className="label-text">Task Description</span>
                                             </label>
                                             <textarea
-                                                name="content"
+                                                name="description"
                                                 placeholder="What needs to be done?"
                                                 value={newTaskText}
                                                 onChange={(e) => setNewTaskText(e.target.value)}

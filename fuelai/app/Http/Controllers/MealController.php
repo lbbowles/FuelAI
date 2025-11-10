@@ -114,5 +114,46 @@ class MealController extends Controller
 
         return redirect('/meal_list')->with('success', 'Meal deleted successfully!');
     }
+
+    // Get all meals for user
+    public function apiIndex()
+    {
+        $meals = Meal::where('created_by', auth()->id())
+            ->orderBy('name', 'asc')
+            ->get();
+
+            return response()->json([
+                'meals' => $meals
+            ], 200);
+    }
+
+    // Create a new meals
+    public function apiStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'calories' => 'nullable|integer|min:0',
+            'protein' => 'nullable|numeric|min:0',
+            'carbs' => 'nullable|numeric|min:0',
+            'fat' => 'nullable|numeric|min:0'
+        ]);
+
+        $meal = Meal::create([
+            'created_by' => auth()->id(),
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'calories' => $validated['calories'] ?? 0,
+            'protein' => $validated['protein'] ?? 0,
+            'carbs' => $validated['carbs'] ?? 0,
+            'fat' => $validated['fat'] ?? 0,
+        ]);
+
+        return response()->json([
+            'message' => 'Meal created',
+            'meal' => $meal
+        ], 201);
+
+    }
 }
 

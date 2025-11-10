@@ -11,13 +11,13 @@ class Task extends Model
 
     protected $table = 'tasks';
 
-    protected $primaryKey = 'task_id';
+    protected $primaryKey = 'id';
 
     public $timestamps = true;
 
     protected $fillable = [
         'user_id',
-        'content',
+        'description',
         'difficulty',
         'category',
         'is_completed',

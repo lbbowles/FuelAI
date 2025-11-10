@@ -2,7 +2,7 @@ import { Head, Link, useForm, router } from '@inertiajs/react';
 import NavbarTop from '@/components/navbar';
 import { FormEvent, useState } from 'react';
 
-interface Post {
+interface Thread {
     id: number;
     content: string;
     author: string;
@@ -11,9 +11,10 @@ interface Post {
     userId: number;
 }
 
-interface Thread {
+interface Post {
     id: number;
     title: string;
+    content: string;
     category: string;
     author: string;
     createdAt: string;
@@ -21,8 +22,8 @@ interface Thread {
 }
 
 interface ForumThreadProps {
-    thread: Thread;
-    posts: Post[];
+    post: Post;
+    threads: Thread[];
     auth: {
         user: {
             id: number;
@@ -35,18 +36,18 @@ interface ReplyFormData {
     content: string;
 }
 
-export default function ForumThread({ thread, posts, auth }: ForumThreadProps) {
-    const { data, setData, post, processing, errors, reset } = useForm<ReplyFormData>({
+export default function ForumThread({ post, threads, auth }: ForumThreadProps) {
+    const { data, setData, post: submitPost, processing, errors, reset } = useForm<ReplyFormData>({
         content: ''
     });
 
-    const [editingPostId, setEditingPostId] = useState<number | null>(null);
+    const [editingThreadId, setEditingThreadId] = useState<number | null>(null);
     const [editContent, setEditContent] = useState<string>('');
     const [isAiLoading, setIsAiLoading] = useState(false);
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post(`/forums/${thread.id}/reply`, {
+        submitPost(`/forums/${post.id}/reply`, {
             onSuccess: () => {
                 reset();
             }
@@ -59,11 +60,11 @@ export default function ForumThread({ thread, posts, auth }: ForumThreadProps) {
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-            const response = await fetch(`/forums/${thread.id}/ai-reply`, {
+            const response = await fetch(`/forums/${post.id}/ai-reply`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
+                    'X-CSRF-TOKEN': csrfToken || '',
                     'Accept': 'application/json'
                 }
             });
@@ -74,7 +75,7 @@ export default function ForumThread({ thread, posts, auth }: ForumThreadProps) {
             console.log('Response data:', result);
 
             if (response.ok) {
-                router.reload({ only: ['posts'] });
+                router.reload({ only: ['threads'] });
             } else {
                 console.error('API error:', result);
                 alert('Failed to generate AI response: ' + (result.error || 'Unknown error'));
@@ -87,34 +88,34 @@ export default function ForumThread({ thread, posts, auth }: ForumThreadProps) {
         }
     };
 
-    const handleDeleteThread = () => {
+    const handleDeletePost = () => {
         if (confirm('Are you sure you want to delete this entire thread? This cannot be undone.')) {
-            router.delete(`/forums/${thread.id}`);
+            router.delete(`/forums/${post.id}`);
         }
     };
 
-    const handleDeletePost = (postId: number) => {
+    const handleDeleteThread = (threadId: number) => {
         if (confirm('Are you sure you want to delete this post? This cannot be undone.')) {
-            router.delete(`/forums/${thread.id}/posts/${postId}`);
+            router.delete(`/forums/${post.id}/threads/${threadId}`);
         }
     };
 
-    const startEditPost = (post: Post) => {
-        setEditingPostId(post.id);
-        setEditContent(post.content);
+    const startEditThread = (thread: Thread) => {
+        setEditingThreadId(thread.id);
+        setEditContent(thread.content);
     };
 
     const cancelEdit = () => {
-        setEditingPostId(null);
+        setEditingThreadId(null);
         setEditContent('');
     };
 
-    const handleUpdatePost = (postId: number) => {
-        router.put(`/forums/${thread.id}/posts/${postId}`, {
+    const handleUpdateThread = (threadId: number) => {
+        router.put(`/forums/${post.id}/threads/${threadId}`, {
             content: editContent
         }, {
             onSuccess: () => {
-                setEditingPostId(null);
+                setEditingThreadId(null);
                 setEditContent('');
             }
         });
@@ -122,7 +123,7 @@ export default function ForumThread({ thread, posts, auth }: ForumThreadProps) {
 
     return (
         <>
-            <Head title={thread.title}>
+            <Head title={post.title}>
                 <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
             </Head>
             <NavbarTop />
@@ -135,16 +136,16 @@ export default function ForumThread({ thread, posts, auth }: ForumThreadProps) {
                         <div className="card-body p-6">
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex-1">
-                                    <div className="badge badge-ghost mb-2">{thread.category}</div>
+                                    <div className="badge badge-ghost mb-2">{post.category}</div>
                                     <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                                        {thread.title}
+                                        {post.title}
                                     </h1>
                                     <div className="flex items-center gap-4 text-sm text-gray-600">
-                                        <span>Author: {thread.author}</span>
+                                        <span>Author: {post.author}</span>
                                         <span>•</span>
-                                        <span>{thread.createdAt}</span>
+                                        <span>{post.createdAt}</span>
                                         <span>•</span>
-                                        <span>{posts.length} replies</span>
+                                        <span>{threads.length} replies</span>
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
@@ -167,9 +168,9 @@ export default function ForumThread({ thread, posts, auth }: ForumThreadProps) {
                                             </>
                                         )}
                                     </button>
-                                    {auth.user.id === thread.userId && (
+                                    {auth.user.id === post.userId && (
                                         <button
-                                            onClick={handleDeleteThread}
+                                            onClick={handleDeletePost}
                                             className="btn btn-error btn-sm"
                                         >
                                             Delete Thread
@@ -177,20 +178,25 @@ export default function ForumThread({ thread, posts, auth }: ForumThreadProps) {
                                     )}
                                 </div>
                             </div>
+                            <div className="prose max-w-none mt-4">
+                                <p className="whitespace-pre-wrap text-gray-700">
+                                    {post.content}
+                                </p>
+                            </div>
                         </div>
                     </div>
 
                     {/* Posts */}
                     <div className="space-y-4 mb-6">
-                        {posts.map((post, index) => (
-                            <div key={post.id} className="card bg-white shadow-lg">
+                        {threads.map((thread, index) => (
+                            <div key={thread.id} className="card bg-white shadow-lg">
                                 <div className="card-body p-6">
                                     <div className="flex gap-4">
                                         {/* Avatar */}
                                         <div className="flex-shrink-0">
                                             <div className="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center">
                                                 <span className="text-sm font-semibold">
-                                                    {post.authorAvatar}
+                                                    {thread.authorAvatar}
                                                 </span>
                                             </div>
                                         </div>
@@ -200,20 +206,15 @@ export default function ForumThread({ thread, posts, auth }: ForumThreadProps) {
                                             <div className="flex items-center justify-between mb-3">
                                                 <div>
                                                     <p className="font-semibold text-gray-900">
-                                                        {post.author}
+                                                        {thread.author}
                                                     </p>
                                                     <p className="text-sm text-gray-500">
-                                                        {post.createdAt}
-                                                        {index === 0 && (
-                                                            <span className="badge badge-primary badge-sm ml-2">
-                                                                Author
-                                                            </span>
-                                                        )}
+                                                        {thread.createdAt}
                                                     </p>
                                                 </div>
                                             </div>
 
-                                            {editingPostId === post.id ? (
+                                            {editingThreadId === thread.id ? (
                                                 <div className="space-y-3">
                                                     <textarea
                                                         value={editContent}
@@ -222,7 +223,7 @@ export default function ForumThread({ thread, posts, auth }: ForumThreadProps) {
                                                     />
                                                     <div className="flex gap-2">
                                                         <button
-                                                            onClick={() => handleUpdatePost(post.id)}
+                                                            onClick={() => handleUpdateThread(thread.id)}
                                                             className="btn btn-primary btn-sm"
                                                         >
                                                             Save
@@ -239,27 +240,25 @@ export default function ForumThread({ thread, posts, auth }: ForumThreadProps) {
                                                 <>
                                                     <div className="prose max-w-none">
                                                         <p className="whitespace-pre-wrap text-gray-700">
-                                                            {post.content}
+                                                            {thread.content}
                                                         </p>
                                                     </div>
 
                                                     {/* Post Actions */}
-                                                    {auth.user.id === post.userId && (
+                                                    {auth.user.id === thread.userId && (
                                                         <div className="flex gap-2 mt-4 pt-4 border-t">
                                                             <button
-                                                                onClick={() => startEditPost(post)}
+                                                                onClick={() => startEditThread(thread)}
                                                                 className="btn btn-ghost btn-sm"
                                                             >
                                                                 Edit
                                                             </button>
-                                                            {index !== 0 && (
-                                                                <button
-                                                                    onClick={() => handleDeletePost(post.id)}
-                                                                    className="btn btn-ghost btn-sm text-error"
-                                                                >
-                                                                    Delete
-                                                                </button>
-                                                            )}
+                                                            <button
+                                                                onClick={() => handleDeleteThread(thread.id)}
+                                                                className="btn btn-ghost btn-sm text-error"
+                                                            >
+                                                                Delete
+                                                            </button>
                                                         </div>
                                                     )}
                                                 </>
