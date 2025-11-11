@@ -89,6 +89,10 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/image_rec', function () {
     return Inertia::render('image_rec');
 })->name('image_rec');
+Route::middleware(['auth'])->group(function () {
+    Route::post('/image_rec', [MealController::class, 'store'])->name('meals.store');
+});
+
 
 
 Route::get('/admin', function () {

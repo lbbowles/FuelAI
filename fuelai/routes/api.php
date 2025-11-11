@@ -31,4 +31,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // Meal Plan Food Routes
     Route::post('/meal-plans/{id}/add-meal', [MealPlanController::class, 'apiAddMeal']);
     Route::delete('/meal-plans-meals/{id}', [MealPlanController::class, 'apiRemoveMeal']);
+
+    Route::get('/test', function () {
+        \Log::info('TEST ENDPOINT');
+        return response()->json(['status' => 'success', 'message' => 'App is working']);
+    });
+
+    Route::get('/health', function () {
+        return response()->json(['status' => 'ok'], 200);
+    });
+
 });

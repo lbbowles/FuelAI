@@ -305,10 +305,10 @@ destroyForm.delete = (args: { id: string | number } | [id: string | number ] | s
 destroy.form = destroyForm
 
 const tasks = {
-    index,
-    store,
-    update,
-    destroy,
+    index: Object.assign(index, index),
+    store: Object.assign(store, store),
+    update: Object.assign(update, update),
+    destroy: Object.assign(destroy, destroy),
 }
 
 export default tasks

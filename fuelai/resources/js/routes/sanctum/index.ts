@@ -81,7 +81,7 @@ csrfCookieForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> 
 csrfCookie.form = csrfCookieForm
 
 const sanctum = {
-    csrfCookie,
+    csrfCookie: Object.assign(csrfCookie, csrfCookie),
 }
 
 export default sanctum

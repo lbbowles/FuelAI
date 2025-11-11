@@ -4,26 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\Meal;
 use App\Models\MealPlan;
+use App\Models\NutritionalInfo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+
+
 
 class MealController extends Controller
 {
     public function index()
-    {
-        $meals = Meal::where('created_by', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+{
+    $meals = Meal::where('created_by', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        $meal_plans = MealPlan::where('user_id', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+    $meal_plans = MealPlan::where('user_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        return Inertia::render('MealList', [
-            'meals' => $meals,
-            'meal_plans' => $meal_plans,
-        ]);
-    }
+    return Inertia::render('MealList', [
+        'meals' => $meals,
+        'meal_plans' => $meal_plans,
+    ]);
+}
+
+
 
     public function create()
     {
@@ -32,16 +38,50 @@ class MealController extends Controller
 
     public function store(Request $request)
     {
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'calories' => 'nullable|numeric',
+            'protein' => 'nullable|numeric',
+            'carbs' => 'nullable|numeric',
+            'fat' => 'nullable|numeric',
+            'fiber' => 'nullable|numeric',
+            'sugar' => 'nullable|numeric',
+            'sodium' => 'nullable|numeric',
+            'other_nutrients' => 'nullable|string',
+            'image' => 'nullable|image|max:4096',
         ]);
 
-        Meal::create([
+        DB::transaction(function () use ($validated,$request) {
+
+            // Handle image upload (store as binary)
+            $imageData = null;
+
+            if ($request->hasFile('image')) {
+                $imageFile = $request->file('image');
+                 $imageData = base64_encode(file_get_contents($imageFile->getRealPath())); // Converts to binary
+                }
+
+            $meal = Meal::create([
             'created_by' => auth()->id(),
             'name' => $validated['name'],
             'description' => $validated['description'],
-        ]);
+            'image_data' => $imageData,
+            ]);
+
+            NutritionalInfo::create([
+            'meal_id' => $meal->id,
+            'calories' => $validated['calories'],
+            'protein' => $validated['protein'],
+            'carbs' => $validated['carbs'],
+            'fat' => $validated['fat'],
+            'fiber' => $validated['fiber'],
+            'sugar' => $validated['sugar'],
+            'sodium' => $validated['sodium'],
+            'other_nutrients' => $validated['other_nutrients'],
+            ]);
+        });
 
         return redirect('/meal_list')->with('success', 'Meal created successfully!');
     }

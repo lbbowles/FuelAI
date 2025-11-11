@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:379
+* @see app/Http/Controllers/ForumController.php:0
 * @route '/forums/{threadId}/posts/{postId}'
 */
 export const destroy = (args: { threadId: string | number, postId: string | number } | [threadId: string | number, postId: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -16,7 +16,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:379
+* @see app/Http/Controllers/ForumController.php:0
 * @route '/forums/{threadId}/posts/{postId}'
 */
 destroy.url = (args: { threadId: string | number, postId: string | number } | [threadId: string | number, postId: string | number ], options?: RouteQueryOptions) => {
@@ -42,7 +42,7 @@ destroy.url = (args: { threadId: string | number, postId: string | number } | [t
 
 /**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:379
+* @see app/Http/Controllers/ForumController.php:0
 * @route '/forums/{threadId}/posts/{postId}'
 */
 destroy.delete = (args: { threadId: string | number, postId: string | number } | [threadId: string | number, postId: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -52,7 +52,7 @@ destroy.delete = (args: { threadId: string | number, postId: string | number } |
 
 /**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:379
+* @see app/Http/Controllers/ForumController.php:0
 * @route '/forums/{threadId}/posts/{postId}'
 */
 const destroyForm = (args: { threadId: string | number, postId: string | number } | [threadId: string | number, postId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -67,7 +67,7 @@ const destroyForm = (args: { threadId: string | number, postId: string | number 
 
 /**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:379
+* @see app/Http/Controllers/ForumController.php:0
 * @route '/forums/{threadId}/posts/{postId}'
 */
 destroyForm.delete = (args: { threadId: string | number, postId: string | number } | [threadId: string | number, postId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -84,7 +84,7 @@ destroy.form = destroyForm
 
 /**
 * @see \App\Http\Controllers\ForumController::update
-* @see app/Http/Controllers/ForumController.php:412
+* @see app/Http/Controllers/ForumController.php:0
 * @route '/forums/{threadId}/posts/{postId}'
 */
 export const update = (args: { threadId: string | number, postId: string | number } | [threadId: string | number, postId: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -99,7 +99,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::update
-* @see app/Http/Controllers/ForumController.php:412
+* @see app/Http/Controllers/ForumController.php:0
 * @route '/forums/{threadId}/posts/{postId}'
 */
 update.url = (args: { threadId: string | number, postId: string | number } | [threadId: string | number, postId: string | number ], options?: RouteQueryOptions) => {
@@ -125,7 +125,7 @@ update.url = (args: { threadId: string | number, postId: string | number } | [th
 
 /**
 * @see \App\Http\Controllers\ForumController::update
-* @see app/Http/Controllers/ForumController.php:412
+* @see app/Http/Controllers/ForumController.php:0
 * @route '/forums/{threadId}/posts/{postId}'
 */
 update.put = (args: { threadId: string | number, postId: string | number } | [threadId: string | number, postId: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -135,7 +135,7 @@ update.put = (args: { threadId: string | number, postId: string | number } | [th
 
 /**
 * @see \App\Http\Controllers\ForumController::update
-* @see app/Http/Controllers/ForumController.php:412
+* @see app/Http/Controllers/ForumController.php:0
 * @route '/forums/{threadId}/posts/{postId}'
 */
 const updateForm = (args: { threadId: string | number, postId: string | number } | [threadId: string | number, postId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -150,7 +150,7 @@ const updateForm = (args: { threadId: string | number, postId: string | number }
 
 /**
 * @see \App\Http\Controllers\ForumController::update
-* @see app/Http/Controllers/ForumController.php:412
+* @see app/Http/Controllers/ForumController.php:0
 * @route '/forums/{threadId}/posts/{postId}'
 */
 updateForm.put = (args: { threadId: string | number, postId: string | number } | [threadId: string | number, postId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -166,8 +166,8 @@ updateForm.put = (args: { threadId: string | number, postId: string | number } |
 update.form = updateForm
 
 const posts = {
-    destroy,
-    update,
+    destroy: Object.assign(destroy, destroy),
+    update: Object.assign(update, update),
 }
 
 export default posts

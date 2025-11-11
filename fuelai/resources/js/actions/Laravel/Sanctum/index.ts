@@ -1,7 +1,7 @@
 import Http from './Http'
 
 const Sanctum = {
-    Http,
+    Http: Object.assign(Http, Http),
 }
 
 export default Sanctum

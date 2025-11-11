@@ -9,6 +9,8 @@ interface Meal {
     created_by: number;
     created_at: string;
     updated_at: string;
+    image_data?: string | null;      // Base64 from Laravel (TEXT column)
+    image_base64?: string | null;    // Derived field if backend converts BYTEA → Base64
 }
 
 interface MealPlan {
@@ -26,7 +28,6 @@ interface MealListProps {
 }
 
 export default function MealList({ meals, meal_plans }: MealListProps) {
-
     // Set Initial States
     const [showCreatePlanModal, setShowCreatePlanModal] = useState(false);
     const [showAddMealModal, setShowAddMealModal] = useState(false);
@@ -38,7 +39,8 @@ export default function MealList({ meals, meal_plans }: MealListProps) {
     const [selectedMealTime, setSelectedMealTime] = useState('breakfast');
 
     const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    const mealTimes = ['breakfast', 'lunch', 'dinner', 'snack']; // Ask group if I should include Brunch ?
+    const mealTimes = ['breakfast', 'lunch', 'dinner', 'snack'];
+
     const handleAddToMealPlan = (meal: Meal) => {
         if (meal_plans.length === 0) {
             setShowCreatePlanModal(true);
@@ -77,8 +79,6 @@ export default function MealList({ meals, meal_plans }: MealListProps) {
             });
         }
     };
-
-
 
     return (
         <>
@@ -121,6 +121,21 @@ export default function MealList({ meals, meal_plans }: MealListProps) {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {meals.map((meal) => (
                                 <div key={meal.id} className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+                                    {(meal.image_base64 || meal.image_data) ? (
+                                        <figure className="h-48 overflow-hidden flex justify-center items-center bg-base-200">
+                                            <img
+                                                src={meal.image_base64 || meal.image_data || ''}
+
+                                                alt={meal.name}
+                                                className="w-40 h-40 object-cover rounded-xl"
+                                            />
+                                        </figure>
+                                    ) : (
+                                        <figure className="h-48 bg-base-200 flex items-center justify-center text-base-content/40">
+                                            <span>No Image</span>
+                                        </figure>
+                                    )}
+
                                     <div className="card-body">
                                         <h2 className="card-title text-xl">{meal.name}</h2>
                                         <p className="text-base-content/60 line-clamp-3">
@@ -130,16 +145,10 @@ export default function MealList({ meals, meal_plans }: MealListProps) {
                                             Added {new Date(meal.created_at).toLocaleDateString()}
                                         </div>
                                         <div className="card-actions justify-end mt-4 gap-2">
-                                            <Link
-                                                href={`/meals/${meal.id}`}
-                                                className="btn btn-outline btn-sm"
-                                            >
+                                            <Link href={`/meals/${meal.id}`} className="btn btn-outline btn-sm">
                                                 View
                                             </Link>
-                                            <button
-                                                onClick={() => handleAddToMealPlan(meal)}
-                                                className="btn btn-primary btn-sm"
-                                            >
+                                            <button onClick={() => handleAddToMealPlan(meal)} className="btn btn-primary btn-sm">
                                                 Add to Plan
                                             </button>
                                         </div>
@@ -151,6 +160,7 @@ export default function MealList({ meals, meal_plans }: MealListProps) {
                 </div>
             </div>
 
+            {/* --- Create Meal Plan Modal --- */}
             {showCreatePlanModal && (
                 <div className="modal modal-open">
                     <div className="modal-box">
@@ -199,6 +209,7 @@ export default function MealList({ meals, meal_plans }: MealListProps) {
                 </div>
             )}
 
+            {/* --- Add Meal to Plan Modal --- */}
             {showAddMealModal && selectedMeal && (
                 <div className="modal modal-open">
                     <div className="modal-box">
@@ -268,10 +279,13 @@ export default function MealList({ meals, meal_plans }: MealListProps) {
                             </button>
                         </div>
                     </div>
-                    <div className="modal-backdrop" onClick={() => {
-                        setShowAddMealModal(false);
-                        setSelectedMeal(null);
-                    }}></div>
+                    <div
+                        className="modal-backdrop"
+                        onClick={() => {
+                            setShowAddMealModal(false);
+                            setSelectedMeal(null);
+                        }}
+                    ></div>
                 </div>
             )}
         </>
