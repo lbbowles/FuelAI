@@ -14,20 +14,22 @@ use Inertia\Inertia;
 class MealController extends Controller
 {
     public function index()
-    {
-        $meals = Meal::where('created_by', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+{
+    $meals = Meal::where('created_by', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        $meal_plans = MealPlan::where('user_id', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+    $meal_plans = MealPlan::where('user_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        return Inertia::render('MealList', [
-            'meals' => $meals,
-            'meal_plans' => $meal_plans,
-        ]);
-    }
+    return Inertia::render('MealList', [
+        'meals' => $meals,
+        'meal_plans' => $meal_plans,
+    ]);
+}
+
+
 
     public function create()
     {
@@ -36,6 +38,7 @@ class MealController extends Controller
 
     public function store(Request $request)
     {
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -47,13 +50,24 @@ class MealController extends Controller
             'sugar' => 'nullable|numeric',
             'sodium' => 'nullable|numeric',
             'other_nutrients' => 'nullable|string',
+            'image' => 'nullable|image|max:4096',
         ]);
 
-        DB::transaction(function () use ($validated) {
+        DB::transaction(function () use ($validated,$request) {
+
+            // Handle image upload (store as binary)
+            $imageData = null;
+
+            if ($request->hasFile('image')) {
+                $imageFile = $request->file('image');
+                 $imageData = base64_encode(file_get_contents($imageFile->getRealPath())); // Converts to binary
+                }
+
             $meal = Meal::create([
             'created_by' => auth()->id(),
             'name' => $validated['name'],
             'description' => $validated['description'],
+            'image_data' => $imageData,
             ]);
 
             NutritionalInfo::create([

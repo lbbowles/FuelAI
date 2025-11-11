@@ -1,7 +1,10 @@
-import { Head } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import NavbarTop from '@/components/navbar';
 import { useState, ChangeEvent, DragEvent } from 'react';
-//TO DO: save the response from llm to DB using route/api
+import DeepThinkButton from '@/components/deep-think-button';
+import { useFileToDataURL } from '@/hooks/use-file-to-data-url';
+
+//TO DO: save the response from llm to DB 
 
 interface Prediction {
     label: string;
@@ -34,6 +37,21 @@ export default function ImageRecognition() {
     const [mealForm, setMealForm] = useState<MealData | null>(null);
     const [llmLoading, setLlmLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [saving, setSaving] = useState(false);
+    const [deepThinkState, setDeepThinkState] = useState(false);
+    const { dataURL, convert, loading: convertLoading, error: convertError } = useFileToDataURL(); // fixes jpg issues
+
+    // can still keep useForm for other pages/consistency
+    const { errors, reset } = useForm({
+        name: '',
+        description: '',
+        calories: '',
+        protein: '',
+        carbs: '',
+        fat: '',
+        fiber: '',
+        sugar: '',
+    });
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] ?? null;
@@ -82,6 +100,95 @@ export default function ImageRecognition() {
             setLoading(false);
         }
     };
+
+    const handleDeeopThink = async (img: File | null) => {
+  if (!img) {
+    setError("No image selected for Deep Think.");
+    return;
+  }
+
+  setLlmLoading(true);
+  setError(null);
+
+  try {
+    const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+    if (!apiKey) throw new Error("Missing OpenRouter API key");
+
+    // Convert image to base64
+const base64Image = await convert(img);
+
+    const prompt = `
+You are an expert nutritionist and chef.
+Analyze the attached food image and generate structured JSON describing the meal and its nutritional breakdown.
+Respond ONLY in this JSON structure:
+{
+  "meal": {
+    "title": "String",
+    "description": "String",
+    "instructions": "String"
+  },
+  "nutrition": {
+    "calories": number,
+    "protein": number,
+    "carb": number,
+    "fat": number,
+    "fiber": number,
+    "sugar": number
+  }
+}`;
+console.log("Sending to OpenRouter:", {
+  model: "openai/gpt-4o",
+  hasImagePrefix: base64Image.startsWith("data:image/"),
+  length: base64Image.length,
+});
+
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "openai/gpt-4o", //  Use a vision-capable model
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt },
+              { type: "image_url", image_url: base64Image },
+            ],
+          },
+        ],
+      }),
+    });
+
+    const data = await response.json();
+    const rawContent = data.choices?.[0]?.message?.content;
+    if (!rawContent) throw new Error("No content returned from LLM");
+
+    const cleanJson = rawContent.replace(/```json|```/g, "").trim();
+    const parsed = JSON.parse(cleanJson);
+
+    setMealForm({
+      title: parsed.meal.title,
+      description: parsed.meal.description,
+      instructions: parsed.meal.instructions,
+      calories: parsed.nutrition.calories,
+      protein: parsed.nutrition.protein,
+      carb: parsed.nutrition.carb,
+      fat: parsed.nutrition.fat,
+      fiber: parsed.nutrition.fiber,
+      sugar: parsed.nutrition.sugar,
+    });
+  } catch (err: any) {
+    console.error(err);
+    setError(err.message || "Error processing image");
+  } finally {
+    setLlmLoading(false);
+  }
+};
+
+   
 
     const fetchMealDataFromLLM = async (label: string) => {
         setLlmLoading(true);
@@ -154,6 +261,7 @@ Respond ONLY in JSON with this structure:
             setLlmLoading(false);
         }
     };
+    
 
     const handleClear = () => {
         setSelectedFile(null);
@@ -161,6 +269,7 @@ Respond ONLY in JSON with this structure:
         setApiResponse(null);
         setSelectedLabel(null);
         setMealForm(null);
+        reset();
     };
 
     const handleMealChange = (field: keyof MealData, value: any) => {
@@ -168,6 +277,46 @@ Respond ONLY in JSON with this structure:
             setMealForm({ ...mealForm, [field]: value });
         }
     };
+
+    
+    const handleSaveMeal = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!mealForm) return;
+
+        setSaving(true);
+
+        // Map to your controller's expected fields
+        const payload = {
+            name: mealForm.title,
+            description: mealForm.description,
+            // NutritionalInfo fields (controller expects numeric)
+            calories: mealForm.calories,
+            protein: mealForm.protein,
+            carbs: mealForm.carb,
+            fat: mealForm.fat,
+            fiber: mealForm.fiber ?? 0,
+            sugar: mealForm.sugar ?? 0,
+            sodium: 0, // placeholder since LLM doesn’t generate this yet
+            other_nutrients: '',
+        };
+
+        router.post('/image_rec', payload, {
+            onSuccess: () => {
+                setSaving(false);
+                reset();
+                // optional: clear UI
+                // handleClear();
+                alert('Meal saved successfully!');
+            },
+            onError: (errs) => {
+                console.error('Save failed:', errs);
+                setSaving(false);
+            },
+            preserveScroll: true,
+        });
+    };
+    
+
 
     return (
         <>
@@ -231,9 +380,12 @@ Respond ONLY in JSON with this structure:
                                     }}
                                 >
                                     {pred.label} — {(pred.confidence * 100).toFixed(2)}%
+                                    
+
                                 </li>
                             ))}
                         </ul>
+                        <DeepThinkButton onClick={() => handleDeeopThink(selectedFile)} disabled={!selectedFile} loading={llmLoading} />
                     </div>
                 )}
 
@@ -271,22 +423,24 @@ Respond ONLY in JSON with this structure:
                                 <label key={field} className="form-control">
                                     <span className="label-text font-semibold">{label}</span>
                                     <input
-                                        type={
-                                            ["title", "description", "instructions"].includes(field)
-                                                ? "text"
-                                                : "number"
-                                        }
+                                        type={["title"].includes(field) ? "text" : "number"}
                                         className="input input-bordered"
                                         value={(mealForm[field] as string | number) ?? ""}
                                         onChange={(e) =>
-                                            handleMealChange(field, e.target.value)
+                                            handleMealChange(
+                                                field,
+                                                ["title"].includes(field)
+                                                    ? e.target.value
+                                                    : e.target.value === ""
+                                                        ? ""
+                                                        : Number(e.target.value)
+                                            )
                                         }
                                     />
                                 </label>
                             ))}
                         </div>
 
-                        
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                             {[
                                 ["description", "Description"],
@@ -304,7 +458,6 @@ Respond ONLY in JSON with this structure:
                                         placeholder={`Enter ${label.toLowerCase()}...`}
                                         onChange={(e) => {
                                             handleMealChange(field as keyof MealData, e.target.value);
-                                            // Auto-resize behavior
                                             const textarea = e.target;
                                             textarea.style.height = "auto";
                                             textarea.style.height = `${textarea.scrollHeight}px`;
@@ -315,8 +468,15 @@ Respond ONLY in JSON with this structure:
                         </div>
 
                         <div className="mt-6 flex justify-center gap-4">
-                            <button className="btn btn-primary">Save Meal</button>
-                            <button onClick={handleClear} className="btn btn-secondary">
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleSaveMeal}
+                                disabled={saving}
+                                type="button"
+                            >
+                                {saving ? 'Saving…' : 'Save Meal'}
+                            </button>
+                            <button onClick={handleClear} className="btn btn-secondary" type="button">
                                 Clear
                             </button>
                         </div>
@@ -326,6 +486,7 @@ Respond ONLY in JSON with this structure:
         </>
     );
 }
+
 
 
 
