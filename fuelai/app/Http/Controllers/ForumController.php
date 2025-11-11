@@ -27,30 +27,29 @@ class ForumController extends Controller
     // Create
     public function create()
     {
-        $forums = DB::table('forums')
+        $categories = DB::table('categories')
             ->select('id', 'name', 'description')
             ->orderBy('name')
             ->get();
 
         return Inertia::render('ForumCreate', [
-            'forums' => $forums
+            'forums' => $categories
         ]);
     }
+
 
     // Store new forum post
     public function store(Request $request)
     {
-        // Validate input
         $validated = $request->validate([
             'title' => 'required|string|max:255|min:5',
             'content' => 'required|string|min:10',
-            'forum_id' => 'required|exists:forums,id'
+            'forum_id' => 'required|exists:categories,id'
         ]);
 
         try {
-            // Create post in forum_posts table
             $postId = DB::table('forum_posts')->insertGetId([
-                'forum_id' => $validated['forum_id'],
+                'category_id' => $validated['forum_id'],
                 'user_id' => Auth::id(),
                 'title' => $validated['title'],
                 'content' => $validated['content'],
@@ -72,7 +71,7 @@ class ForumController extends Controller
     public function show($id)
     {
         $post = DB::table('forum_posts')
-            ->join('forums', 'forum_posts.forum_id', '=', 'forums.id')
+            ->join('categories', 'forum_posts.category_id', '=', 'categories.id')
             ->join('users', 'forum_posts.user_id', '=', 'users.id')
             ->where('forum_posts.id', $id)
             ->select([
@@ -81,7 +80,7 @@ class ForumController extends Controller
                 'forum_posts.content',
                 'forum_posts.user_id',
                 'forum_posts.created_at',
-                'forums.name as category',
+                'categories.name as category',
                 'users.username as author'
             ])
             ->first();
@@ -162,7 +161,7 @@ class ForumController extends Controller
     private function getForumPosts()
     {
         $posts = DB::table('forum_posts')
-            ->join('forums', 'forum_posts.forum_id', '=', 'forums.id')
+            ->join('categories', 'forum_posts.category_id', '=', 'categories.id')
             ->join('users', 'forum_posts.user_id', '=', 'users.id')
             ->select(
                 'forum_posts.id as post_id',
@@ -170,19 +169,17 @@ class ForumController extends Controller
                 'forum_posts.content',
                 'forum_posts.created_at as post_created_at',
                 'users.username as author',
-                'forums.name as category'
+                'categories.name as category'
             )
             ->orderBy('forum_posts.created_at', 'desc')
             ->limit(20)
             ->get();
 
         return $posts->map(function ($post) {
-            // Count replies (threads)
             $replyCount = DB::table('forum_threads')
                 ->where('post_id', $post->post_id)
                 ->count();
 
-            // Get last reply
             $lastThread = DB::table('forum_threads')
                 ->where('post_id', $post->post_id)
                 ->orderBy('created_at', 'desc')
@@ -208,17 +205,16 @@ class ForumController extends Controller
 
     private function getCategories()
     {
-        $forums = DB::table('forums')->get();
+        $categories = DB::table('categories')->get();
 
-        return $forums->map(function ($forum) {
-            // Count posts in each forum
+        return $categories->map(function ($category) {
             $count = DB::table('forum_posts')
-                ->where('forum_id', $forum->id)
+                ->where('category_id', $category->id)
                 ->count();
 
             return [
-                'id' => strtolower(str_replace(' ', '-', $forum->name)),
-                'name' => $forum->name,
+                'id' => strtolower(str_replace(' ', '-', $category->name)),
+                'name' => $category->name,
                 'count' => $count
             ];
         });
