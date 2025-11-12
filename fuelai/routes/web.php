@@ -84,6 +84,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::patch('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+    Route::post('/tasks/workout', [TaskController::class, 'storeWorkout'])->name('tasks.store-workout');
 });
 
 Route::get('/image_rec', function () {

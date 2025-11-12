@@ -77,4 +77,63 @@ class TaskController extends Controller
 
         return redirect()->route('tasks.index');
     }
+
+
+    // Bulk store exercises as tasks
+    // Bulk store exercises as tasks
+    public function storeWorkout(Request $request)
+    {
+        $validated = $request->validate([
+            'workout_title' => 'required|string|max:255',
+            'exercises' => 'required|array',
+            'exercises.*.name' => 'required|string',
+            'exercises.*.sets' => 'required|integer',
+            'exercises.*.reps' => 'required|string',
+            'exercises.*.difficulty' => 'required|string',
+            'exercises.*.description' => 'nullable|string',
+            'exercises.*.muscleGroups' => 'nullable|array',
+            'deadline' => 'nullable|date',
+        ]);
+
+        foreach ($validated['exercises'] as $exercise) {
+            // Transform exercise data to fit existing task structure
+            $muscleGroups = isset($exercise['muscleGroups']) && is_array($exercise['muscleGroups'])
+                ? implode(', ', $exercise['muscleGroups'])
+                : '';
+
+            // Build the full description with exercise details
+            $description = $exercise['sets'] . " sets × " . $exercise['reps'] . " reps";
+
+            if (!empty($muscleGroups)) {
+                $description .= " (Targets: " . $muscleGroups . ")";
+            }
+
+            if (!empty($exercise['description'])) {
+                $description .= "\n\nForm: " . $exercise['description'];
+            }
+
+            Task::create([
+                'user_id' => $request->user()->id,
+                'title' => $exercise['name'], // Use exercise name as the task title
+                'description' => $description, // Put sets, reps, and form in description
+                'difficulty' => $this->mapExerciseDifficultyToTask($exercise['difficulty']),
+                'category' => 'Exercise',
+                'is_completed' => false,
+                'deadline' => $validated['deadline'] ?? null,
+            ]);
+        }
+
+        return back()->with('success', 'Workout exercises added to tasks!');
+    }
+
+    private function mapExerciseDifficultyToTask($exerciseDifficulty)
+    {
+        $mapping = [
+            'beginner' => 'easy',
+            'intermediate' => 'medium',
+            'advanced' => 'hard',
+        ];
+
+        return $mapping[strtolower($exerciseDifficulty)] ?? 'medium';
+    }
 }

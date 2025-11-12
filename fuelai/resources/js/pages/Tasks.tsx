@@ -3,16 +3,11 @@ import NavbarTop from '@/components/navbar';
 import { useState, FormEvent } from 'react';
 
 
-// TO DO:
-// Add in a description of tasks, that you can click on
-// Add in deadline for tasks
-// Move add tasks to be a popup window
-// Connection with calendar
-
 
 interface DatabaseTask {
     id: number;
     user_id: number;
+    title: string | null;
     description: string;
     difficulty: 'easy' | 'medium' | 'hard' | 'expert' | null;
     category: string | null;
@@ -39,7 +34,8 @@ const categories = ['General', 'Work', 'Personal', 'Shopping', 'Health', 'Financ
 export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
 
     // Set initial states
-    const [tasks, setTasks] = useState<DatabaseTask[]>(initialTasks);
+    const [tasks] = useState<DatabaseTask[]>(initialTasks);
+    const [newTaskTitle, setNewTaskTitle] = useState('');
     const [newTaskText, setNewTaskText] = useState('');
     const [newTaskDifficulty, setNewTaskDifficulty] = useState<'easy' | 'medium' | 'hard' | 'expert'>('medium');
     const [newTaskCategory, setNewTaskCategory] = useState('General');
@@ -94,7 +90,7 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
 
     const handleAddTaskSubmit = (e: FormEvent) => {
         e.preventDefault();
-        if (newTaskText.trim()) {
+        if (newTaskTitle.trim() || newTaskText.trim()) {
             (e.target as HTMLFormElement).submit();
         }
     };
@@ -213,6 +209,11 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
                                                 </form>
 
                                                 <div className="flex-1">
+                                                    {task.title && (
+                                                        <div className={`text-xl font-bold mb-1 ${task.is_completed ? 'line-through opacity-60' : ''}`}>
+                                                            {task.title}
+                                                        </div>
+                                                    )}
                                                     <div className={`text-lg ${task.is_completed ? 'line-through opacity-60' : ''}`}>
                                                         {task.description}
                                                     </div>
@@ -314,6 +315,21 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
 
                                         <div className="form-control w-full">
                                             <label className="label">
+                                                <span className="label-text">Task Title</span>
+                                                <span className="label-text-alt text-xs">Optional</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="title"
+                                                placeholder="Task title (e.g., Morning Workout)"
+                                                value={newTaskTitle}
+                                                onChange={(e) => setNewTaskTitle(e.target.value)}
+                                                className="input input-bordered"
+                                            />
+                                        </div>
+
+                                        <div className="form-control w-full">
+                                            <label className="label">
                                                 <span className="label-text">Task Description</span>
                                             </label>
                                             <textarea
@@ -393,7 +409,7 @@ export default function Tasks({ tasks: initialTasks, auth }: TasksProps) {
                                         <div className="card-actions justify-end mt-4">
                                             <button
                                                 type="submit"
-                                                disabled={!newTaskText.trim()}
+                                                disabled={!newTaskTitle.trim() && !newTaskText.trim()}
                                                 className="btn btn-primary btn-block"
                                             >
                                                 Add Task
