@@ -5,134 +5,172 @@ import { LoaderCircle } from 'lucide-react';
 
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AuthLayout from '@/layouts/auth-layout';
-
 import NavbarTop from '@/components/navbar';
 
 export default function Register() {
     return (
         <>
+            <Head title="Register">
+                <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
+            </Head>
             <NavbarTop />
-            <AuthLayout title="Create an account" description="Enter your details below to create your account">
-                <Head title="Register" />
 
-
-                <Form
-                    {...RegisteredUserController.store.form()}
-                    resetOnSuccess={['password', 'password_confirmation']}
-                    disableWhileProcessing
-                    className="flex flex-col gap-6"
-                >
-                    {({ processing, errors }) => (
-                        <>
-                            <div className="grid gap-6">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="username">Name</Label>
-                                    <Input
-                                        id="username"
-                                        type="text"
-                                        required
-                                        autoFocus
-                                        tabIndex={1}
-                                        autoComplete="username"
-                                        name="username"
-                                        placeholder="Full name"
-                                    />
-                                    <InputError message={errors.name} className="mt-2" />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="email">Email address</Label>
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        required
-                                        tabIndex={2}
-                                        autoComplete="email"
-                                        name="email"
-                                        placeholder="email@example.com"
-                                    />
-                                    <InputError message={errors.email} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="password">Password</Label>
-                                    <Input
-                                        id="password"
-                                        type="password"
-                                        required
-                                        tabIndex={3}
-                                        autoComplete="new-password"
-                                        name="password"
-                                        placeholder="Password"
-                                    />
-                                    <InputError message={errors.password} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="password_confirmation">Confirm password</Label>
-                                    <Input
-                                        id="password_confirmation"
-                                        type="password"
-                                        required
-                                        tabIndex={4}
-                                        autoComplete="new-password"
-                                        name="password_confirmation"
-                                        placeholder="Confirm password"
-                                    />
-                                    <InputError message={errors.password_confirmation} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="role">Role</Label>
-                                    <Input
-                                        id="role"
-                                        type="role"
-                                        required
-                                        tabIndex={3}
-                                        autoComplete="role"
-                                        name="role"
-                                        placeholder="user"
-                                    />
-                                    <InputError message={errors.email} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="profile_image_url">Image</Label>
-                                    <Input
-                                        id="profile_image_url"
-                                        type="profile_image_url"
-                                        required
-                                        tabIndex={3}
-                                        autoComplete="profile_image_url"
-                                        name="profile_image_url"
-                                        placeholder="profile_image_url"
-                                    />
-                                    <InputError message={errors.email} />
-                                </div>
-
-
-
-
-                                <Button type="submit" className="mt-2 w-full" tabIndex={5}>
-                                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                    Create account
-                                </Button>
+            <div className="mt-16 pt-16 min-h-screen bg-gray-50">
+                <div className="container mx-auto px-4 py-8 max-w-7xl">
+                    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+                        <div className="w-full max-w-md">
+                            {/* Header */}
+                            <div className="text-center mb-8">
+                                <h1 className="text-3xl font-bold text-gray-900 mb-2">Create an Account</h1>
+                                <p className="text-gray-600">
+                                    Join us and start planning your meals today
+                                </p>
                             </div>
 
-                            <div className="text-center text-sm text-muted-foreground">
-                                Already have an account?{' '}
-                                <TextLink href={login()} tabIndex={6}>
-                                    Log in
-                                </TextLink>
+                            {/* Register Card */}
+                            <div className="card bg-white shadow-lg">
+                                <div className="card-body p-8">
+                                    <Form
+                                        {...RegisteredUserController.store.form()}
+                                        resetOnSuccess={['password', 'password_confirmation']}
+                                        disableWhileProcessing
+                                        className="space-y-6"
+                                    >
+                                        {({ processing, errors }) => (
+                                            <>
+                                                {/* Name Input */}
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="username" className="text-gray-700 font-semibold">
+                                                        Name
+                                                    </Label>
+                                                    <Input
+                                                        id="username"
+                                                        type="text"
+                                                        required
+                                                        autoFocus
+                                                        tabIndex={1}
+                                                        autoComplete="username"
+                                                        name="username"
+                                                        placeholder="Enter your full name"
+                                                        className="w-full"
+                                                    />
+                                                    <InputError message={errors.name} />
+                                                </div>
+
+                                                {/* Email Input */}
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="email" className="text-gray-700 font-semibold">
+                                                        Email address
+                                                    </Label>
+                                                    <Input
+                                                        id="email"
+                                                        type="email"
+                                                        required
+                                                        tabIndex={2}
+                                                        autoComplete="email"
+                                                        name="email"
+                                                        placeholder="email@example.com"
+                                                        className="w-full"
+                                                    />
+                                                    <InputError message={errors.email} />
+                                                </div>
+
+                                                {/* Password Input */}
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="password" className="text-gray-700 font-semibold">
+                                                        Password
+                                                    </Label>
+                                                    <Input
+                                                        id="password"
+                                                        type="password"
+                                                        required
+                                                        tabIndex={3}
+                                                        autoComplete="new-password"
+                                                        name="password"
+                                                        placeholder="Create a strong password"
+                                                        className="w-full"
+                                                    />
+                                                    <InputError message={errors.password} />
+                                                </div>
+
+                                                {/* Confirm Password Input */}
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="password_confirmation" className="text-gray-700 font-semibold">
+                                                        Confirm password
+                                                    </Label>
+                                                    <Input
+                                                        id="password_confirmation"
+                                                        type="password"
+                                                        required
+                                                        tabIndex={4}
+                                                        autoComplete="new-password"
+                                                        name="password_confirmation"
+                                                        placeholder="Re-enter your password"
+                                                        className="w-full"
+                                                    />
+                                                    <InputError message={errors.password_confirmation} />
+                                                </div>
+
+                                                {/* Hidden Role Input - Locked to "user" */}
+                                                <input
+                                                    type="hidden"
+                                                    name="role"
+                                                    value="user"
+                                                />
+
+                                                {/* Profile Image URL Input */}
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="profile_image_url" className="text-gray-700 font-semibold">
+                                                        Profile Image URL
+                                                    </Label>
+                                                    <Input
+                                                        id="profile_image_url"
+                                                        type="text"
+                                                        required
+                                                        tabIndex={6}
+                                                        autoComplete="off"
+                                                        name="profile_image_url"
+                                                        placeholder="https://example.com/image.jpg"
+                                                        className="w-full"
+                                                    />
+                                                    <InputError message={errors.profile_image_url} />
+                                                </div>
+
+                                                {/* Submit Button */}
+                                                <button
+                                                    type="submit"
+                                                    className="btn btn-primary w-full inline-flex items-center justify-center gap-2"
+                                                    tabIndex={7}
+                                                    disabled={processing}
+                                                >
+                                                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                                                    Create account
+                                                </button>
+
+                                                {/* Login Link */}
+                                                <div className="text-center pt-4 border-t border-gray-200">
+                                                    <p className="text-sm text-gray-600">
+                                                        Already have an account?{' '}
+                                                        <TextLink
+                                                            href={login()}
+                                                            tabIndex={8}
+                                                            className="text-blue-600 hover:text-blue-700 font-semibold"
+                                                        >
+                                                            Log in
+                                                        </TextLink>
+                                                    </p>
+                                                </div>
+                                            </>
+                                        )}
+                                    </Form>
+                                </div>
                             </div>
-                        </>
-                    )}
-                </Form>
-            </AuthLayout>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </>
     );
 }
