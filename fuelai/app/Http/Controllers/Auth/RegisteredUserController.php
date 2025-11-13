@@ -28,25 +28,41 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'username' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $validated = $request->validate([
+                'username' => 'required|string|max:255',
+                'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'role' => 'required|string|max:255',
+                'image' => 'nullable|image|max:4096', // NEW: file upload support
+            ]);
 
-        $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password_hash' => $request->password,
-        ]);
+            // Handle profile image
+            $imageData = null;
+            $mimeType = null;
 
-        event(new Registered($user));
+            if ($request->hasFile('image')) {
+                $img = $request->file('image');
+                $imageData = base64_encode(file_get_contents($img->getRealPath()));
+                $mimeType = $img->getMimeType(); // e.g. image/png
+            }
 
-        Auth::login($user);
+            // Create the user
+            $user = User::create([
+                'username' => $validated['username'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role' => $validated['role'],
+                'image_data' => $imageData,
+                'mime_type' => $mimeType,
+            ]);
 
-        return redirect(route('dashboard', absolute: false));
+            event(new Registered($user));
+
+            Auth::login($user);
+
+            return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

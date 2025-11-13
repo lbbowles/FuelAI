@@ -15,20 +15,34 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'username',
         'email',
-        'password_hash',
+        'password',
         'role',
-        'profile_image_url',
+        'image_data',
+        'mime_type',
     ];
 
     protected $hidden = [
         'password_hash',
         'remember_token',
+         'image_data',
     ];
+     protected $appends = ['image_base64'];
+
+     public function getImageBase64Attribute()
+    {
+        if (!$this->image_data) {
+            return null;
+        }
+
+        $mime = $this->mime_type ?? 'image/jpeg';
+
+        return "data:{$mime};base64,{$this->image_data}";
+    }
 
     protected function casts(): array
     {
         return [
-            'password_hash' => 'hashed',
+            'password' => 'hashed',
             'email_verified_at' => 'datetime',
         ];
     }

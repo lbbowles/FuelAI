@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
-import posts from './posts'
-import replies from './replies'
+import postsD8dc7a from './posts'
+import repliesCf2950 from './replies'
 /**
 * @see \App\Http\Controllers\AdminController::posts
 * @see app/Http/Controllers/AdminController.php:106
@@ -164,8 +164,8 @@ repliesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 replies.form = repliesForm
 
 const forum = {
-    posts,
-    replies,
+    posts: Object.assign(posts, postsD8dc7a),
+    replies: Object.assign(replies, repliesCf2950),
 }
 
 export default forum

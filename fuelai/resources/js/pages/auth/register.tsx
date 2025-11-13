@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import RegisteredUserController from '@/actions/App/Http/Controllers/Auth/RegisteredUserController';
 import { login } from '@/routes';
 import { Form, Head } from '@inertiajs/react';
@@ -10,6 +11,32 @@ import { Label } from '@/components/ui/label';
 import NavbarTop from '@/components/navbar';
 
 export default function Register() {
+
+    // Image preview state
+   const [preview, setPreview] = useState<string | null>(null);
+
+
+    // Handle preview
+    function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target?.files?.[0];
+    if (!file) {
+        setPreview(null);
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (ev: ProgressEvent<FileReader>) => {
+        const result = ev.target?.result;
+
+        if (typeof result === "string") {
+            setPreview(result);
+        }
+    };
+
+    reader.readAsDataURL(file);
+}
+
+
     return (
         <>
             <Head title="Register">
@@ -21,6 +48,7 @@ export default function Register() {
                 <div className="container mx-auto px-4 py-8 max-w-7xl">
                     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
                         <div className="w-full max-w-md">
+
                             {/* Header */}
                             <div className="text-center mb-8">
                                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Create an Account</h1>
@@ -32,14 +60,18 @@ export default function Register() {
                             {/* Register Card */}
                             <div className="card bg-white shadow-lg">
                                 <div className="card-body p-8">
+
                                     <Form
                                         {...RegisteredUserController.store.form()}
+                                        method="post"
+                                        enctype="multipart/form-data"
                                         resetOnSuccess={['password', 'password_confirmation']}
                                         disableWhileProcessing
                                         className="space-y-6"
                                     >
                                         {({ processing, errors }) => (
                                             <>
+
                                                 {/* Name Input */}
                                                 <div className="space-y-2">
                                                     <Label htmlFor="username" className="text-gray-700 font-semibold">
@@ -56,7 +88,7 @@ export default function Register() {
                                                         placeholder="Enter your full name"
                                                         className="w-full"
                                                     />
-                                                    <InputError message={errors.name} />
+                                                    <InputError message={errors.username} />
                                                 </div>
 
                                                 {/* Email Input */}
@@ -120,22 +152,33 @@ export default function Register() {
                                                     value="user"
                                                 />
 
-                                                {/* Profile Image URL Input */}
+                                                {/* Profile Image Upload */}
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="profile_image_url" className="text-gray-700 font-semibold">
-                                                        Profile Image URL
+                                                    <Label htmlFor="image" className="text-gray-700 font-semibold">
+                                                        Profile Image
                                                     </Label>
+
                                                     <Input
-                                                        id="profile_image_url"
-                                                        type="text"
-                                                        required
+                                                        id="image"
+                                                        type="file"
+                                                        name="image"
+                                                        accept="image/*"
                                                         tabIndex={6}
-                                                        autoComplete="off"
-                                                        name="profile_image_url"
-                                                        placeholder="https://example.com/image.jpg"
+                                                        onChange={handleImageChange}
                                                         className="w-full"
                                                     />
-                                                    <InputError message={errors.profile_image_url} />
+                                                    <InputError message={errors.image} />
+
+                                                    {/* Image Preview */}
+                                                    {preview && (
+                                                        <div className="mt-3">
+                                                            <img
+                                                                src={preview}
+                                                                alt="Preview"
+                                                                className="w-32 h-32 rounded-full object-cover border shadow"
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 {/* Submit Button */}
@@ -162,11 +205,14 @@ export default function Register() {
                                                         </TextLink>
                                                     </p>
                                                 </div>
+
                                             </>
                                         )}
                                     </Form>
+
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>

@@ -164,10 +164,10 @@ statsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 stats.form = statsForm
 
 const admin = {
-    index,
-    stats,
-    users,
-    forum,
+    index: Object.assign(index, index),
+    stats: Object.assign(stats, stats),
+    users: Object.assign(users, users),
+    forum: Object.assign(forum, forum),
 }
 
 export default admin

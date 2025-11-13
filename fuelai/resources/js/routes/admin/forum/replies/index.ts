@@ -90,7 +90,7 @@ destroyForm.delete = (args: { thread: number | { id: number } } | [thread: numbe
 destroy.form = destroyForm
 
 const replies = {
-    destroy,
+    destroy: Object.assign(destroy, destroy),
 }
 
 export default replies

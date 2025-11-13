@@ -306,7 +306,7 @@ destroy.form = destroyForm
 
 /**
 * @see \App\Http\Controllers\TaskController::storeWorkout
-* @see app/Http/Controllers/TaskController.php:0
+* @see app/Http/Controllers/TaskController.php:84
 * @route '/tasks/workout'
 */
 export const storeWorkout = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -321,7 +321,7 @@ storeWorkout.definition = {
 
 /**
 * @see \App\Http\Controllers\TaskController::storeWorkout
-* @see app/Http/Controllers/TaskController.php:0
+* @see app/Http/Controllers/TaskController.php:84
 * @route '/tasks/workout'
 */
 storeWorkout.url = (options?: RouteQueryOptions) => {
@@ -330,7 +330,7 @@ storeWorkout.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\TaskController::storeWorkout
-* @see app/Http/Controllers/TaskController.php:0
+* @see app/Http/Controllers/TaskController.php:84
 * @route '/tasks/workout'
 */
 storeWorkout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -340,7 +340,7 @@ storeWorkout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\TaskController::storeWorkout
-* @see app/Http/Controllers/TaskController.php:0
+* @see app/Http/Controllers/TaskController.php:84
 * @route '/tasks/workout'
 */
 const storeWorkoutForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -350,7 +350,7 @@ const storeWorkoutForm = (options?: RouteQueryOptions): RouteFormDefinition<'pos
 
 /**
 * @see \App\Http\Controllers\TaskController::storeWorkout
-* @see app/Http/Controllers/TaskController.php:0
+* @see app/Http/Controllers/TaskController.php:84
 * @route '/tasks/workout'
 */
 storeWorkoutForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -361,11 +361,11 @@ storeWorkoutForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post
 storeWorkout.form = storeWorkoutForm
 
 const tasks = {
-    index,
-    store,
-    update,
-    destroy,
-    storeWorkout,
+    index: Object.assign(index, index),
+    store: Object.assign(store, store),
+    update: Object.assign(update, update),
+    destroy: Object.assign(destroy, destroy),
+    storeWorkout: Object.assign(storeWorkout, storeWorkout),
 }
 
 export default tasks

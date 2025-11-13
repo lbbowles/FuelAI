@@ -56,7 +56,7 @@ storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => (
 store.form = storeForm
 
 const meals = {
-    store,
+    store: Object.assign(store, store),
 }
 
 export default meals

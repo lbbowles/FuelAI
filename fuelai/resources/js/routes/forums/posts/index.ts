@@ -166,8 +166,8 @@ updateForm.put = (args: { threadId: string | number, postId: string | number } |
 update.form = updateForm
 
 const posts = {
-    destroy,
-    update,
+    destroy: Object.assign(destroy, destroy),
+    update: Object.assign(update, update),
 }
 
 export default posts

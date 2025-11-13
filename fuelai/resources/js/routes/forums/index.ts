@@ -550,14 +550,14 @@ showForm.head = (args: { id: string | number } | [id: string | number ] | string
 show.form = showForm
 
 const forums = {
-    index,
-    create,
-    store,
-    reply,
-    aiReply,
-    destroy,
-    show,
-    posts,
+    index: Object.assign(index, index),
+    create: Object.assign(create, create),
+    store: Object.assign(store, store),
+    reply: Object.assign(reply, reply),
+    aiReply: Object.assign(aiReply, aiReply),
+    destroy: Object.assign(destroy, destroy),
+    show: Object.assign(show, show),
+    posts: Object.assign(posts, posts),
 }
 
 export default forums

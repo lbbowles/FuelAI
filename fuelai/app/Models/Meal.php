@@ -19,49 +19,34 @@ class Meal extends Model
         'description',
         'image_data',
         'created_by',
+        'mime_type',
+        'instruction'
     ];
 
     
-    /**
-     * Hide raw binary image data from JSON responses.
-     */
-    protected $hidden = ['image_data'];
+/**
+ * Hide raw binary image data from JSON responses.
+ */
+protected $hidden = ['image_data'];
 
-    /**
-     * Automatically append base64 image string when converting to array or JSON.
-     */
-    protected $appends = ['image_base64'];
+/**
+ * Automatically append base64 image string when converting to array or JSON.
+ */
+protected $appends = ['image_base64'];
 
-    /**
-     * Accessor to safely read image_data from PostgreSQL BYTEA.
-     */
-    public function getImageDataAttribute($value)
+public function getImageBase64Attribute()
     {
-        if (is_resource($value)) {
-            // Convert stream to actual binary string
-            $value = stream_get_contents($value);
-        }
-        return $value;
-    }
-
-    /**
-     * Accessor to create base64 image string automatically.
-     */
-    public function getImageBase64Attribute()
-    {
-        $data = $this->image_data;
-
-        if ($data) {
-            $encoded = base64_encode($data);
-
-            // Ensure UTF-8 safety for JSON encoding
-            $safe = mb_convert_encoding($encoded, 'UTF-8', 'UTF-8');
-
-            return "data:image/jpeg;base64,{$safe}";
+        if (!$this->image_data) {
+            return null;
         }
 
-        return null;
+        $mime = $this->mime_type ?? 'image/jpeg';
+
+        return "data:{$mime};base64,{$this->image_data}";
     }
+
+
+
 
     public function creator()
     {

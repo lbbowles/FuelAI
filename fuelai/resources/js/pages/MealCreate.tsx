@@ -6,9 +6,9 @@ import { useState, ChangeEvent } from "react";
 export default function MealCreate() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [instruction, setInstruction] = useState(""); // 👈 NEW
   const [image, setImage] = useState<File | null>(null);
 
-  
   const [fields, setFields] = useState({
     calories: "",
     protein: "",
@@ -39,6 +39,7 @@ export default function MealCreate() {
     const formData = new FormData();
     formData.append("name", name);
     formData.append("description", description);
+    formData.append("instruction", instruction); // 👈 SEND TO LARAVEL
 
     // Append each field exactly as Laravel expects
     Object.entries(fields).forEach(([key, val]) => {
@@ -52,6 +53,7 @@ export default function MealCreate() {
       onSuccess: () => {
         setName("");
         setDescription("");
+        setInstruction(""); // 👈 RESET
         setImage(null);
         setFields({
           calories: "",
@@ -80,8 +82,18 @@ export default function MealCreate() {
             <div className="card-body">
               <div className="flex items-center gap-4 mb-6">
                 <Link href="/meal_list" className="btn btn-ghost btn-sm">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
                   </svg>
                   Back
                 </Link>
@@ -113,6 +125,18 @@ export default function MealCreate() {
                   />
                 </div>
 
+                {/* INSTRUCTION FIELD */}
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-semibold">Instructions</span>
+                  </label>
+                  <textarea
+                    value={instruction}
+                    onChange={(e) => setInstruction(e.target.value)}
+                    className="textarea textarea-bordered w-full h-24"
+                  />
+                </div>
+
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text font-semibold">Upload Image</span>
@@ -123,7 +147,13 @@ export default function MealCreate() {
                     onChange={handleImageChange}
                     className="file-input file-input-bordered w-full"
                   />
-                  {image && <img src={URL.createObjectURL(image)} alt="Preview" className="max-w-xs mt-3 rounded shadow" />}
+                  {image && (
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt="Preview"
+                      className="max-w-xs mt-3 rounded shadow"
+                    />
+                  )}
                 </div>
 
                 {/* Dynamic Nutrient Fields (auto labels) */}
@@ -147,7 +177,9 @@ export default function MealCreate() {
                   </label>
                   <textarea
                     value={fields.other_nutrients}
-                    onChange={(e) => handleFieldChange("other_nutrients", e.target.value)}
+                    onChange={(e) =>
+                      handleFieldChange("other_nutrients", e.target.value)
+                    }
                     className="textarea textarea-bordered w-full h-24"
                   />
                 </div>

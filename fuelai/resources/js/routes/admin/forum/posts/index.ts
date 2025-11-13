@@ -90,7 +90,7 @@ destroyForm.delete = (args: { post: number | { id: number } } | [post: number | 
 destroy.form = destroyForm
 
 const posts = {
-    destroy,
+    destroy: Object.assign(destroy, destroy),
 }
 
 export default posts

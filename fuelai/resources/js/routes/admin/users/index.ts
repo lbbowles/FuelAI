@@ -317,10 +317,10 @@ destroyForm.delete = (args: { user: number | { id: number } } | [user: number | 
 destroy.form = destroyForm
 
 const users = {
-    index,
-    store,
-    update,
-    destroy,
+    index: Object.assign(index, index),
+    store: Object.assign(store, store),
+    update: Object.assign(update, update),
+    destroy: Object.assign(destroy, destroy),
 }
 
 export default users

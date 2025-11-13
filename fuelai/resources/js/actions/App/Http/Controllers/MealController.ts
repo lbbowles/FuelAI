@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\MealController::apiIndex
-* @see app/Http/Controllers/MealController.php:133
+* @see app/Http/Controllers/MealController.php:168
 * @route '/api/meals'
 */
 export const apiIndex = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ apiIndex.definition = {
 
 /**
 * @see \App\Http\Controllers\MealController::apiIndex
-* @see app/Http/Controllers/MealController.php:133
+* @see app/Http/Controllers/MealController.php:168
 * @route '/api/meals'
 */
 apiIndex.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ apiIndex.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\MealController::apiIndex
-* @see app/Http/Controllers/MealController.php:133
+* @see app/Http/Controllers/MealController.php:168
 * @route '/api/meals'
 */
 apiIndex.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ apiIndex.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\MealController::apiIndex
-* @see app/Http/Controllers/MealController.php:133
+* @see app/Http/Controllers/MealController.php:168
 * @route '/api/meals'
 */
 apiIndex.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ apiIndex.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\MealController::apiIndex
-* @see app/Http/Controllers/MealController.php:133
+* @see app/Http/Controllers/MealController.php:168
 * @route '/api/meals'
 */
 const apiIndexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const apiIndexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\MealController::apiIndex
-* @see app/Http/Controllers/MealController.php:133
+* @see app/Http/Controllers/MealController.php:168
 * @route '/api/meals'
 */
 apiIndexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ apiIndexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\MealController::apiIndex
-* @see app/Http/Controllers/MealController.php:133
+* @see app/Http/Controllers/MealController.php:168
 * @route '/api/meals'
 */
 apiIndexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ apiIndex.form = apiIndexForm
 
 /**
 * @see \App\Http\Controllers\MealController::apiStore
-* @see app/Http/Controllers/MealController.php:145
+* @see app/Http/Controllers/MealController.php:180
 * @route '/api/meals'
 */
 export const apiStore = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -97,7 +97,7 @@ apiStore.definition = {
 
 /**
 * @see \App\Http\Controllers\MealController::apiStore
-* @see app/Http/Controllers/MealController.php:145
+* @see app/Http/Controllers/MealController.php:180
 * @route '/api/meals'
 */
 apiStore.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ apiStore.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\MealController::apiStore
-* @see app/Http/Controllers/MealController.php:145
+* @see app/Http/Controllers/MealController.php:180
 * @route '/api/meals'
 */
 apiStore.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ apiStore.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\MealController::apiStore
-* @see app/Http/Controllers/MealController.php:145
+* @see app/Http/Controllers/MealController.php:180
 * @route '/api/meals'
 */
 const apiStoreForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -126,7 +126,7 @@ const apiStoreForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> 
 
 /**
 * @see \App\Http\Controllers\MealController::apiStore
-* @see app/Http/Controllers/MealController.php:145
+* @see app/Http/Controllers/MealController.php:180
 * @route '/api/meals'
 */
 apiStoreForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -416,7 +416,7 @@ create.form = createForm
 
 /**
 * @see \App\Http\Controllers\MealController::show
-* @see app/Http/Controllers/MealController.php:89
+* @see app/Http/Controllers/MealController.php:94
 * @route '/meals/{id}'
 */
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -431,7 +431,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\MealController::show
-* @see app/Http/Controllers/MealController.php:89
+* @see app/Http/Controllers/MealController.php:94
 * @route '/meals/{id}'
 */
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -458,7 +458,7 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\MealController::show
-* @see app/Http/Controllers/MealController.php:89
+* @see app/Http/Controllers/MealController.php:94
 * @route '/meals/{id}'
 */
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -468,7 +468,7 @@ show.get = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\MealController::show
-* @see app/Http/Controllers/MealController.php:89
+* @see app/Http/Controllers/MealController.php:94
 * @route '/meals/{id}'
 */
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -478,7 +478,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\MealController::show
-* @see app/Http/Controllers/MealController.php:89
+* @see app/Http/Controllers/MealController.php:94
 * @route '/meals/{id}'
 */
 const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -488,7 +488,7 @@ const showForm = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\MealController::show
-* @see app/Http/Controllers/MealController.php:89
+* @see app/Http/Controllers/MealController.php:94
 * @route '/meals/{id}'
 */
 showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -498,7 +498,7 @@ showForm.get = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\MealController::show
-* @see app/Http/Controllers/MealController.php:89
+* @see app/Http/Controllers/MealController.php:94
 * @route '/meals/{id}'
 */
 showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -515,7 +515,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\MealController::update
-* @see app/Http/Controllers/MealController.php:105
+* @see app/Http/Controllers/MealController.php:111
 * @route '/meals/{id}'
 */
 export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -530,7 +530,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\MealController::update
-* @see app/Http/Controllers/MealController.php:105
+* @see app/Http/Controllers/MealController.php:111
 * @route '/meals/{id}'
 */
 update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -557,7 +557,7 @@ update.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\MealController::update
-* @see app/Http/Controllers/MealController.php:105
+* @see app/Http/Controllers/MealController.php:111
 * @route '/meals/{id}'
 */
 update.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -567,7 +567,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\MealController::update
-* @see app/Http/Controllers/MealController.php:105
+* @see app/Http/Controllers/MealController.php:111
 * @route '/meals/{id}'
 */
 const updateForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -582,7 +582,7 @@ const updateForm = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\MealController::update
-* @see app/Http/Controllers/MealController.php:105
+* @see app/Http/Controllers/MealController.php:111
 * @route '/meals/{id}'
 */
 updateForm.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -599,7 +599,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\MealController::destroy
-* @see app/Http/Controllers/MealController.php:121
+* @see app/Http/Controllers/MealController.php:156
 * @route '/meals/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -614,7 +614,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\MealController::destroy
-* @see app/Http/Controllers/MealController.php:121
+* @see app/Http/Controllers/MealController.php:156
 * @route '/meals/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -641,7 +641,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\MealController::destroy
-* @see app/Http/Controllers/MealController.php:121
+* @see app/Http/Controllers/MealController.php:156
 * @route '/meals/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -651,7 +651,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\MealController::destroy
-* @see app/Http/Controllers/MealController.php:121
+* @see app/Http/Controllers/MealController.php:156
 * @route '/meals/{id}'
 */
 const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -666,7 +666,7 @@ const destroyForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\MealController::destroy
-* @see app/Http/Controllers/MealController.php:121
+* @see app/Http/Controllers/MealController.php:156
 * @route '/meals/{id}'
 */
 destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

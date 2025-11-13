@@ -38,48 +38,53 @@ class MealController extends Controller
 
     public function store(Request $request)
     {
-        
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'calories' => 'nullable|numeric',
-            'protein' => 'nullable|numeric',
-            'carbs' => 'nullable|numeric',
-            'fat' => 'nullable|numeric',
-            'fiber' => 'nullable|numeric',
-            'sugar' => 'nullable|numeric',
-            'sodium' => 'nullable|numeric',
+            'name'            => 'required|string|max:255',
+            'description'     => 'nullable|string',
+            'calories'        => 'nullable|numeric|min:0',
+            'protein'         => 'nullable|numeric|min:0',
+            'carbs'           => 'nullable|numeric|min:0',
+            'fat'             => 'nullable|numeric|min:0',
+            'fiber'           => 'nullable|numeric|min:0',
+            'sugar'           => 'nullable|numeric|min:0',
+            'sodium'          => 'nullable|numeric|min:0',
             'other_nutrients' => 'nullable|string',
-            'image' => 'nullable|image|max:4096',
+            'image'           => 'nullable|image|max:4096',
+            'instruction'     => 'nullable|string',
         ]);
 
-        DB::transaction(function () use ($validated,$request) {
+        DB::transaction(function () use ($validated, $request) {
 
-            // Handle image upload (store as binary)
             $imageData = null;
+            $mimeType  = null;
 
             if ($request->hasFile('image')) {
-                $imageFile = $request->file('image');
-                 $imageData = base64_encode(file_get_contents($imageFile->getRealPath())); // Converts to binary
-                }
+                $image      = $request->file('image');
+                $mimeType   = $image->getMimeType();
+                $imageData  = base64_encode(file_get_contents($image->getRealPath()));
+            }
 
+            // Create Meal
             $meal = Meal::create([
-            'created_by' => auth()->id(),
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'image_data' => $imageData,
+                'created_by' => auth()->id(),
+                'name'       => $validated['name'],
+                'description'=> $validated['description'] ?? null,
+                'image_data' => $imageData,
+                'mime_type'  => $mimeType,
+                'instruction'=> $validated['instruction'] ?? null,
             ]);
 
+            // Create associated Nutritional Info
             NutritionalInfo::create([
-            'meal_id' => $meal->id,
-            'calories' => $validated['calories'],
-            'protein' => $validated['protein'],
-            'carbs' => $validated['carbs'],
-            'fat' => $validated['fat'],
-            'fiber' => $validated['fiber'],
-            'sugar' => $validated['sugar'],
-            'sodium' => $validated['sodium'],
-            'other_nutrients' => $validated['other_nutrients'],
+                'meal_id'         => $meal->id,
+                'calories'        => $validated['calories'] ?? null,
+                'protein'         => $validated['protein'] ?? null,
+                'carbs'           => $validated['carbs'] ?? null,
+                'fat'             => $validated['fat'] ?? null,
+                'fiber'           => $validated['fiber'] ?? null,
+                'sugar'           => $validated['sugar'] ?? null,
+                'sodium'          => $validated['sodium'] ?? null,
+                'other_nutrients' => $validated['other_nutrients'] ?? null,
             ]);
         });
 
@@ -89,33 +94,63 @@ class MealController extends Controller
     public function show($id)
     {
         $meal = Meal::where('id', $id)
-            ->where('created_by', auth()->id())
-            ->firstOrFail();
+        ->where('created_by', auth()->id())
+        ->with('nutritionalInfo') 
+        ->firstOrFail();
 
-        $meal_plans = MealPlan::where('user_id', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+    $meal_plans = MealPlan::where('user_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        return Inertia::render('MealView', [
-            'meal' => $meal,
-            'meal_plans' => $meal_plans,
-        ]);
+    return Inertia::render('MealView', [
+        'meal' => $meal,
+        'meal_plans' => $meal_plans,
+    ]);
     }
 
     public function update(Request $request, $id)
     {
         $meal = Meal::where('id', $id)
-            ->where('created_by', auth()->id())
-            ->firstOrFail();
+        ->where('created_by', auth()->id())
+        ->with('nutritionalInfo')
+        ->firstOrFail();
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+    $validated = $request->validate([
+        'name'            => 'required|string|max:255',
+        'description'     => 'nullable|string',
+        'calories'        => 'nullable|numeric|min:0',
+        'protein'         => 'nullable|numeric|min:0',
+        'carbs'           => 'nullable|numeric|min:0',
+        'fat'             => 'nullable|numeric|min:0',
+        'fiber'           => 'nullable|numeric|min:0',
+        'sugar'           => 'nullable|numeric|min:0',
+        'sodium'          => 'nullable|numeric|min:0',
+        'other_nutrients' => 'nullable|string',
+        'instruction'      => 'nullable|string',
+    ]);
+
+    DB::transaction(function () use ($meal, $validated) {
+
+        // Update Meal basic info
+        $meal->update([
+            'name'        => $validated['name'],
+            'description' => $validated['description'],
         ]);
 
-        $meal->update($validated);
+        // Update nutritional info
+        $meal->nutritionalInfo->update([
+            'calories'        => $validated['calories'] ?? null,
+            'protein'         => $validated['protein'] ?? null,
+            'carbs'           => $validated['carbs'] ?? null,
+            'fat'             => $validated['fat'] ?? null,
+            'fiber'           => $validated['fiber'] ?? null,
+            'sugar'           => $validated['sugar'] ?? null,
+            'sodium'          => $validated['sodium'] ?? null,
+            'other_nutrients' => $validated['other_nutrients'] ?? null,
+        ]);
+    });
 
-        return redirect()->back()->with('success', 'Meal updated successfully!');
+    return redirect()->back()->with('success', 'Meal updated successfully!');
     }
 
     public function destroy($id)
