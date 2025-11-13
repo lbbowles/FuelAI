@@ -81,7 +81,7 @@ indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 index.form = indexForm
 
 const calendar = {
-    index: Object.assign(index, index),
+    index,
 }
 
 export default calendar

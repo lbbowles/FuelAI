@@ -8,14 +8,14 @@ import EmailVerificationNotificationController from './EmailVerificationNotifica
 import ConfirmablePasswordController from './ConfirmablePasswordController'
 
 const Auth = {
-    AuthenticatedSessionController: Object.assign(AuthenticatedSessionController, AuthenticatedSessionController),
-    RegisteredUserController: Object.assign(RegisteredUserController, RegisteredUserController),
-    PasswordResetLinkController: Object.assign(PasswordResetLinkController, PasswordResetLinkController),
-    NewPasswordController: Object.assign(NewPasswordController, NewPasswordController),
-    EmailVerificationPromptController: Object.assign(EmailVerificationPromptController, EmailVerificationPromptController),
-    VerifyEmailController: Object.assign(VerifyEmailController, VerifyEmailController),
-    EmailVerificationNotificationController: Object.assign(EmailVerificationNotificationController, EmailVerificationNotificationController),
-    ConfirmablePasswordController: Object.assign(ConfirmablePasswordController, ConfirmablePasswordController),
+    AuthenticatedSessionController,
+    RegisteredUserController,
+    PasswordResetLinkController,
+    NewPasswordController,
+    EmailVerificationPromptController,
+    VerifyEmailController,
+    EmailVerificationNotificationController,
+    ConfirmablePasswordController,
 }
 
 export default Auth

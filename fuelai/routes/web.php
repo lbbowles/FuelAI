@@ -13,6 +13,7 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\MealController;
 use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\MealPlanMealController;
+use App\Http\Controllers\AdminController;
 
 
 
@@ -84,6 +85,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::patch('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+    Route::post('/tasks/workout', [TaskController::class, 'storeWorkout'])->name('tasks.store-workout');
 });
 
 Route::get('/image_rec', function () {
@@ -94,10 +96,24 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
+// ADMIN ROUTES
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
-Route::get('/admin', function () {
-    return Inertia::render('admin');
-})->middleware(['auth', 'admin'])->name('admin');
+    Route::get('/', [AdminController::class, 'index'])->name('index'); // This creates 'admin.index'
+    Route::get('/stats', [AdminController::class, 'stats'])->name('stats'); // This creates 'admin.stats'
+
+    Route::get('/users', [AdminController::class, 'getUsers'])->name('users.index');
+    Route::post('/users', [AdminController::class, 'createUser'])->name('users.store');
+    Route::put('/users/{user}', [AdminController::class, 'updateUser'])->name('users.update');
+    Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('users.destroy');
+
+    Route::get('/forum-posts', [AdminController::class, 'getForumPosts'])->name('forum.posts');
+    Route::delete('/forum-posts/{post}', [AdminController::class, 'deleteForumPost'])->name('forum.posts.destroy');
+
+    Route::get('/forum-replies', [AdminController::class, 'getForumReplies'])->name('forum.replies');
+    Route::delete('/forum-replies/{thread}', [AdminController::class, 'deleteForumReply'])->name('forum.replies.destroy');
+});
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

@@ -164,7 +164,7 @@ create.form = createForm
 
 /**
 * @see \App\Http\Controllers\ForumController::store
-* @see app/Http/Controllers/ForumController.php:41
+* @see app/Http/Controllers/ForumController.php:42
 * @route '/forums'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -179,7 +179,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::store
-* @see app/Http/Controllers/ForumController.php:41
+* @see app/Http/Controllers/ForumController.php:42
 * @route '/forums'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -188,7 +188,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ForumController::store
-* @see app/Http/Controllers/ForumController.php:41
+* @see app/Http/Controllers/ForumController.php:42
 * @route '/forums'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -198,7 +198,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\ForumController::store
-* @see app/Http/Controllers/ForumController.php:41
+* @see app/Http/Controllers/ForumController.php:42
 * @route '/forums'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -208,7 +208,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\ForumController::store
-* @see app/Http/Controllers/ForumController.php:41
+* @see app/Http/Controllers/ForumController.php:42
 * @route '/forums'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -220,7 +220,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\ForumController::reply
-* @see app/Http/Controllers/ForumController.php:132
+* @see app/Http/Controllers/ForumController.php:131
 * @route '/forums/{id}/reply'
 */
 export const reply = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -235,7 +235,7 @@ reply.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::reply
-* @see app/Http/Controllers/ForumController.php:132
+* @see app/Http/Controllers/ForumController.php:131
 * @route '/forums/{id}/reply'
 */
 reply.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -262,7 +262,7 @@ reply.url = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\ForumController::reply
-* @see app/Http/Controllers/ForumController.php:132
+* @see app/Http/Controllers/ForumController.php:131
 * @route '/forums/{id}/reply'
 */
 reply.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -272,7 +272,7 @@ reply.post = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\ForumController::reply
-* @see app/Http/Controllers/ForumController.php:132
+* @see app/Http/Controllers/ForumController.php:131
 * @route '/forums/{id}/reply'
 */
 const replyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -282,7 +282,7 @@ const replyForm = (args: { id: string | number } | [id: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\ForumController::reply
-* @see app/Http/Controllers/ForumController.php:132
+* @see app/Http/Controllers/ForumController.php:131
 * @route '/forums/{id}/reply'
 */
 replyForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -294,7 +294,7 @@ reply.form = replyForm
 
 /**
 * @see \App\Http\Controllers\ForumController::aiReply
-* @see app/Http/Controllers/ForumController.php:229
+* @see app/Http/Controllers/ForumController.php:225
 * @route '/forums/{id}/ai-reply'
 */
 export const aiReply = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -309,7 +309,7 @@ aiReply.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::aiReply
-* @see app/Http/Controllers/ForumController.php:229
+* @see app/Http/Controllers/ForumController.php:225
 * @route '/forums/{id}/ai-reply'
 */
 aiReply.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -336,7 +336,7 @@ aiReply.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\ForumController::aiReply
-* @see app/Http/Controllers/ForumController.php:229
+* @see app/Http/Controllers/ForumController.php:225
 * @route '/forums/{id}/ai-reply'
 */
 aiReply.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -346,7 +346,7 @@ aiReply.post = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\ForumController::aiReply
-* @see app/Http/Controllers/ForumController.php:229
+* @see app/Http/Controllers/ForumController.php:225
 * @route '/forums/{id}/ai-reply'
 */
 const aiReplyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -356,7 +356,7 @@ const aiReplyForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\ForumController::aiReply
-* @see app/Http/Controllers/ForumController.php:229
+* @see app/Http/Controllers/ForumController.php:225
 * @route '/forums/{id}/ai-reply'
 */
 aiReplyForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -368,7 +368,7 @@ aiReply.form = aiReplyForm
 
 /**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:345
+* @see app/Http/Controllers/ForumController.php:341
 * @route '/forums/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -383,7 +383,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:345
+* @see app/Http/Controllers/ForumController.php:341
 * @route '/forums/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -410,7 +410,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:345
+* @see app/Http/Controllers/ForumController.php:341
 * @route '/forums/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -420,7 +420,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:345
+* @see app/Http/Controllers/ForumController.php:341
 * @route '/forums/{id}'
 */
 const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -435,7 +435,7 @@ const destroyForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:345
+* @see app/Http/Controllers/ForumController.php:341
 * @route '/forums/{id}'
 */
 destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -452,7 +452,7 @@ destroy.form = destroyForm
 
 /**
 * @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:72
+* @see app/Http/Controllers/ForumController.php:71
 * @route '/forums/{id}'
 */
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -467,7 +467,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:72
+* @see app/Http/Controllers/ForumController.php:71
 * @route '/forums/{id}'
 */
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -494,7 +494,7 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:72
+* @see app/Http/Controllers/ForumController.php:71
 * @route '/forums/{id}'
 */
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -504,7 +504,7 @@ show.get = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:72
+* @see app/Http/Controllers/ForumController.php:71
 * @route '/forums/{id}'
 */
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -514,7 +514,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:72
+* @see app/Http/Controllers/ForumController.php:71
 * @route '/forums/{id}'
 */
 const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -524,7 +524,7 @@ const showForm = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:72
+* @see app/Http/Controllers/ForumController.php:71
 * @route '/forums/{id}'
 */
 showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -534,7 +534,7 @@ showForm.get = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:72
+* @see app/Http/Controllers/ForumController.php:71
 * @route '/forums/{id}'
 */
 showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -550,14 +550,14 @@ showForm.head = (args: { id: string | number } | [id: string | number ] | string
 show.form = showForm
 
 const forums = {
-    index: Object.assign(index, index),
-    create: Object.assign(create, create),
-    store: Object.assign(store, store),
-    reply: Object.assign(reply, reply),
-    aiReply: Object.assign(aiReply, aiReply),
-    destroy: Object.assign(destroy, destroy),
-    show: Object.assign(show, show),
-    posts: Object.assign(posts, posts),
+    index,
+    create,
+    store,
+    reply,
+    aiReply,
+    destroy,
+    show,
+    posts,
 }
 
 export default forums

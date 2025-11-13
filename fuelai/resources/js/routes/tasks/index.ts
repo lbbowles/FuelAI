@@ -304,11 +304,68 @@ destroyForm.delete = (args: { id: string | number } | [id: string | number ] | s
 
 destroy.form = destroyForm
 
+/**
+* @see \App\Http\Controllers\TaskController::storeWorkout
+* @see app/Http/Controllers/TaskController.php:0
+* @route '/tasks/workout'
+*/
+export const storeWorkout = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: storeWorkout.url(options),
+    method: 'post',
+})
+
+storeWorkout.definition = {
+    methods: ["post"],
+    url: '/tasks/workout',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\TaskController::storeWorkout
+* @see app/Http/Controllers/TaskController.php:0
+* @route '/tasks/workout'
+*/
+storeWorkout.url = (options?: RouteQueryOptions) => {
+    return storeWorkout.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\TaskController::storeWorkout
+* @see app/Http/Controllers/TaskController.php:0
+* @route '/tasks/workout'
+*/
+storeWorkout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: storeWorkout.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\TaskController::storeWorkout
+* @see app/Http/Controllers/TaskController.php:0
+* @route '/tasks/workout'
+*/
+const storeWorkoutForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: storeWorkout.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\TaskController::storeWorkout
+* @see app/Http/Controllers/TaskController.php:0
+* @route '/tasks/workout'
+*/
+storeWorkoutForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: storeWorkout.url(options),
+    method: 'post',
+})
+
+storeWorkout.form = storeWorkoutForm
+
 const tasks = {
-    index: Object.assign(index, index),
-    store: Object.assign(store, store),
-    update: Object.assign(update, update),
-    destroy: Object.assign(destroy, destroy),
+    index,
+    store,
+    update,
+    destroy,
+    storeWorkout,
 }
 
 export default tasks

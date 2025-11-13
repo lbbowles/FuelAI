@@ -12,12 +12,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
-use function Psy\debug;
 
 class RegisteredUserController extends Controller
 {
     /**
-     * Show the registration page.
+     * Display the registration view.
      */
     public function create(): Response
     {
@@ -29,32 +28,38 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-
-
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'username' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|string|max:255',
-            'profile_image_url' => 'required|string|max:255',
         ]);
-
-
 
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-            'profile_image_url' => $request->profile_image_url,
+            'password_hash' => $request->password,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect(route('dashboard', absolute: false));
+    }
+
+    /**
+     * Destroy an authenticated session.
+     */
+    public function destroy(Request $request): RedirectResponse
+    {
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }

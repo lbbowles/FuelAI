@@ -235,9 +235,9 @@ sendForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
 send.form = sendForm
 
 const verification = {
-    notice: Object.assign(notice, notice),
-    verify: Object.assign(verify, verify),
-    send: Object.assign(send, send),
+    notice,
+    verify,
+    send,
 }
 
 export default verification
