@@ -3,7 +3,7 @@ import { Text, SafeAreaView } from 'react-native';
 // React native component; inexplicably useful for saving tokens (preventing sign in every time).
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // Import login api function call from authcontroller
-import { login, register } from '@/services/api';
+import { register, login, withAuth } from '@/services/api';
 
 const AuthContext = createContext();
 
@@ -13,6 +13,7 @@ const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [session, setSession] = useState(null);
     const [user, setUser] = useState(null);
+    const [sessionVersion, setSessionVersion] = useState(0);
 
     // Run upon application loading.
     useEffect(() => {
@@ -82,6 +83,7 @@ const AuthProvider = ({ children }) => {
             // Set session and user state.
             setSession({ access_token: response.access_token });
             setUser(response.user);
+            setSessionVersion(v => v + 1);
 
         } catch (error) {
             console.error('Register error:', error);
@@ -101,6 +103,7 @@ const AuthProvider = ({ children }) => {
 
             setSession(null);
             setUser(null);
+            setSessionVersion(v => v + 1);
         } catch (error) {
             console.error('Sign out error:', error);
         }
@@ -109,7 +112,7 @@ const AuthProvider = ({ children }) => {
     };
 
     // Package session, user, signin function, signup function, signout function
-    const contextData = { session, user, signin, signup, signout};
+    const contextData = { session, user, signin, signup, signout, sessionVersion};
 
     // show loading screen if loading, show the rest of the app... children.
     return (

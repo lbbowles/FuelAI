@@ -18,9 +18,9 @@ export default function FeaturesSectionDemo() {
         "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
     },
     {
-      title: "Identify food from images!",
+      title: "Identify calendar from images!",
       description:
-        "Use our Image Recognition to discover, what is in your food!",
+        "Use our Image Recognition to discover, what is in your calendar!",
       skeleton: <SkeletonTwo />,
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },

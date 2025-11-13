@@ -9,6 +9,25 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     /**
+     * Update the authenticated user's profile
+     */
+    public function update(Request $request)
+    {
+        $validated = $request->validate([
+            'username' => 'sometimes|string|max:255|unique:users,username,' . $request->user()->id,
+            'profile_image_url' => 'sometimes|string|nullable',
+        ]);
+
+        $user = $request->user();
+        $user->update($validated);
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'user' => $user
+        ]);
+    }
+
+    /**
      * Allow the authenticated user to follow another user
      */
     public function follow(Request $request, User $user)

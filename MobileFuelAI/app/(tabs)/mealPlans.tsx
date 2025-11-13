@@ -111,16 +111,27 @@ const MealPlans = () => {
                     </View>
 
                     {/* Create Button */}
-                    <TouchableOpacity
-                        onPress={() => setShowCreateModal(true)}
-                        className={`rounded-2xl p-4 mb-6 border ${
-                            isDark ? 'bg-secondary/10 border-secondary/15' : 'bg-primary/5 border-primary/10'
-                        }`}
-                    >
-                        <Text className={`text-center text-lg font-semibold ${isDark ? "text-secondary" : "text-primary"}`}>
-                            + Create New Plan
-                        </Text>
-                    </TouchableOpacity>
+                    <View className="space-y-3 mb-6">
+                        <TouchableOpacity
+                            onPress={() => router.push('/recipes/generate')}
+                            className="rounded-2xl p-4 bg-blue-500"
+                        >
+                            <Text className="text-center text-lg font-semibold text-white">
+                                Generate with FuelAI
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={() => setShowCreateModal(true)}
+                            className={`rounded-2xl p-4 border ${
+                                isDark ? 'bg-secondary/10 border-secondary/15' : 'bg-primary/5 border-primary/10'
+                            }`}
+                        >
+                            <Text className={`text-center text-lg font-semibold ${isDark ? "text-secondary" : "text-primary"}`}>
+                                Create Plan Manually
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
 
                     {/* Loading State */}
                     {loading ? (

@@ -26,7 +26,6 @@ class ForumController extends Controller
                 ->get();
 
             return response()->json(['posts' => $posts], 200);
-
         } catch (\Exception $e) {
             Log::error('Failed to fetch posts:', ['error' => $e->getMessage()]);
             return response()->json([
@@ -59,6 +58,13 @@ class ForumController extends Controller
                 'message' => 'Post created successfull',
                 'post_id' => $post->id
             ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to create post',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
         } catch (\Exception $e) {
             return response()->json([
@@ -78,13 +84,13 @@ class ForumController extends Controller
                 ->first();
 
             if (!$post) {
-                return response()->json(['message' => 'Post not found'
-                ], 404);}
+                return response()->json(['message' => 'Post not found'], 404);
+            }
 
             $threads = ForumThread::join('users', 'forum_threads.user_id', '=', 'users.id')
                 ->where('forum_threads.post_id', $postId)
                 ->select('forum_threads.*', 'users.username', 'users.profile_image_url')
-                ->orderBy('forum_threads.created_at', 'desc')
+                ->orderBy('forum_threads.created_at', 'asc')
                 ->get();
 
             return response()->json([
@@ -92,7 +98,6 @@ class ForumController extends Controller
                 'threads' => $threads,
                 'thread_count' => $threads->count()
             ], 200);
-
         } catch (\Exception $e) {
             Log::error('Failed to fetch post:', ['error' => $e->getMessage()]);
             return response()->json([
@@ -113,7 +118,6 @@ class ForumController extends Controller
         try {
             Log::info('Creating reply', ['post_id' => $postId, 'user_id' => $request->user()->id]);
 
-
             $post = ForumPost::find($postId);
             if (!$post) {
                 return response()->json(['message' => 'Post not found'
@@ -132,7 +136,6 @@ class ForumController extends Controller
                 'message' => 'Reply created successfully',
                 'thread_id' => $thread->id
             ], 201);
-
         } catch (\Exception $e) {
             Log::error('Reply creation failed:', [
                 'error' => $e->getMessage(),
