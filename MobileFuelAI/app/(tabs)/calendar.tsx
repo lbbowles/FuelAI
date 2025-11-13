@@ -92,7 +92,7 @@ const UserCalendar = () => {
                         </View>
 
                         {/* Button to view the specific day */}
-                        <Link href={`/food/${selected}`} asChild>
+                        <Link href={`/calendar/${selected}`} asChild>
                             <TouchableOpacity
                                 className={`rounded-2xl p-4 mt-4 border ${
                                     isDark ? 'bg-secondary/10 border-secondary/15' : 'bg-primary/5 border-primary/10'

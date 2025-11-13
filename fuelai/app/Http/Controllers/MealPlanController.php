@@ -155,9 +155,18 @@ class MealPlanController extends Controller
             ->first();
 
         if ($existing) {
+            // Update the existing meal instead of returning an error
+            $existing->update([
+                'meal_id' => $validated['meal_id'],
+                'updated_at' => now()
+            ]);
+
+            $existing->load('meal');
+
             return response()->json([
-                'message' => 'You already have a meal here.'
-            ], 400);
+                'message' => 'Meal updated successfully!',
+                'meal_plan_meal' => $existing
+            ], 200);
         }
 
         $mealPlanMeal = MealPlanMeal::create([

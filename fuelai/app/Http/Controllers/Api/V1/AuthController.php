@@ -7,13 +7,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 
 class AuthController extends Controller
 {
-    /**
-     * Handles all incoming registration requests
-     */
     public function register(Request $request)
     {
         $request->validate([
@@ -28,18 +26,19 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken($request->device_name ?? 'mobile')->plainTextToken;
 
-        return response()->json([
+        $response = [
             'user' => $user,
             'access_token' => $token,
             'token_type' => 'Bearer',
-        ]);
+        ];
+
+        Log::info('Registration response:', $response);
+
+        return response()->json($response);
     }
 
-    /**
-     * Handles all incoming authentication requests
-     */
     public function login(Request $request)
     {
         $request->validate([
@@ -61,7 +60,8 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // Token issue resolution, was not verifying previously
+        $token = $user->createToken($request->device_name ?? 'mobile')->plainTextToken;
 
         return response()->json([
             'user' => $user,

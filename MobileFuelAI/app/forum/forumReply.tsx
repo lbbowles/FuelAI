@@ -27,7 +27,7 @@ export default function forumReply() {
 
         try {
             const api = withAuth(session.access_token);
-            //const result = await api.replyToPost(Number(id), content);
+            const result = await api.replyToPost(Number(id), content);
 
 
             Alert.alert('Success', 'Reply created!', [
@@ -51,7 +51,7 @@ export default function forumReply() {
             }}
         >
             {/* Back button */}
-            <TouchableOpacity onPress={() => router.back} className="mb-4">
+            <TouchableOpacity onPress={() => router.back()} className="mb-4">
                 <Text className={`text-lg ${isDark ? "text-secondary" : "text-primary"}`}>
                     ← Back to Forums
                 </Text>

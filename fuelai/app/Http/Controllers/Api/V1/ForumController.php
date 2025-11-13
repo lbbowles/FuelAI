@@ -11,66 +11,64 @@ use Illuminate\Support\Facades\Log;
 class ForumController extends Controller
 {
     // Show all of the forum posts
-   public function index(){
-       try {
-           $posts = ForumPost::with('threads')
-           // Had to flatten eloquent was not allowing me to access the username due to it being nested.
+    public function index()
+    {
+        try {
+            $posts = ForumPost::with('threads')
                 ->join('users', 'forum_posts.user_id', '=', 'users.id')
                 ->select(
                     'forum_posts.*',
                     'users.username',
                     'users.profile_image_url'
-                    )
-                    ->withCount('threads as reply_count')
-                    ->orderBy('forum_posts.created_at', 'desc')
-                    ->get();
+                )
+                ->withCount('threads as reply_count')
+                ->orderBy('forum_posts.created_at', 'desc')
+                ->get();
 
-           return response()->json(['posts' => $posts], 200);
-
-       } catch (\Exception $e) {
+            return response()->json(['posts' => $posts], 200);
+        } catch (\Exception $e) {
             Log::error('Failed to fetch posts:', ['error' => $e->getMessage()]);
             return response()->json([
                 'message' => 'Failed to fetch posts',
                 'error' => $e->getMessage()
-                ], 500);
-            }
-   }
+            ], 500);
+        }
+    }
 
     // Store new forum post
-   public function store(Request $request)
-   {
-       $validated = $request->validate([
-           'title' => 'required|string|max:255|min:5',
-           'content' => 'required|string|min:10',
-           'forum_id' => 'required|exists:forums,id'
-       ]);
-
-       try {
-        Log::info('Creating post with:', $validated);
-
-        $post = ForumPost::create([
-            'forum_id' => $validated['forum_id'],
-            'user_id' => $request->user()->id,
-            'title' => $validated['title'],
-            'content' => $validated['content'],
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255|min:5',
+            'content' => 'required|string|min:10',
+            'forum_id' => 'required|exists:forums,id'
         ]);
 
-        return response()->json([
-            'message' => 'Post created successfull',
-            'post_id' => $post->id
+        try {
+            Log::info('Creating post with:', $validated);
+
+            $post = ForumPost::create([
+                'forum_id' => $validated['forum_id'],
+                'user_id' => $request->user()->id,
+                'title' => $validated['title'],
+                'content' => $validated['content'],
+            ]);
+
+            return response()->json([
+                'message' => 'Post created successfully',
+                'post_id' => $post->id
             ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to create post',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
-       } catch (\Exception $e) {
-           return response()->json([
-               'message' => 'Failed to create post',
-               'error' => $e->getMessage()
-           ], 500);
-       }
-   }
-
-    // Show a post and all comments
-    public function show($postId){
-
+    // Show a post and all replies (threads)
+    public function show($postId)
+    {
         try {
             $post = ForumPost::join('users', 'forum_posts.user_id', '=', 'users.id')
                 ->where('forum_posts.id', $postId)
@@ -78,53 +76,48 @@ class ForumController extends Controller
                 ->first();
 
             if (!$post) {
-                return response()->json(['message' => 'Post not found'
-                ], 404);}
+                return response()->json(['message' => 'Post not found'], 404);
+            }
 
             $threads = ForumThread::join('users', 'forum_threads.user_id', '=', 'users.id')
                 ->where('forum_threads.post_id', $postId)
                 ->select('forum_threads.*', 'users.username', 'users.profile_image_url')
-                ->orderBy('forum_threads.created_at', 'desc')
+                ->orderBy('forum_threads.created_at', 'asc')
                 ->get();
 
             return response()->json([
                 'post' => $post,
                 'threads' => $threads,
                 'thread_count' => $threads->count()
-                ], 200);
-
+            ], 200);
         } catch (\Exception $e) {
             Log::error('Failed to fetch post:', ['error' => $e->getMessage()]);
             return response()->json([
                 'message' => 'Failed to fetch post',
                 'error' => $e->getMessage()
-                ], 500);
-            }
-
+            ], 500);
+        }
     }
 
-    public function reply(Request $request, $postId){
-
-    // Confirm minimum length requirements are met
-       $validated = $request->validate([
-           'content' => 'required|string|min:10',
-           ]);
+    public function reply(Request $request, $postId)
+    {
+        $validated = $request->validate([
+            'content' => 'required|string|min:10',
+        ]);
 
         try {
             Log::info('Creating reply', ['post_id' => $postId, 'user_id' => $request->user()->id]);
 
-
             $post = ForumPost::find($postId);
             if (!$post) {
-                return response()->json(['message' => 'Post not found'
-                ], 404);
-                }
+                return response()->json(['message' => 'Post not found'], 404);
+            }
 
             $thread = ForumThread::create([
                 'post_id' => $postId,
                 'user_id' => $request->user()->id,
                 'content' => $validated['content'],
-                ]);
+            ]);
 
             Log::info('Reply posted successfully', ['thread_id' => $thread->id]);
 
@@ -132,16 +125,47 @@ class ForumController extends Controller
                 'message' => 'Reply created successfully',
                 'thread_id' => $thread->id
             ], 201);
-
-    } catch (\Exception $e) {
-        Log::error('Reply creation failed:', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
+        } catch (\Exception $e) {
+            Log::error('Reply creation failed:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
-        return response()->json([
-            'message' => 'Failed to create reply:',
-            'error' => $e->getMessage()
+            return response()->json([
+                'message' => 'Failed to create reply',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Delete a post (only if user owns it)
+    public function destroy(Request $request, $id)
+    {
+        try {
+            $post = ForumPost::where('id', $id)
+                ->where('user_id', $request->user()->id)
+                ->first();
+
+            if (!$post) {
+                return response()->json([
+                    'message' => 'Post not found or unauthorized'
+                ], 404);
+            }
+
+            // Delete associated threads first
+            ForumThread::where('post_id', $id)->delete();
+            
+            // Delete the post
+            $post->delete();
+
+            return response()->json([
+                'message' => 'Post deleted successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete post:', ['error' => $e->getMessage()]);
+            return response()->json([
+                'message' => 'Failed to delete post',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

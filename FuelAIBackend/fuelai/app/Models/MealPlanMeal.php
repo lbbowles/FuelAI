@@ -9,7 +9,7 @@ class MealPlanMeal extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'meal_plan_id',

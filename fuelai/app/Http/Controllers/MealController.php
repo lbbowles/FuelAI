@@ -90,16 +90,16 @@ class MealController extends Controller
     }
 
     // Get all meals for user
-    public function apiIndex()
-    {
-        $meals = Meal::where('created_by', auth()->id())
-            ->orderBy('name', 'asc')
-            ->get();
+        public function apiIndex()
+        {
+            $meals = Meal::where('created_by', auth()->id())
+                ->orderBy('name', 'asc')
+                ->get();
 
             return response()->json([
                 'meals' => $meals
             ], 200);
-    }
+        }
 
     // Create a new meals
     public function apiStore(Request $request)

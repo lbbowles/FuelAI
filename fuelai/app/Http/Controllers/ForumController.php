@@ -82,7 +82,8 @@ class ForumController extends Controller
                 'forum_posts.user_id',
                 'forum_posts.created_at',
                 'forums.name as category',
-                'users.username as author'
+                'users.username as author',
+                'users.profile_image_url'
             ])
             ->first();
 
@@ -99,7 +100,8 @@ class ForumController extends Controller
                 'forum_threads.content',
                 'forum_threads.user_id',
                 'forum_threads.created_at',
-                'users.username as author'
+                'users.username as author',
+                'users.profile_image_url'
             ])
             ->orderBy('forum_threads.created_at', 'asc')
             ->get()
@@ -110,6 +112,7 @@ class ForumController extends Controller
                     'author' => $thread->author,
                     'userId' => $thread->user_id,
                     'authorAvatar' => strtoupper(substr($thread->author, 0, 1)),
+                    'profile_image_url' => $thread->profile_image_url,
                     'createdAt' => $this->formatDate($thread->created_at)
                 ];
             });
@@ -122,6 +125,7 @@ class ForumController extends Controller
                 'category' => $post->category,
                 'author' => $post->author,
                 'userId' => $post->user_id,
+                'profile_image_url' => $post->profile_image_url,
                 'createdAt' => $this->formatDate($post->created_at)
             ],
             'threads' => $threads

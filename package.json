@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "@inertiajs/react": "^2.2.15",
+    "eslint-config-expo": "~10.0.0",
+    "expo": "^54.0.10",
+    "expo-router": "^6.0.8",
+    "react-dom": "^19.1.0",
+    "react-native-calendars": "^1.1313.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.10",
+    "typescript": "~5.9.2"
+  }
+}

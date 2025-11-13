@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, useColorScheme } from "react-native";
 import { ThemeProvider, DarkTheme, DefaultTheme } from "@react-navigation/native";
-import { useColorScheme } from "react-native";
 import { icons } from "@/constants/icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../context/AuthContext";
 import { withAuth } from "@/services/api";
+import { images } from "@/constants/images";
 
 const ViewForum = () => {
     const { session } = useAuth();
@@ -63,23 +63,54 @@ const ViewForum = () => {
                         <Image source={icons.logo} className="w-14 h-14" />
                     </View>
 
+                    {/* Back button */}
+                    <TouchableOpacity onPress={() => router.push('/(tabs)/forum')} className="mb-4">
+                        <Text className={`text-lg ${isDark ? "text-secondary" : "text-primary"}`}>
+                            ← Back to Forums
+                        </Text>
+                    </TouchableOpacity>
+
                     {/* Post Card */}
                     <View
                         className={`mt-6 rounded-2xl p-5 border ${
                             isDark ? 'bg-secondary/10 border-secondary/15' : 'bg-primary/5 border-primary/10'
                         }`}
                     >
-                        <Text className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>
+                        {/* Post Header with Profile Pic */}
+                        <View className="flex-row items-center mb-3">
+                            <View className="w-10 h-10 rounded-full overflow-hidden bg-gray-300 mr-3">
+                                {post.profile_image_url ? (
+                                    <Image
+                                        source={{ uri: post.profile_image_url }}
+                                        className="w-full h-full"
+                                        resizeMode="cover"
+                                    />
+                                ) : (
+                                    <View className="w-full h-full items-center justify-center bg-gray-400">
+                                        <Text className="text-white font-bold">
+                                            {post.username?.charAt(0).toUpperCase()}
+                                        </Text>
+                                    </View>
+                                )}
+                            </View>
+                            <View>
+                                <Text className={`font-semibold ${isDark ? "text-white" : "text-black"}`}>
+                                    @{post.username}
+                                </Text>
+                                <Text className={`${isDark ? "text-white/50" : "text-black/40"} text-xs`}>
+                                    {new Date(post.created_at).toLocaleDateString()}
+                                </Text>
+                            </View>
+                        </View>
+
+                        <Text className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"} mb-3`}>
                             {post.title}
                         </Text>
-                        <Text className={`${isDark ? "text-white/70" : "text-black/60"} mt-1`}>
-                            by @{post.username}
-                        </Text>
-                        <Text className={`${isDark ? "text-white/85" : "text-black/80"} mt-4 text-base leading-6`}>
+                        <Text className={`${isDark ? "text-white/85" : "text-black/80"} text-base leading-6`}>
                             {post.content}
                         </Text>
                         <Text className={`${isDark ? "text-white/50" : "text-black/40"} mt-4 text-xs`}>
-                            {new Date(post.created_at).toLocaleDateString()} · {threads.length} replies
+                            {threads.length} replies
                         </Text>
                     </View>
 
@@ -108,10 +139,31 @@ const ViewForum = () => {
                                         isDark ? 'bg-secondary/10 border-secondary/15' : 'bg-primary/5 border-primary/10'
                                     }`}
                                 >
-                                    <Text className={`${isDark ? "text-white/70" : "text-black/60"} font-medium`}>
-                                        @{thread.username}
-                                    </Text>
-                                    <Text className={`${isDark ? "text-white/85" : "text-black/80"} mt-2`}>
+                                    {/* Thread Header with Profile Pic */}
+                                    <View className="flex-row items-center mb-2">
+                                        <View className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 mr-2">
+                                            {thread.profile_image_url ? (
+                                                <Image
+                                                    source={{ uri: thread.profile_image_url }}
+                                                    className="w-full h-full"
+                                                    resizeMode="cover"
+                                                />
+                                            ) : (
+                                                <View className="w-full h-full items-center justify-center bg-gray-400">
+                                                    <Text className="text-white text-xs font-bold">
+                                                        {thread.username?.charAt(0).toUpperCase()}
+                                                    </Text>
+                                                </View>
+                                            )}
+                                        </View>
+                                        <View>
+                                            <Text className={`${isDark ? "text-white/70" : "text-black/60"} font-medium`}>
+                                                @{thread.username}
+                                            </Text>
+                                        </View>
+                                    </View>
+
+                                    <Text className={`${isDark ? "text-white/85" : "text-black/80"} mt-1`}>
                                         {thread.content}
                                     </Text>
                                     <Text className={`${isDark ? "text-white/40" : "text-black/30"} mt-2 text-xs`}>

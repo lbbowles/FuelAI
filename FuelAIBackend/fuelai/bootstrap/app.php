@@ -24,6 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        // Added for issue with tokens.
+        $middleware->statefulApi();
+
         $middleware->alias([
             'admin' => AdminMiddleware::class,
         ]);
