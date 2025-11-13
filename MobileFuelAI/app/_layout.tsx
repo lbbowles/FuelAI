@@ -1,13 +1,17 @@
-import { Slot } from "expo-router";
-import { AuthProvider } from "./context/AuthContext";
+import {Slot} from "expo-router";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import "./globals.css";
 
-// wraps the entire app in authentication context and dynamically renders the correct route using Expo Router's
+
+function AppContent() {
+    const { sessionVersion } = useAuth();
+    return <Slot key={sessionVersion} />;
+}
 
 export default function RootLayout() {
     return (
         <AuthProvider>
-            <Slot />
+            <AppContent />
         </AuthProvider>
     );
 }

@@ -21,7 +21,7 @@ const Forum = () => {
             setLoading(true);
             const api = withAuth(session.access_token);
             const data = await api.getAllPosts();
-            console.log('Posts data:', JSON.stringify(data.posts[0], null, 2));
+            //console.log('Posts data:', JSON.stringify(data.posts[0], null, 2));
             setPosts(data.posts);
         } catch (error) {
             console.error('Failed to fetch posts:', error);

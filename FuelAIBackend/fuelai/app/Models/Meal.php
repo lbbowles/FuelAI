@@ -9,11 +9,6 @@ class Meal extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'description',
@@ -28,7 +23,7 @@ class Meal extends Model
 
     public function nutritionalInfo()
     {
-        return $this->hasOne(NutritionalInfo::class);
+        return $this->hasOne(NutritionalInfo::class, 'meal_id', 'id');
     }
 
     public function mealPlans()

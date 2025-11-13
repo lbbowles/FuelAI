@@ -30,14 +30,12 @@ export default function MakeForum() {
         setLoading(true);
 
         try {
-            console.log('Session token:', session?.access_token);
+            //console.log('Session token:', session?.access_token);
             const api = withAuth(session.access_token);
-            console.log('Attempting to create post with:', { forumId, title, content });
             const result = await api.createPost(forumId, title, content);
-            console.log('Success result:', result);
 
             Alert.alert('Success', 'Post created!', [
-                { text: 'OK', onPress: () => router.back() }
+                { text: 'OK', onPress: () => router.push('/forum') }
             ]);
         } catch (error) {
             console.error('Failed to create post:', error);
@@ -57,7 +55,7 @@ export default function MakeForum() {
             }}
         >
             {/* Back button */}
-            <TouchableOpacity onPress={() => router.back()} className="mb-4">
+            <TouchableOpacity onPress={() => router.push('/forum')} className="mb-4">
                 <Text className={`text-lg ${isDark ? "text-secondary" : "text-primary"}`}>
                     ← Back to Forums
                 </Text>

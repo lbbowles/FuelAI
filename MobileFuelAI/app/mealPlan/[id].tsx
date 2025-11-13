@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Modal, TextInput, Alert } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Modal, TextInput, Alert, Switch } from "react-native";
 import { ThemeProvider, DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { useColorScheme } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useAuth } from "../context/AuthContext";
 import { withAuth } from "@/services/api";
 
-// Type definitions for TypeScript otherwise I get a bunch of annoying "errors".  It runs without these just highlights references.
+// Type definitions
+
+// Nutritional info type
+type NutritionalInfo = {
+    id: number;
+    meal_id: number;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+};
+
+// General meal, for adding it to the DB
 type Meal = {
     id: number;
     name: string;
     description: string;
-    calories: number;
-    protein: number;
+    nutritional_info?: NutritionalInfo; // Add this relationship
 };
 
+// The meal we are appending to the meal plan
 type MealPlanMeal = {
     id: number;
     meal_plan_id: number;
@@ -24,6 +36,7 @@ type MealPlanMeal = {
     meal: Meal;
 };
 
+// The meal plan we are viewing
 type MealPlan = {
     id: number;
     user_id: number;
@@ -33,11 +46,10 @@ type MealPlan = {
     updated_at: string;
 };
 
-// Days of the week for the schedule
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-// Meal times for each day
 const mealTimes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 
+// Load Meal Plan Visually
 const MealPlanView = () => {
     const { session } = useAuth();
     const isDark = useColorScheme() === "dark";
@@ -46,6 +58,7 @@ const MealPlanView = () => {
     // State management
     const [mealPlan, setMealPlan] = useState<MealPlan | null>(null);
     const [mealPlanMeals, setMealPlanMeals] = useState<MealPlanMeal[]>([]);
+    const [allMeals, setAllMeals] = useState<Meal[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Create meal modal state
@@ -58,15 +71,21 @@ const MealPlanView = () => {
     const [newMealFat, setNewMealFat] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Fetch meal plan data on component mount
+    // Add meal to slot modal state
+    const [showSelectMeal, setShowSelectMeal] = useState(false);
+    const [selectedSlot, setSelectedSlot] = useState<{ day: string; time: string } | null>(null);
+    const [repeatForAllDays, setRepeatForAllDays] = useState(false);
+
+    // Fetch all information about the Meal Plan and Meals attached.
     useEffect(() => {
         fetchMealPlan();
+        fetchAllMeals();
     }, [id]);
 
-    // Fetch the meal plan and its assigned meals from the API
     const fetchMealPlan = async () => {
         try {
             setLoading(true);
+            // Confirm session token
             const api = withAuth(session.access_token);
             const data = await api.getMealPlan(Number(id));
             setMealPlan(data.meal_plan);
@@ -78,16 +97,64 @@ const MealPlanView = () => {
         }
     };
 
-    // Helper function to get the meal for a specific day and time slot
+    // Load all meals within the DB so that they can be shown within the Modal
+    const fetchAllMeals = async () => {
+        try {
+            const api = withAuth(session.access_token);
+            const data = await api.getMeals();
+            setAllMeals(data.meals || []);
+        } catch (error) {
+            console.error('Failed to fetch meals:', error);
+        }
+    };
+
+    // Function to get the meal for a specific slot (day -> meal)
     const getMealForSlot = (day: string, time: string) => {
         return mealPlanMeals.find(
             (mpm) => mpm.day_of_week === day && mpm.meal_time === time
         );
     };
 
-    // Handle creating a new meal
+    const handleSlotClick = (day: string, time: string) => {
+        setSelectedSlot({ day, time });
+        setRepeatForAllDays(false);
+        setShowSelectMeal(true);
+    };
+
+    // Function to add a meal to a specific slot (day -> meal)
+    const handleAddMealToSlot = async (meal: Meal) => {
+        if (!selectedSlot) return;
+
+        setIsSubmitting(true);
+        try {
+            const api = withAuth(session.access_token);
+
+            // If repeat for all days is selected, add the meal for all days.
+            if (repeatForAllDays) {
+
+                for (const day of daysOfWeek) {
+                    await api.addMealToPlan(Number(id), meal.id, day, selectedSlot.time);
+                }
+                Alert.alert('Success', `${meal.name} added to ${selectedSlot.time} for all days!`);
+            } else {
+                // Add meal to just this specific slot
+                await api.addMealToPlan(Number(id), meal.id, selectedSlot.day, selectedSlot.time);
+                Alert.alert('Success', `${meal.name} added to ${selectedSlot.day} ${selectedSlot.time}!`);
+            }
+
+            setShowSelectMeal(false);
+            setSelectedSlot(null);
+            await fetchMealPlan(); // Refresh the meal plan
+        } catch (error) {
+            console.error('Failed to add meal:', error);
+            Alert.alert('Error', 'Failed to add meal to plan');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // Create the meal and check requirements
     const handleCreateMeal = async () => {
-        // Validate that meal name is provided
         if (!newMealName.trim()) {
             Alert.alert('Error', 'Meal name is required');
             return;
@@ -96,8 +163,7 @@ const MealPlanView = () => {
         setIsSubmitting(true);
         try {
             const api = withAuth(session.access_token);
-            // Call API to create the meal
-            const result = await api.createMeal(
+            await api.createMeal(
                 newMealName,
                 newMealDescription,
                 Number(newMealCalories) || 0,
@@ -106,18 +172,16 @@ const MealPlanView = () => {
                 Number(newMealFat) || 0
             );
 
-            // Reset form fields
             setNewMealName('');
             setNewMealDescription('');
             setNewMealCalories('');
             setNewMealProtein('');
             setNewMealCarbs('');
             setNewMealFat('');
-
-            // Close the modal
             setShowCreateMeal(false);
 
-            // Show success message
+            // Refresh meals list so that the user can use it.
+            await fetchAllMeals();
             Alert.alert('Success', 'Meal created successfully!');
         } catch (error) {
             console.error('Failed to create meal:', error);
@@ -127,7 +191,7 @@ const MealPlanView = () => {
         }
     };
 
-    // Loading state - show spinner while fetching data
+    // If loading, darken
     if (loading) {
         return (
             <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
@@ -138,7 +202,7 @@ const MealPlanView = () => {
         );
     }
 
-    // Error state - meal plan not found
+    // If no meal plan, show an error
     if (!mealPlan) {
         return (
             <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
@@ -149,90 +213,70 @@ const MealPlanView = () => {
         );
     }
 
+    // Actually display the meal plan with the aforementioned functions.
     return (
         <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
             <View className={`flex-1 ${isDark ? "bg-primary" : "bg-secondary"}`}>
                 <ScrollView className="flex-1 px-5" contentContainerClassName="pb-16">
-                    {/* Header Section */}
                     <View className="mt-16 mb-6">
-                        {/* Back button */}
+
+
+                        {/*Back Button*/}
                         <TouchableOpacity onPress={() => router.back()} className="mb-4">
                             <Text className={`text-lg ${isDark ? "text-secondary" : "text-primary"}`}>
                                 ← Back to Meal Plans
                             </Text>
                         </TouchableOpacity>
 
-                        {/* Meal plan name */}
+                        {/*Rest of header*/}
                         <Text className={`text-3xl font-bold ${isDark ? "text-white" : "text-black"}`}>
                             {mealPlan.name}
                         </Text>
-                        {/* Optional description */}
+
                         {mealPlan.description && (
-                            <Text className={`mt-2 ${isDark ? "text-white/70" : "text-black/60"}`}>
+                            <Text className={`${isDark ? "text-white/70" : "text-black/60"} mt-2`}>
                                 {mealPlan.description}
                             </Text>
                         )}
+
+                        {/*Access function to create a new meal to add to the database*/}
+                        <TouchableOpacity
+                            onPress={() => setShowCreateMeal(true)}
+                            className="mt-4 bg-blue-500 rounded-xl p-3"
+                        >
+                            <Text className="text-white text-center font-semibold">Create New Meal</Text>
+                        </TouchableOpacity>
                     </View>
 
-                    {/* Create New Meal Button */}
-                    <TouchableOpacity
-                        onPress={() => setShowCreateMeal(true)}
-                        className={`rounded-2xl p-4 mb-6 border ${
-                            isDark ? 'bg-secondary/10 border-secondary/15' : 'bg-primary/5 border-primary/10'
-                        }`}
-                    >
-                        <Text className={`text-center text-lg font-semibold ${isDark ? "text-secondary" : "text-primary"}`}>
-                            + Create New Meal
-                        </Text>
-                    </TouchableOpacity>
-
-                    {/* Weekly Schedule - Loop through each day */}
+                    {/* Days of the week with meal slots */}
                     {daysOfWeek.map((day) => (
                         <View key={day} className="mb-6">
-                            {/* Day header */}
-                            <Text className={`text-xl font-semibold mb-3 ${isDark ? "text-white" : "text-black"}`}>
+                            <Text className={`text-xl font-bold mb-3 ${isDark ? "text-white" : "text-black"}`}>
                                 {day}
                             </Text>
 
-                            {/* Meal slots for this day - Loop through each meal time */}
-                            <View className="space-y-3">
+                            <View className="space-y-2">
                                 {mealTimes.map((time) => {
-                                    // Check if there's a meal assigned to this slot
                                     const mealSlot = getMealForSlot(day, time);
-
                                     return (
-                                        <View
+                                        <TouchableOpacity
                                             key={`${day}-${time}`}
-                                            className={`rounded-2xl p-4 border ${
-                                                isDark ? 'bg-secondary/10 border-secondary/15' : 'bg-primary/5 border-primary/10'
+                                            onPress={() => handleSlotClick(day, time)}
+                                            className={`rounded-xl p-4 border ${
+                                                isDark ? 'bg-white/5 border-white/10' : 'bg-black/5 border-black/10'
                                             }`}
                                         >
-                                            {/* Meal time header with nutritional info if meal exists */}
-                                            <View className="flex-row justify-between items-center mb-2">
-                                                <Text className={`font-semibold ${isDark ? "text-white/90" : "text-black/90"}`}>
-                                                    {time}
-                                                </Text>
-                                                {/* Show calories and protein if meal is assigned */}
-                                                {mealSlot && (
-                                                    <View className="flex-row gap-3">
-                                                        <Text className={`text-xs ${isDark ? "text-white/60" : "text-black/50"}`}>
-                                                            {mealSlot.meal.calories} cal
-                                                        </Text>
-                                                        <Text className={`text-xs ${isDark ? "text-white/60" : "text-black/50"}`}>
-                                                            {mealSlot.meal.protein}g protein
-                                                        </Text>
-                                                    </View>
-                                                )}
-                                            </View>
-
-                                            {/* Display meal details if assigned, otherwise show empty state */}
+                                            <Text className={`font-semibold mb-1 ${isDark ? "text-white/80" : "text-black/70"}`}>
+                                                {time}
+                                            </Text>
                                             {mealSlot ? (
                                                 <View>
-                                                    {/* Meal name */}
-                                                    <Text className={`text-base font-medium ${isDark ? "text-white" : "text-black"}`}>
+                                                    <Text className={`font-bold ${isDark ? "text-white" : "text-black"}`}>
                                                         {mealSlot.meal.name}
                                                     </Text>
-                                                    {/* Optional meal description */}
+                                                    <Text className={`${isDark ? "text-white/60" : "text-black/50"} text-sm`}>
+                                                        {mealSlot.meal.nutritional_info?.calories || 0} cal | {mealSlot.meal.nutritional_info?.protein || 0}g protein
+                                                    </Text>
                                                     {mealSlot.meal.description && (
                                                         <Text className={`mt-1 ${isDark ? "text-white/60" : "text-black/50"}`} numberOfLines={2}>
                                                             {mealSlot.meal.description}
@@ -240,18 +284,87 @@ const MealPlanView = () => {
                                                     )}
                                                 </View>
                                             ) : (
-                                                /* Empty slot - no meal assigned */
                                                 <Text className={`${isDark ? "text-white/40" : "text-black/30"}`}>
-                                                    No meal planned
+                                                    Tap to add meal
                                                 </Text>
                                             )}
-                                        </View>
+                                        </TouchableOpacity>
                                     );
                                 })}
                             </View>
                         </View>
                     ))}
                 </ScrollView>
+
+                {/* Select Meal Modal */}
+                <Modal
+                    visible={showSelectMeal}
+                    transparent
+                    animationType="slide"
+                    onRequestClose={() => !isSubmitting && setShowSelectMeal(false)}
+                >
+                    <View className="flex-1 bg-black/50 justify-end">
+                        <View className={`rounded-t-3xl p-6 ${isDark ? "bg-gray-900" : "bg-white"}`}>
+                            <Text className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-black"}`}>
+                                Select Meal for {selectedSlot?.day} {selectedSlot?.time}
+                            </Text>
+
+                            {/* Repeat for all days toggle */}
+                            <View className="flex-row items-center justify-between mb-4 p-3 rounded-xl"
+                                  style={{ backgroundColor: isDark ? "#ffffff0f" : "#00000008" }}>
+                                <Text className={isDark ? "text-white" : "text-black"}>
+                                    Repeat for all {selectedSlot?.time}s
+                                </Text>
+                                <Switch
+                                    value={repeatForAllDays}
+                                    onValueChange={setRepeatForAllDays}
+                                    trackColor={{ false: "#767577", true: "#3b82f6" }}
+                                    thumbColor={repeatForAllDays ? "#2563eb" : "#f4f3f4"}
+                                />
+                            </View>
+
+                            {/* Meals List with fixed height */}
+                            <ScrollView style={{ height: 400, marginBottom: 16 }} showsVerticalScrollIndicator={true}>
+                                {allMeals.length === 0 ? (
+                                    <Text className={`text-center ${isDark ? "text-white/60" : "text-black/50"} py-8`}>
+                                        No meals available. Create one first!
+                                    </Text>
+                                ) : (
+                                    allMeals.map((meal) => (
+                                        <TouchableOpacity
+                                            key={meal.id}
+                                            onPress={() => handleAddMealToSlot(meal)}
+                                            disabled={isSubmitting}
+                                            className={`p-4 mb-2 rounded-xl border ${
+                                                isDark ? 'bg-white/5 border-white/10' : 'bg-black/5 border-black/10'
+                                            }`}
+                                        >
+                                            <Text className={`font-bold ${isDark ? "text-white" : "text-black"}`}>
+                                                {meal.name}
+                                            </Text>
+                                            <Text className={`${isDark ? "text-white/60" : "text-black/50"} text-sm mt-1`}>
+                                                {meal.nutritional_info?.calories || 0} cal | {meal.nutritional_info?.protein || 0}g protein | {meal.nutritional_info?.carbs || 0}g carbs | {meal.nutritional_info?.fat || 0}g fat
+                                            </Text>
+                                            {meal.description && (
+                                                <Text className={`${isDark ? "text-white/50" : "text-black/40"} text-sm mt-1`} numberOfLines={2}>
+                                                    {meal.description}
+                                                </Text>
+                                            )}
+                                        </TouchableOpacity>
+                                    ))
+                                )}
+                            </ScrollView>
+
+                            <TouchableOpacity
+                                onPress={() => setShowSelectMeal(false)}
+                                disabled={isSubmitting}
+                                className="bg-gray-500 rounded-xl p-3"
+                            >
+                                <Text className="text-white text-center font-semibold">Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
 
                 {/* Create Meal Modal */}
                 <Modal
@@ -262,12 +375,10 @@ const MealPlanView = () => {
                 >
                     <ScrollView className="flex-1 bg-black/50 px-6 py-20">
                         <View className={`rounded-2xl p-6 ${isDark ? "bg-gray-900" : "bg-white"}`}>
-                            {/* Modal header */}
                             <Text className={`text-xl font-bold mb-4 ${isDark ? "text-white" : "text-black"}`}>
                                 Create New Meal
                             </Text>
 
-                            {/* Meal name input (required) */}
                             <Text className={`mb-2 ${isDark ? "text-white/80" : "text-black/80"}`}>
                                 Meal Name <Text className="text-red-500">*</Text>
                             </Text>
@@ -281,7 +392,6 @@ const MealPlanView = () => {
                                 }`}
                             />
 
-                            {/* Description input (optional) */}
                             <Text className={`mb-2 ${isDark ? "text-white/80" : "text-black/80"}`}>
                                 Description
                             </Text>
@@ -298,7 +408,6 @@ const MealPlanView = () => {
                                 style={{ textAlignVertical: 'top' }}
                             />
 
-                            {/* Nutritional info inputs - Row 1: Calories and Protein */}
                             <View className="flex-row gap-3 mb-4">
                                 <View className="flex-1">
                                     <Text className={`mb-2 ${isDark ? "text-white/80" : "text-black/80"}`}>Calories</Text>
@@ -328,7 +437,6 @@ const MealPlanView = () => {
                                 </View>
                             </View>
 
-                            {/* Nutritional info inputs - Row 2: Carbs and Fat */}
                             <View className="flex-row gap-3 mb-6">
                                 <View className="flex-1">
                                     <Text className={`mb-2 ${isDark ? "text-white/80" : "text-black/80"}`}>Carbs (g)</Text>
@@ -358,13 +466,10 @@ const MealPlanView = () => {
                                 </View>
                             </View>
 
-                            {/* Action buttons - Cancel and Create */}
                             <View className="flex-row gap-3">
-                                {/* Cancel button */}
                                 <TouchableOpacity
                                     onPress={() => {
                                         setShowCreateMeal(false);
-                                        // Reset all form fields
                                         setNewMealName('');
                                         setNewMealDescription('');
                                         setNewMealCalories('');
@@ -378,7 +483,6 @@ const MealPlanView = () => {
                                     <Text className="text-white text-center font-semibold">Cancel</Text>
                                 </TouchableOpacity>
 
-                                {/* Create button - disabled if no name or submitting */}
                                 <TouchableOpacity
                                     onPress={handleCreateMeal}
                                     disabled={isSubmitting || !newMealName.trim()}

@@ -1,44 +1,47 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ForumController;
-use App\Http\Controllers\MealPlanController;
-use App\Http\Controllers\MealController;
+use App\Http\Controllers\Api\V1\MealPlanController;
+use App\Http\Controllers\Api\V1\MealController;
+use App\Http\Controllers\Api\V1\TaskController;
 
+// Authentication
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-// API forum creation endpoints
-Route::get('/users/{user}/followers', [UserController::class, 'followers']);
 
+// Protected routes
 Route::middleware('auth:sanctum')->group(function () {
+    // Users
+    Route::put('/user/profile', [UserController::class, 'update']);
     Route::post('/users/{user}/follow', [UserController::class, 'follow']);
-    // Forums routes
-    Route::post('/forums', [ForumController::class, 'store']);
+    Route::get('/users/{user}/followers', [UserController::class, 'followers']);
+
+    // Forums
     Route::get('/forums', [ForumController::class, 'index']);
     Route::get('/forums/{post}', [ForumController::class, 'show']);
+    Route::post('/forums', [ForumController::class, 'store']);
     Route::post('/forums/{post}/reply', [ForumController::class, 'reply']);
-    // Meal plan routes
-    Route::get('/meal-plans', [MealPlanController::class, 'apiIndex']);
-    Route::post('/meal-plans', [MealPlanController::class, 'apiStore']);
-    Route::get('/meal-plans/{id}', [MealPlanController::class, 'apiShow']);
-    Route::delete('/meal-plans/{id}', [MealPlanController::class, 'apiDestroy']);
-    // Actual Meal Routes
-    Route::get('/meals', [MealController::class, 'apiIndex']);
-    Route::post('/meals', [MealController::class, 'apiStore']);
-    // Meal Plan Food Routes
-    Route::post('/meal-plans/{id}/add-meal', [MealPlanController::class, 'apiAddMeal']);
-    Route::delete('/meal-plans-meals/{id}', [MealPlanController::class, 'apiRemoveMeal']);
+    Route::delete('/forums/{id}', [ForumController::class, 'destroy']);
 
-    Route::get('/test', function () {
-        \Log::info('TEST ENDPOINT');
-        return response()->json(['status' => 'success', 'message' => 'App is working']);
-    });
+    // Meals
+    Route::get('/meals', [MealController::class, 'index']);
+    Route::post('/meals', [MealController::class, 'store']);
 
-    Route::get('/health', function () {
-        return response()->json(['status' => 'ok'], 200);
-    });
+    // Meal Plans
+    Route::get('/meal-plans', [MealPlanController::class, 'index']);
+    Route::post('/meal-plans', [MealPlanController::class, 'store']);
+    Route::get('/meal-plans/{id}', [MealPlanController::class, 'show']);
+    Route::delete('/meal-plans/{id}', [MealPlanController::class, 'destroy']);
+    Route::post('/meal-plans/{id}/add-meal', [MealPlanController::class, 'addMeal']);
+    Route::delete('/meal-plans-meals/{id}', [MealPlanController::class, 'removeMeal']);
 
+    // Tasks
+    Route::get('/tasks', [TaskController::class, 'index']);
+    Route::post('/tasks', [TaskController::class, 'store']);
+    Route::put('/tasks/{id}', [TaskController::class, 'update']);
+    Route::delete('/tasks/{id}', [TaskController::class, 'destroy']);
+    Route::post('/tasks/workout', [TaskController::class, 'storeWorkout']);
 });
