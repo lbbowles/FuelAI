@@ -95,6 +95,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/image_rec', [MealController::class, 'store'])->name('meals.store');
 });
 
+// PROFILE ROUTES
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+
+    Route::post('/profile/update', [ProfileController::class, 'update'])
+        ->name('profile.update');
+});
+
+
 
 // ADMIN ROUTES
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
