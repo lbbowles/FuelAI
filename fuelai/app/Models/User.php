@@ -22,7 +22,7 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     protected $hidden = [
-        'password_hash',
+        'password',
         'remember_token',
          'image_data',
     ];
@@ -46,9 +46,5 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
         ];
     }
-
-    public function getAuthPassword()
-    {
-        return $this->password_hash;
-    }
+    
 }
