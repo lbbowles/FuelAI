@@ -17,7 +17,7 @@ interface Meal {
     id: number;
     name: string;
     description: string;
-    instruction: string | null; 
+    instruction: string | null;
     created_by: number;
     created_at: string;
     updated_at: string;
@@ -46,7 +46,7 @@ export default function MealView({ meal, meal_plans }: MealViewProps) {
 
     const [editName, setEditName] = useState(meal.name);
     const [editDescription, setEditDescription] = useState(meal.description);
-    const [editInstruction, setEditInstruction] = useState(meal.instruction ?? ""); // ✅ updated
+    const [editInstruction, setEditInstruction] = useState(meal.instruction ?? ""); //  updated
 
     const [editCalories, setEditCalories] = useState(meal.nutritional_info?.calories ?? '');
     const [editProtein, setEditProtein] = useState(meal.nutritional_info?.protein ?? '');
@@ -57,8 +57,8 @@ export default function MealView({ meal, meal_plans }: MealViewProps) {
     const [editSodium, setEditSodium] = useState(meal.nutritional_info?.sodium ?? '');
     const [editOther, setEditOther] = useState(meal.nutritional_info?.other_nutrients ?? '');
 
-    const daysOfWeek = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
-    const mealTimes = ['breakfast','lunch','dinner','snack'];
+    const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const mealTimes = ['breakfast', 'lunch', 'dinner', 'snack'];
 
     const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
     const [selectedDayOfWeek, setSelectedDayOfWeek] = useState('monday');
@@ -78,7 +78,7 @@ export default function MealView({ meal, meal_plans }: MealViewProps) {
         router.put(`/meals/${meal.id}`, {
             name: editName,
             description: editDescription,
-            instruction: editInstruction, 
+            instruction: editInstruction,
 
             calories: editCalories,
             protein: editProtein,
@@ -122,7 +122,7 @@ export default function MealView({ meal, meal_plans }: MealViewProps) {
             <Head title={`${meal.name} - Meal`} />
             <NavbarTop />
 
-            <div className="max-w-4xl mx-auto p-6 pt-28">
+            <div className="max-w-4xl mx-auto p-6 pt-42">
 
                 {/* Header */}
                 <div className="card bg-base-100 shadow-xl mb-6">
@@ -205,112 +205,172 @@ export default function MealView({ meal, meal_plans }: MealViewProps) {
             {/* EDIT MODAL */}
             {showEditModal && (
                 <div className="modal modal-open">
-                    <div className="modal-box max-w-3xl">
-                        <h3 className="font-bold text-lg mb-4">Edit Meal</h3>
+                    <div className="modal-box max-w-4xl">
 
-                        {/* Name */}
-                        <label className="form-control mb-4">
-                            <span className="label-text">Meal Name</span>
-                            <input className="input input-bordered"
-                                value={editName}
-                                onChange={(e) => setEditName(e.target.value)}
-                            />
-                        </label>
+                        <h3 className="font-bold text-3xl mb-6">Edit Meal</h3>
 
-                        {/* Description */}
-                        <label className="form-control mb-4">
-                            <span className="label-text">Description</span>
-                            <textarea className="textarea textarea-bordered"
-                                value={editDescription}
-                                onChange={(e) => setEditDescription(e.target.value)}
-                            />
-                        </label>
+                        {/* GRID: Name + Description */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 
-                        {/* Instruction — updated */}
-                        <label className="form-control mb-4">
-                            <span className="label-text">Instructions</span>
-                            <textarea className="textarea textarea-bordered"
+                            {/* Meal Name */}
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text font-semibold">Meal Name</span>
+                                </label>
+                                <input
+                                    className="input input-bordered"
+                                    value={editName}
+                                    onChange={(e) => setEditName(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Description */}
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text font-semibold">Description</span>
+                                </label>
+                                <textarea
+                                    className="textarea textarea-bordered resize-none"
+                                    rows={3}
+                                    value={editDescription}
+                                    onChange={(e) => setEditDescription(e.target.value)}
+                                />
+                            </div>
+
+                        </div>
+
+                        {/* Instructions */}
+                        <div className="form-control mb-8">
+                            <label className="label">
+                                <span className="label-text font-semibold">Instructions</span>
+                            </label>
+                            <textarea
+                                className="textarea textarea-bordered resize-none"
+                                rows={4}
                                 value={editInstruction}
                                 onChange={(e) => setEditInstruction(e.target.value)}
                             />
-                        </label>
+                        </div>
 
-                        {/* Nutrition */}
-                        <h3 className="text-lg font-bold mb-2">Nutrition</h3>
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label className="label"><span>Calories</span></label>
-                                <input className="input input-bordered" type="number"
-                                    value={editCalories}
-                                    onChange={(e) => setEditCalories(e.target.value)}
-                                />
+                        {/* Nutrition Section */}
+                        <h3 className="text-xl font-bold mb-3">Nutrition</h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+                            {/* LEFT SIDE NUTRITION */}
+                            <div className="space-y-4">
+
+                                <div className="form-control">
+                                    <label className="label"><span className="font-semibold">Calories</span></label>
+                                    <input
+                                        type="number"
+                                        className="input input-bordered"
+                                        value={editCalories}
+                                        onChange={(e) => setEditCalories(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="form-control">
+                                    <label className="label"><span className="font-semibold">Carbs (g)</span></label>
+                                    <input
+                                        type="number"
+                                        className="input input-bordered"
+                                        value={editCarbs}
+                                        onChange={(e) => setEditCarbs(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="form-control">
+                                    <label className="label"><span className="font-semibold">Fiber (g)</span></label>
+                                    <input
+                                        type="number"
+                                        className="input input-bordered"
+                                        value={editFiber}
+                                        onChange={(e) => setEditFiber(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="form-control">
+                                    <label className="label"><span className="font-semibold">Sodium (mg)</span></label>
+                                    <input
+                                        type="number"
+                                        className="input input-bordered"
+                                        value={editSodium}
+                                        onChange={(e) => setEditSodium(e.target.value)}
+                                    />
+                                </div>
+
                             </div>
 
-                            <div>
-                                <label className="label"><span>Protein (g)</span></label>
-                                <input className="input input-bordered" type="number"
-                                    value={editProtein}
-                                    onChange={(e) => setEditProtein(e.target.value)}
-                                />
-                            </div>
+                            {/* RIGHT SIDE NUTRITION */}
+                            <div className="space-y-4">
 
-                            <div>
-                                <label className="label"><span>Carbs (g)</span></label>
-                                <input className="input input-bordered" type="number"
-                                    value={editCarbs}
-                                    onChange={(e) => setEditCarbs(e.target.value)}
-                                />
-                            </div>
+                                <div className="form-control">
+                                    <label className="label"><span className="font-semibold">Protein (g)</span></label>
+                                    <input
+                                        type="number"
+                                        className="input input-bordered"
+                                        value={editProtein}
+                                        onChange={(e) => setEditProtein(e.target.value)}
+                                    />
+                                </div>
 
-                            <div>
-                                <label className="label"><span>Fat (g)</span></label>
-                                <input className="input input-bordered" type="number"
-                                    value={editFat}
-                                    onChange={(e) => setEditFat(e.target.value)}
-                                />
-                            </div>
+                                <div className="form-control">
+                                    <label className="label"><span className="font-semibold">Fat (g)</span></label>
+                                    <input
+                                        type="number"
+                                        className="input input-bordered"
+                                        value={editFat}
+                                        onChange={(e) => setEditFat(e.target.value)}
+                                    />
+                                </div>
 
-                            <div>
-                                <label className="label"><span>Fiber (g)</span></label>
-                                <input className="input input-bordered" type="number"
-                                    value={editFiber}
-                                    onChange={(e) => setEditFiber(e.target.value)}
-                                />
-                            </div>
+                                <div className="form-control">
+                                    <label className="label"><span className="font-semibold">Sugar (g)</span></label>
+                                    <input
+                                        type="number"
+                                        className="input input-bordered"
+                                        value={editSugar}
+                                        onChange={(e) => setEditSugar(e.target.value)}
+                                    />
+                                </div>
 
-                            <div>
-                                <label className="label"><span>Sugar (g)</span></label>
-                                <input className="input input-bordered" type="number"
-                                    value={editSugar}
-                                    onChange={(e) => setEditSugar(e.target.value)}
-                                />
-                            </div>
-
-                            <div>
-                                <label className="label"><span>Sodium (mg)</span></label>
-                                <input className="input input-bordered" type="number"
-                                    value={editSodium}
-                                    onChange={(e) => setEditSodium(e.target.value)}
-                                />
                             </div>
                         </div>
 
-                        <label className="form-control mb-4">
-                            <span className="label-text">Other Notes</span>
-                            <textarea className="textarea textarea-bordered"
+                        {/* Other Notes */}
+                        <div className="form-control mb-6">
+                            <label className="label">
+                                <span className="label-text font-semibold">Other Notes</span>
+                            </label>
+                            <textarea
+                                className="textarea textarea-bordered resize-none"
+                                rows={3}
                                 value={editOther}
                                 onChange={(e) => setEditOther(e.target.value)}
                             />
-                        </label>
-
-                        {/* Actions */}
-                        <div className="modal-action">
-                            <button className="btn btn-ghost" onClick={() => setShowEditModal(false)}>Cancel</button>
-                            <button className="btn btn-primary" onClick={handleUpdateMeal}>Save Changes</button>
                         </div>
+
+                        {/* ACTION BUTTONS */}
+                        <div className="modal-action">
+                            <button
+                                className="btn btn-ghost"
+                                onClick={() => setShowEditModal(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleUpdateMeal}
+                            >
+                                Save Changes
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             )}
+
         </>
     );
 }

@@ -14,6 +14,7 @@ use App\Http\Controllers\MealController;
 use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\MealPlanMealController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\ProfileController;
 
 
 
