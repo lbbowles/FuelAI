@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
 
 });
 
+
+
 // Allow for user who aren't logged in to view forums
 Route::get('/forums', [ForumController::class, 'index'])->name('forums.index');
 
@@ -75,6 +77,9 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile/update', [ProfileController::class, 'update']) ->name('profile.update');
 });
 
 Route::get('/exercises', function () {

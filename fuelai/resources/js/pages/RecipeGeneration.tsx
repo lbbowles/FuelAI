@@ -1,7 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import NavbarTop from '@/components/navbar';
 import { useState } from 'react';
-import {RecipeFormData, commonAllergies, dietaryOptions, proteinOptions} from '@/data/recipeData';
+import { RecipeFormData, commonAllergies, dietaryOptions, proteinOptions } from '@/data/recipeData';
 
 export default function RecipeGeneration() {
     const [formData, setFormData] = useState<RecipeFormData>({
@@ -18,13 +18,14 @@ export default function RecipeGeneration() {
         additionalNotes: ''
     });
 
-    // Set initial state
+    // State
     const [generatedRecipe, setGeneratedRecipe] = useState<string>('');
-    const [setRecipeName] = useState<string>('');
+    const [recipeName, setRecipeName] = useState<string>('');   // <— FIXED
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string>('');
 
+    // Checkbox handler
     const handleCheckboxChange = (
         category: 'dietaryRequirements' | 'allergies' | 'proteins',
         value: string
@@ -37,6 +38,7 @@ export default function RecipeGeneration() {
         }));
     };
 
+    // Input handler
     const handleInputChange = (field: keyof RecipeFormData, value: string) => {
         setFormData(prev => ({
             ...prev,
@@ -44,64 +46,85 @@ export default function RecipeGeneration() {
         }));
     };
 
+    // Extract Recipe Name
     const extractRecipeName = (recipeText: string): string => {
         const nameMatch = recipeText.match(/RECIPE_NAME:\s*(.+?)(?:\n|$)/i);
-        if (nameMatch && nameMatch[1]) {
-            return nameMatch[1].trim();
-        }
-        return 'Generated Recipe';
+        return nameMatch?.[1]?.trim() ?? "Generated Recipe";
     };
 
+    // Extract Description
     const extractRecipeDescription = (recipeText: string): string => {
         const descMatch = recipeText.match(/RECIPE_DESCRIPTION:\s*([\s\S]+)/i);
-        if (descMatch && descMatch[1]) {
-            return descMatch[1].trim();
-        }
-        return recipeText;
+        return descMatch?.[1]?.trim() ?? recipeText;
     };
 
+
+
+    // Extract instructions
+    const extractInstructions = (recipeText: string): string => {
+        const match = recipeText.match(/Instructions?:\s*([\s\S]*?)(?:Estimated|Calories:|$)/i);
+        if (match) return match[1].trim();
+        const stepMatch = recipeText.match(/(\d+\..*)/s);
+        return stepMatch ? stepMatch[1].trim() : "";
+    };
+
+    // Extract number fields
+    const extractNumber = (text: string, label: string): number | null => {
+        const regex = new RegExp(`${label}\\s*:?.*?(\\d+)`, "i");
+        const match = text.match(regex);
+        return match ? Number(match[1]) : null;
+    };
+
+    // Extract nutrition macros
+    const extractNutrition = (recipeText: string) => ({
+        calories: extractNumber(recipeText, "Calories"),
+        protein: extractNumber(recipeText, "Protein"),
+        carbs: extractNumber(recipeText, "Carbs|Carbohydrates"),
+        fat: extractNumber(recipeText, "Fat"),
+        fiber: extractNumber(recipeText, "Fiber"),
+        sugar: extractNumber(recipeText, "Sugar"),
+        sodium: extractNumber(recipeText, "Sodium"),
+        other_nutrients: null
+    });
+
+
+
+    // Generate Recipe
     const generateRecipe = async () => {
         if (!formData.caloriesTarget) {
             setError('Please specify a calorie target');
             return;
         }
-
         if (!formData.proteinsTarget) {
             setError('Please specify a protein target');
             return;
         }
 
         setIsLoading(true);
-        setError('');
         setGeneratedRecipe('');
+        setError('');
 
         try {
             const prompt = `Generate a recipe with the following requirements:
 
-            Dietary Requirements: ${formData.dietaryRequirements.join(', ') || 'None specified'}
-            Allergies to avoid: ${formData.allergies.join(', ') || 'None'}
+            Dietary Requirements: ${formData.dietaryRequirements.join(', ') || 'None'}
+            Allergies: ${formData.allergies.join(', ') || 'None'}
             Preferred proteins: ${formData.proteins.join(', ') || 'Any'}
-            Target calories: ${formData.caloriesTarget} calories
-            Target Proteins: ${formData.proteinsTarget} (g) proteins
+            Target calories: ${formData.caloriesTarget}
+            Target protein: ${formData.proteinsTarget}
             Servings: ${formData.servings}
             Cooking time: ${formData.cookingTime || 'Any'}
-            Difficulty level: ${formData.difficulty || 'Any'}
-            Cuisine type: ${formData.cuisine || 'Any'}
-            Meal type: ${formData.mealType || 'Any'}
-            Additional notes: ${formData.additionalNotes || 'None'}
+            Difficulty: ${formData.difficulty || 'Any'}
+            Cuisine: ${formData.cuisine || 'Any'}
+            Meal Type: ${formData.mealType || 'Any'}
+            Additional Notes: ${formData.additionalNotes || 'None'}
 
-            Please respond EXACTLY in this format with no extra headers, labels, or formatting:
+            Respond EXACTLY in this format:
 
-            RECIPE_NAME: [Just the recipe name, nothing else]
-            RECIPE_DESCRIPTION: [Complete recipe including: ingredient list with measurements, step-by-step cooking instructions, estimated nutritional information (calories, protein, carbs, fat), cooking time, and difficulty level]
+            RECIPE_NAME: [name]
+            RECIPE_DESCRIPTION: [Ingredients + Instructions + Nutrition]`;
 
-            Make sure the recipe is safe, healthy, and realistic to prepare at home.`;
-
-            const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY; //Pull from .env file
-
-            if (!apiKey) {
-                throw new Error('OpenRouter API key not found. Please add VITE_OPENROUTER_API_KEY to your .env file.');
-            }
+            const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
 
             const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                 method: "POST",
@@ -113,111 +136,106 @@ export default function RecipeGeneration() {
                 },
                 body: JSON.stringify({
                     "model": "openai/gpt-4o-mini",
-                    "messages": [
-                        {
-                            "role": "user",
-                            "content": prompt
-                        }
-                    ],
+                    "messages": [{ "role": "user", "content": prompt }],
                     "temperature": 0.7,
                     "max_tokens": 2000
                 })
             });
 
-            if (!response.ok) {
-                const errorData = await response.text();
-                throw new Error(`API request failed with status ${response.status}: ${errorData}`);
-            }
-
             const data = await response.json();
-
-            if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-                throw new Error('Invalid response format from API');
-            }
 
             const recipeContent = data.choices[0].message.content;
             setGeneratedRecipe(recipeContent);
             setRecipeName(extractRecipeName(recipeContent));
 
-        } catch (error) {
-            console.error('Recipe generation error:', error);
-            let errorMessage = 'Failed to generate recipe. ';
-
-            if (error instanceof Error) {
-                errorMessage += error.message;
-            } else {
-                errorMessage += 'Please try again.';
-            }
-
-            setError(errorMessage);
+        } catch (err) {
+            setError("Error generating recipe.");
         } finally {
             setIsLoading(false);
         }
     };
+
+    /* ------------------ SAVE TO DB WITH ALL FIXED FIELDS ------------------ */
 
     const saveRecipeToMeals = () => {
         if (!generatedRecipe) return;
 
         const name = extractRecipeName(generatedRecipe);
         const description = extractRecipeDescription(generatedRecipe);
+        const instructions = extractInstructions(generatedRecipe);
+        const nutrition = extractNutrition(generatedRecipe);
 
         setIsSaving(true);
+
         router.post('/meals', {
             name: name,
-            description: description
+            description: description,
+            instruction: instructions,
+
+            calories: nutrition.calories,
+            protein: nutrition.protein,
+            carbs: nutrition.carbs,
+            fat: nutrition.fat,
+            fiber: nutrition.fiber,
+            sugar: nutrition.sugar,
+            sodium: nutrition.sodium,
+            other_nutrients: nutrition.other_nutrients,
+
+            image_base64: null
         }, {
-            onSuccess: () => {
-                alert('Recipe saved to meals successfully!');
-            },
-            onError: () => {
-                alert('Failed to save recipe. Please try again.');
-            },
-            onFinish: () => {
-                setIsSaving(false);
-            }
+            onSuccess: () => alert("Recipe saved!"),
+            onError: () => alert("Failed to save recipe"),
+            onFinish: () => setIsSaving(false)
         });
     };
+
+    /* ----------------------------------------------------------------------- */
 
     return (
         <>
             <Head title="Recipe Generator">
                 <link rel="icon" type="image/svg+xml" href="/fuelai.svg" />
             </Head>
+
             <NavbarTop />
 
-            {/* Container for everything*/}
-
-            <div className="min-h-screen bg-base-200 pt-32 lg:pt-32">
+            <div className="min-h-screen bg-base-200 pt-32">
                 <div className="container mx-auto p-4 max-w-7xl">
+
+                    {/* Header */}
                     <div className="card bg-base-100 shadow-xl mb-6">
                         <div className="card-body text-center">
                             <h1 className="text-4xl font-bold">Recipe Generator</h1>
                             <p className="text-base-content/60 text-lg">
-                                Tell us your preferences and we'll create the perfect recipe for you
+                                Tell us your preferences and we'll create the perfect recipe
                             </p>
                         </div>
                     </div>
 
-                    {/* Form Section */}
+                    {/* ---- Preferences Form ---- */}
                     <div className="card bg-base-100 shadow-xl mb-6">
                         <div className="card-body">
+
                             <h2 className="text-2xl font-semibold mb-6">Recipe Preferences</h2>
 
+                            {/* --- dietary, allergies, proteins --- */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                                {/* Dietary Requirements */}
                                 <div className="form-control">
                                     <label className="label">
                                         <span className="label-text font-semibold">Dietary Requirements</span>
                                     </label>
                                     <div className="space-y-2">
                                         {dietaryOptions.map(option => (
-                                            <label key={option} className="label cursor-pointer justify-start gap-2 mr-4">
+                                            <label key={option} className="label cursor-pointer gap-2">
                                                 <input
                                                     type="checkbox"
                                                     checked={formData.dietaryRequirements.includes(option)}
                                                     onChange={() => handleCheckboxChange('dietaryRequirements', option)}
-                                                    className="checkbox checkbox-sm border-2 border-black"
+                                                    className="checkbox checkbox-sm"
                                                 />
-                                                <span className="label-text">{option}</span>
+                                                <span>{option}</span>
                                             </label>
                                         ))}
                                     </div>
@@ -226,18 +244,18 @@ export default function RecipeGeneration() {
                                 {/* Allergies */}
                                 <div className="form-control">
                                     <label className="label">
-                                        <span className="label-text font-semibold">Allergies & Restrictions</span>
+                                        <span className="label-text font-semibold">Allergies</span>
                                     </label>
                                     <div className="space-y-2">
                                         {commonAllergies.map(allergy => (
-                                            <label key={allergy} className="label cursor-pointer justify-start gap-2 mr-4">
+                                            <label key={allergy} className="label cursor-pointer gap-2">
                                                 <input
                                                     type="checkbox"
                                                     checked={formData.allergies.includes(allergy)}
                                                     onChange={() => handleCheckboxChange('allergies', allergy)}
-                                                    className="checkbox checkbox-sm border-2 border-black"
+                                                    className="checkbox checkbox-sm"
                                                 />
-                                                <span className="label-text">{allergy}</span>
+                                                <span>{allergy}</span>
                                             </label>
                                         ))}
                                     </div>
@@ -250,66 +268,63 @@ export default function RecipeGeneration() {
                                     </label>
                                     <div className="space-y-2">
                                         {proteinOptions.map(protein => (
-                                            <label key={protein} className="label cursor-pointer justify-start gap-2 mr-4">
+                                            <label key={protein} className="label cursor-pointer gap-2">
                                                 <input
                                                     type="checkbox"
                                                     checked={formData.proteins.includes(protein)}
                                                     onChange={() => handleCheckboxChange('proteins', protein)}
-                                                    className="checkbox checkbox-sm border-2 border-black"
+                                                    className="checkbox checkbox-sm"
                                                 />
-                                                <span className="label-text">{protein}</span>
+                                                <span>{protein}</span>
                                             </label>
                                         ))}
                                     </div>
                                 </div>
+
                             </div>
 
                             <div className="divider"></div>
 
-                            {/* Additional Settings Row */}
-
+                            {/* ---- More Options ---- */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                                {/* Calories */}
                                 <div className="form-control">
-                                    {/* Calories Target  */}
                                     <label className="label">
-                                        <span className="label-text">Target Calories</span>
+                                        <span>Target Calories</span>
                                         <span className="label-text-alt text-error">Required</span>
                                     </label>
                                     <input
                                         type="number"
                                         value={formData.caloriesTarget}
                                         onChange={(e) => handleInputChange('caloriesTarget', e.target.value)}
-                                        placeholder="e.g. 500"
                                         className="input input-bordered"
                                     />
                                 </div>
 
+                                {/* Protein Target */}
                                 <div className="form-control">
-                                    {/* Proteins Target */}
                                     <label className="label">
-                                        <span className="label-text">Target Proteins (g)</span>
+                                        <span>Target Protein (g)</span>
                                         <span className="label-text-alt text-error">Required</span>
                                     </label>
                                     <input
                                         type="number"
                                         value={formData.proteinsTarget}
                                         onChange={(e) => handleInputChange('proteinsTarget', e.target.value)}
-                                        placeholder="e.g. 40"
                                         className="input input-bordered"
                                     />
                                 </div>
 
+                                {/* Cooking Time */}
                                 <div className="form-control">
-                                    {/* Cooking Time */}
-                                    <label className="label">
-                                        <span className="label-text">Cooking Time</span>
-                                    </label>
+                                    <label className="label"><span>Cooking Time</span></label>
                                     <select
                                         value={formData.cookingTime}
                                         onChange={(e) => handleInputChange('cookingTime', e.target.value)}
                                         className="select select-bordered"
                                     >
-                                        <option value="">Any time</option>
+                                        <option value="">Any</option>
                                         <option value="15 minutes">Under 15 min</option>
                                         <option value="30 minutes">Under 30 min</option>
                                         <option value="1 hour">Under 1 hour</option>
@@ -317,49 +332,43 @@ export default function RecipeGeneration() {
                                     </select>
                                 </div>
 
+                                {/* Servings */}
                                 <div className="form-control">
-                                    {/* Serving Number */}
-                                    <label className="label">
-                                        <span className="label-text">Number of Servings</span>
-                                    </label>
+                                    <label className="label"><span>Servings</span></label>
                                     <select
                                         value={formData.servings}
                                         onChange={(e) => handleInputChange('servings', e.target.value)}
                                         className="select select-bordered"
                                     >
-                                        <option value="1">1 serving</option>
-                                        <option value="2">2 servings</option>
-                                        <option value="4">4 servings</option>
-                                        <option value="6">6 servings</option>
-                                        <option value="8">8 servings</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="4">4</option>
+                                        <option value="6">6</option>
+                                        <option value="8">8</option>
                                     </select>
                                 </div>
 
+                                {/* Cuisine */}
                                 <div className="form-control">
-                                    {/* Food Type */}
-                                    <label className="label">
-                                        <span className="label-text">Cuisine Type</span>
-                                    </label>
+                                    <label className="label"><span>Cuisine</span></label>
                                     <input
                                         type="text"
                                         value={formData.cuisine}
                                         onChange={(e) => handleInputChange('cuisine', e.target.value)}
-                                        placeholder="e.g. Italian, Asian"
                                         className="input input-bordered"
+                                        placeholder="e.g. Italian"
                                     />
                                 </div>
 
+                                {/* Meal Type */}
                                 <div className="form-control">
-                                    {/* Meal Type */}
-                                    <label className="label">
-                                        <span className="label-text">Meal Type</span>
-                                    </label>
+                                    <label className="label"><span>Meal Type</span></label>
                                     <select
                                         value={formData.mealType}
                                         onChange={(e) => handleInputChange('mealType', e.target.value)}
                                         className="select select-bordered"
                                     >
-                                        <option value="">Any meal</option>
+                                        <option value="">Any</option>
                                         <option value="Breakfast">Breakfast</option>
                                         <option value="Lunch">Lunch</option>
                                         <option value="Dinner">Dinner</option>
@@ -367,36 +376,32 @@ export default function RecipeGeneration() {
                                         <option value="Dessert">Dessert</option>
                                     </select>
                                 </div>
+
                             </div>
 
-                            <div className="form-control">
-                                {/* Difficulty */}
-                                <label className="label">
-                                    <span className="label-text">Difficulty</span>
-                                </label>
+                            {/* Difficulty */}
+                            <div className="form-control mt-4">
+                                <label className="label"><span>Difficulty</span></label>
                                 <select
                                     value={formData.difficulty}
                                     onChange={(e) => handleInputChange('difficulty', e.target.value)}
                                     className="select select-bordered"
                                 >
-                                    <option value="">Any difficulty</option>
+                                    <option value="">Any</option>
                                     <option value="Beginner">Beginner</option>
                                     <option value="Intermediate">Intermediate</option>
                                     <option value="Advanced">Advanced</option>
                                 </select>
                             </div>
 
+                            {/* Notes */}
                             <div className="form-control mt-4">
-                                {/* Additional Notes */}
-                                <label className="label">
-                                    <span className="label-text">Additional Notes</span>
-                                </label>
+                                <label className="label"><span>Additional Notes</span></label>
                                 <textarea
                                     value={formData.additionalNotes}
                                     onChange={(e) => handleInputChange('additionalNotes', e.target.value)}
-                                    placeholder="Any special requests, ingredients you want to use, or cooking methods..."
-                                    rows={3}
                                     className="textarea textarea-bordered"
+                                    rows={3}
                                 />
                             </div>
 
@@ -406,84 +411,92 @@ export default function RecipeGeneration() {
                                 </div>
                             )}
 
+                            {/* Generate Button */}
                             <button
                                 onClick={generateRecipe}
-                                disabled={isLoading || !formData.caloriesTarget || !formData.proteinsTarget}
+                                disabled={isLoading}
                                 className="btn btn-primary btn-block mt-6"
                             >
                                 {isLoading ? (
                                     <>
                                         <span className="loading loading-spinner"></span>
-                                        Generating Recipe...
+                                        Generating...
                                     </>
                                 ) : (
                                     'Generate Recipe'
                                 )}
                             </button>
+
                         </div>
                     </div>
 
+                    {/* ---- Generated Recipe ---- */}
                     <div className="card bg-base-100 shadow-xl">
                         <div className="card-body">
+
                             <h2 className="text-2xl font-semibold mb-4">Your Generated Recipe</h2>
 
                             {!generatedRecipe && !isLoading && (
                                 <div className="text-center py-12">
-                                    <p className="text-base-content/60">Fill out your preferences above and generate a personalized recipe</p>
+                                    <p className="text-base-content/60">No recipe generated yet.</p>
                                 </div>
                             )}
 
                             {isLoading && (
                                 <div className="text-center py-12">
-                                    <span className="loading loading-spinner loading-lg text-primary"></span>
-                                    <p className="text-base-content/60 mt-4">Creating your perfect recipe...</p>
+                                    <span className="loading loading-lg"></span>
+                                    <p className="text-base-content/60 mt-4">Creating your recipe...</p>
                                 </div>
                             )}
 
                             {generatedRecipe && (
                                 <>
-                                    <div className="prose max-w-none">
-                                        <div className="whitespace-pre-wrap">
-                                            {generatedRecipe}
-                                        </div>
+                                    <div className="prose max-w-none whitespace-pre-wrap">
+                                        {generatedRecipe}
                                     </div>
+
                                     <div className="divider"></div>
-                                    <div className="flex gap-3 justify-end">
+
+                                    <div className="flex justify-end gap-3">
                                         <button
+                                            className="btn btn-ghost"
                                             onClick={() => {
                                                 setGeneratedRecipe('');
                                                 setRecipeName('');
                                             }}
-                                            className="btn btn-ghost"
                                         >
                                             Clear
                                         </button>
+
                                         <button
+                                            className="btn btn-outline"
                                             onClick={generateRecipe}
                                             disabled={isLoading}
-                                            className="btn btn-outline"
                                         >
                                             Regenerate
                                         </button>
+
                                         <button
+                                            className="btn btn-primary"
                                             onClick={saveRecipeToMeals}
                                             disabled={isSaving}
-                                            className="btn btn-primary"
                                         >
                                             {isSaving ? (
                                                 <>
-                                                    <span className="loading loading-spinner loading-sm"></span>
+                                                    <span className="loading loading-spinner"></span>
                                                     Saving...
                                                 </>
                                             ) : (
-                                                'Save to Meals'
+                                                "Save to Meals"
                                             )}
                                         </button>
                                     </div>
                                 </>
                             )}
+
                         </div>
                     </div>
+
                 </div>
             </div>
         </>

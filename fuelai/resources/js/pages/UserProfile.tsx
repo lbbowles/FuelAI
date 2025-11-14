@@ -114,7 +114,6 @@ export default function Profile() {
                         <p><strong>Username:</strong> {user.username}</p>
                         <p><strong>Email:</strong> {user.email}</p>
                         <p><strong>Role:</strong> {user.role}</p>
-                        <p><strong>Joined:</strong> {new Date(user.created_at).toLocaleDateString()}</p>
                     </div>
 
                     <div className="mt-6 flex justify-end">
