@@ -1,4 +1,3 @@
-import AuthenticatedSessionController from '@/actions/App/Http/Controllers/Auth/AuthenticatedSessionController';
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
@@ -7,9 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import NavbarTop from '@/components/navbar';
 import { register } from '@/routes';
+import { store as loginStore } from '@/routes/login';
 import { request } from '@/routes/password';
-import { Form, Head } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
+import { FormEventHandler } from 'react';
 
 interface LoginProps {
     status?: string;
@@ -17,6 +19,20 @@ interface LoginProps {
 }
 
 export default function Login({ status, canResetPassword }: LoginProps) {
+    const { data, setData, post, processing, errors, reset } = useForm({
+        email: '',
+        password: '',
+        remember: false,
+    });
+
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+
+        post(loginStore.url(), {
+            onFinish: () => reset('password'),
+        });
+    };
+
     return (
         <>
             <Head title="Log in">
@@ -48,96 +64,98 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             {/* Login Card */}
                             <div className="card bg-white shadow-lg">
                                 <div className="card-body p-8">
-                                    <Form
-                                        {...AuthenticatedSessionController.store.form()}
-                                        resetOnSuccess={['password']}
-                                        className="space-y-6"
-                                    >
-                                        {({ processing, errors }) => (
-                                            <>
-                                                {/* Email Input */}
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="email" className="text-gray-700 font-semibold">
-                                                        Email address
-                                                    </Label>
-                                                    <Input
-                                                        id="email"
-                                                        type="email"
-                                                        name="email"
-                                                        required
-                                                        autoFocus
-                                                        tabIndex={1}
-                                                        autoComplete="email"
-                                                        placeholder="email@example.com"
-                                                        className="w-full"
-                                                    />
-                                                    <InputError message={errors.email} />
-                                                </div>
+                                    <form onSubmit={submit} className="space-y-6">
+                                        {/* Email Input */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="email" className="text-gray-700 font-semibold">
+                                                Email address
+                                            </Label>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                name="email"
+                                                value={data.email}
+                                                onChange={(e) => setData('email', e.target.value)}
+                                                required
+                                                autoFocus
+                                                tabIndex={1}
+                                                autoComplete="email"
+                                                placeholder="email@example.com"
+                                                className="w-full"
+                                            />
+                                            <InputError message={errors.email} />
+                                        </div>
 
-                                                {/* Password Input */}
-                                                <div className="space-y-2">
-                                                    <div className="flex items-center justify-between">
-                                                        <Label htmlFor="password" className="text-gray-700 font-semibold">
-                                                            Password
-                                                        </Label>
-                                                        {canResetPassword && (
-                                                            <TextLink
-                                                                href={request()}
-                                                                className="text-sm text-blue-600 hover:text-blue-700"
-                                                                tabIndex={5}
-                                                            >
-                                                                Forgot password?
-                                                            </TextLink>
-                                                        )}
-                                                    </div>
-                                                    <Input
-                                                        id="password"
-                                                        type="password"
-                                                        name="password"
-                                                        required
-                                                        tabIndex={2}
-                                                        autoComplete="current-password"
-                                                        placeholder="Enter your password"
-                                                        className="w-full"
-                                                    />
-                                                    <InputError message={errors.password} />
-                                                </div>
+                                        {/* Password Input */}
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <Label htmlFor="password" className="text-gray-700 font-semibold">
+                                                    Password
+                                                </Label>
+                                                {canResetPassword && (
+                                                    <TextLink
+                                                        href={request()}
+                                                        className="text-sm text-blue-600 hover:text-blue-700"
+                                                        tabIndex={5}
+                                                    >
+                                                        Forgot password?
+                                                    </TextLink>
+                                                )}
+                                            </div>
+                                            <Input
+                                                id="password"
+                                                type="password"
+                                                name="password"
+                                                value={data.password}
+                                                onChange={(e) => setData('password', e.target.value)}
+                                                required
+                                                tabIndex={2}
+                                                autoComplete="current-password"
+                                                placeholder="Enter your password"
+                                                className="w-full"
+                                            />
+                                            <InputError message={errors.password} />
+                                        </div>
 
-                                                {/* Remember Me */}
-                                                <div className="flex items-center space-x-3">
-                                                    <Checkbox id="remember" name="remember" tabIndex={3} />
-                                                    <Label htmlFor="remember" className="text-gray-700 cursor-pointer">
-                                                        Remember me for 30 days
-                                                    </Label>
-                                                </div>
+                                        {/* Remember Me */}
+                                        <div className="flex items-center space-x-3">
+                                            <Checkbox
+                                                id="remember"
+                                                name="remember"
+                                                checked={data.remember}
+                                                onCheckedChange={(checked) => setData('remember', checked as boolean)}
+                                                tabIndex={3}
+                                            />
+                                            <Label htmlFor="remember" className="text-gray-700 cursor-pointer">
+                                                Remember me for 30 days
+                                            </Label>
+                                        </div>
 
-                                                {/* Submit Button */}
-                                                <Button
-                                                    type="submit"
-                                                    className="w-full"
-                                                    tabIndex={4}
-                                                    disabled={processing}
+                                        {/* Submit Button */}
+                                        <Button
+                                            type="submit"
+                                            className="w-full"
+                                            tabIndex={4}
+                                            disabled={processing}
+                                        >
+                                            {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
+                                            Log in
+                                        </Button>
+
+                                        {/* Sign Up Link */}
+                                        <div className="text-center pt-4 border-t border-gray-200">
+                                            <p className="text-sm text-gray-600">
+                                                Don't have an account?{' '}
+                                                <TextLink
+                                                    href={register()}
+                                                    tabIndex={5}
+                                                    className="text-blue-600 hover:text-blue-700 font-semibold"
                                                 >
-                                                    {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
-                                                    Log in
-                                                </Button>
-
-                                                {/* Sign Up Link */}
-                                                <div className="text-center pt-4 border-t border-gray-200">
-                                                    <p className="text-sm text-gray-600">
-                                                        Don't have an account?{' '}
-                                                        <TextLink
-                                                            href={register()}
-                                                            tabIndex={5}
-                                                            className="text-blue-600 hover:text-blue-700 font-semibold"
-                                                        >
-                                                            Sign up for free
-                                                        </TextLink>
-                                                    </p>
-                                                </div>
-                                            </>
-                                        )}
-                                    </Form>
+                                                    Sign up for free
+                                                </TextLink>
+                                            </p>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>

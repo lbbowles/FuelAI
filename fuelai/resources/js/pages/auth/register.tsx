@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import RegisteredUserController from '@/actions/App/Http/Controllers/Auth/RegisteredUserController';
+import { useState, FormEventHandler } from 'react';
 import { login } from '@/routes';
-import { Form, Head } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { store as registerStore } from '@/routes/register';
+import { useForm, Head } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Input } from '@/components/ui/input';
@@ -11,31 +11,49 @@ import { Label } from '@/components/ui/label';
 import NavbarTop from '@/components/navbar';
 
 export default function Register() {
-
     // Image preview state
-   const [preview, setPreview] = useState<string | null>(null);
+    const [preview, setPreview] = useState<string | null>(null);
 
+    // Form data
+    const { data, setData, post, processing, errors, reset } = useForm({
+        username: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+        role: 'user',
+        image: null as File | null,
+    });
 
     // Handle preview
     function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target?.files?.[0];
-    if (!file) {
-        setPreview(null);
-        return;
+        const file = e.target?.files?.[0];
+        if (!file) {
+            setPreview(null);
+            setData('image', null);
+            return;
+        }
+
+        setData('image', file);
+
+        const reader = new FileReader();
+        reader.onload = (ev: ProgressEvent<FileReader>) => {
+            const result = ev.target?.result;
+
+            if (typeof result === "string") {
+                setPreview(result);
+            }
+        };
+
+        reader.readAsDataURL(file);
     }
 
-    const reader = new FileReader();
-    reader.onload = (ev: ProgressEvent<FileReader>) => {
-        const result = ev.target?.result;
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
 
-        if (typeof result === "string") {
-            setPreview(result);
-        }
+        post(registerStore.url(), {
+            onFinish: () => reset('password', 'password_confirmation'),
+        });
     };
-
-    reader.readAsDataURL(file);
-}
-
 
     return (
         <>
@@ -61,154 +79,145 @@ export default function Register() {
                             <div className="card bg-white shadow-lg">
                                 <div className="card-body p-8">
 
-                                    <Form
-                                        {...RegisteredUserController.store.form()}
-                                        method="post"
-                                        enctype="multipart/form-data"
-                                        resetOnSuccess={['password', 'password_confirmation']}
-                                        disableWhileProcessing
+                                    <form
+                                        onSubmit={submit}
                                         className="space-y-6"
                                     >
-                                        {({ processing, errors }) => (
-                                            <>
+                                        {/* Name Input */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="username" className="text-gray-700 font-semibold">
+                                                Name
+                                            </Label>
+                                            <Input
+                                                id="username"
+                                                type="text"
+                                                value={data.username}
+                                                onChange={(e) => setData('username', e.target.value)}
+                                                required
+                                                autoFocus
+                                                tabIndex={1}
+                                                autoComplete="username"
+                                                name="username"
+                                                placeholder="Enter your full name"
+                                                className="w-full"
+                                            />
+                                            <InputError message={errors.username} />
+                                        </div>
 
-                                                {/* Name Input */}
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="username" className="text-gray-700 font-semibold">
-                                                        Name
-                                                    </Label>
-                                                    <Input
-                                                        id="username"
-                                                        type="text"
-                                                        required
-                                                        autoFocus
-                                                        tabIndex={1}
-                                                        autoComplete="username"
-                                                        name="username"
-                                                        placeholder="Enter your full name"
-                                                        className="w-full"
+                                        {/* Email Input */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="email" className="text-gray-700 font-semibold">
+                                                Email address
+                                            </Label>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                value={data.email}
+                                                onChange={(e) => setData('email', e.target.value)}
+                                                required
+                                                tabIndex={2}
+                                                autoComplete="email"
+                                                name="email"
+                                                placeholder="email@example.com"
+                                                className="w-full"
+                                            />
+                                            <InputError message={errors.email} />
+                                        </div>
+
+                                        {/* Password Input */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="password" className="text-gray-700 font-semibold">
+                                                Password
+                                            </Label>
+                                            <Input
+                                                id="password"
+                                                type="password"
+                                                value={data.password}
+                                                onChange={(e) => setData('password', e.target.value)}
+                                                required
+                                                tabIndex={3}
+                                                autoComplete="new-password"
+                                                name="password"
+                                                placeholder="Create a strong password"
+                                                className="w-full"
+                                            />
+                                            <InputError message={errors.password} />
+                                        </div>
+
+                                        {/* Confirm Password Input */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="password_confirmation" className="text-gray-700 font-semibold">
+                                                Confirm password
+                                            </Label>
+                                            <Input
+                                                id="password_confirmation"
+                                                type="password"
+                                                value={data.password_confirmation}
+                                                onChange={(e) => setData('password_confirmation', e.target.value)}
+                                                required
+                                                tabIndex={4}
+                                                autoComplete="new-password"
+                                                name="password_confirmation"
+                                                placeholder="Re-enter your password"
+                                                className="w-full"
+                                            />
+                                            <InputError message={errors.password_confirmation} />
+                                        </div>
+
+                                        {/* Profile Image Upload */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="image" className="text-gray-700 font-semibold">
+                                                Profile Image
+                                            </Label>
+
+                                            <Input
+                                                id="image"
+                                                type="file"
+                                                name="image"
+                                                accept="image/*"
+                                                tabIndex={6}
+                                                onChange={handleImageChange}
+                                                className="w-full"
+                                            />
+                                            <InputError message={errors.image} />
+
+                                            {/* Image Preview */}
+                                            {preview && (
+                                                <div className="mt-3">
+                                                    <img
+                                                        src={preview}
+                                                        alt="Preview"
+                                                        className="w-32 h-32 rounded-full object-cover border shadow"
                                                     />
-                                                    <InputError message={errors.username} />
                                                 </div>
+                                            )}
+                                        </div>
 
-                                                {/* Email Input */}
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="email" className="text-gray-700 font-semibold">
-                                                        Email address
-                                                    </Label>
-                                                    <Input
-                                                        id="email"
-                                                        type="email"
-                                                        required
-                                                        tabIndex={2}
-                                                        autoComplete="email"
-                                                        name="email"
-                                                        placeholder="email@example.com"
-                                                        className="w-full"
-                                                    />
-                                                    <InputError message={errors.email} />
-                                                </div>
+                                        {/* Submit Button */}
+                                        <Button
+                                            type="submit"
+                                            className="w-full"
+                                            tabIndex={7}
+                                            disabled={processing}
+                                        >
+                                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                                            Create account
+                                        </Button>
 
-                                                {/* Password Input */}
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="password" className="text-gray-700 font-semibold">
-                                                        Password
-                                                    </Label>
-                                                    <Input
-                                                        id="password"
-                                                        type="password"
-                                                        required
-                                                        tabIndex={3}
-                                                        autoComplete="new-password"
-                                                        name="password"
-                                                        placeholder="Create a strong password"
-                                                        className="w-full"
-                                                    />
-                                                    <InputError message={errors.password} />
-                                                </div>
-
-                                                {/* Confirm Password Input */}
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="password_confirmation" className="text-gray-700 font-semibold">
-                                                        Confirm password
-                                                    </Label>
-                                                    <Input
-                                                        id="password_confirmation"
-                                                        type="password"
-                                                        required
-                                                        tabIndex={4}
-                                                        autoComplete="new-password"
-                                                        name="password_confirmation"
-                                                        placeholder="Re-enter your password"
-                                                        className="w-full"
-                                                    />
-                                                    <InputError message={errors.password_confirmation} />
-                                                </div>
-
-                                                {/* Hidden Role Input - Locked to "user" */}
-                                                <input
-                                                    type="hidden"
-                                                    name="role"
-                                                    value="user"
-                                                />
-
-                                                {/* Profile Image Upload */}
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="image" className="text-gray-700 font-semibold">
-                                                        Profile Image
-                                                    </Label>
-
-                                                    <Input
-                                                        id="image"
-                                                        type="file"
-                                                        name="image"
-                                                        accept="image/*"
-                                                        tabIndex={6}
-                                                        onChange={handleImageChange}
-                                                        className="w-full"
-                                                    />
-                                                    <InputError message={errors.image} />
-
-                                                    {/* Image Preview */}
-                                                    {preview && (
-                                                        <div className="mt-3">
-                                                            <img
-                                                                src={preview}
-                                                                alt="Preview"
-                                                                className="w-32 h-32 rounded-full object-cover border shadow"
-                                                            />
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                {/* Submit Button */}
-                                                <button
-                                                    type="submit"
-                                                    className="btn btn-primary w-full inline-flex items-center justify-center gap-2"
-                                                    tabIndex={7}
-                                                    disabled={processing}
+                                        {/* Login Link */}
+                                        <div className="text-center pt-4 border-t border-gray-200">
+                                            <p className="text-sm text-gray-600">
+                                                Already have an account?{' '}
+                                                <TextLink
+                                                    href={login()}
+                                                    tabIndex={8}
+                                                    className="text-blue-600 hover:text-blue-700 font-semibold"
                                                 >
-                                                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                                    Create account
-                                                </button>
-
-                                                {/* Login Link */}
-                                                <div className="text-center pt-4 border-t border-gray-200">
-                                                    <p className="text-sm text-gray-600">
-                                                        Already have an account?{' '}
-                                                        <TextLink
-                                                            href={login()}
-                                                            tabIndex={8}
-                                                            className="text-blue-600 hover:text-blue-700 font-semibold"
-                                                        >
-                                                            Log in
-                                                        </TextLink>
-                                                    </p>
-                                                </div>
-
-                                            </>
-                                        )}
-                                    </Form>
+                                                    Log in
+                                                </TextLink>
+                                            </p>
+                                        </div>
+                                    </form>
 
                                 </div>
                             </div>
