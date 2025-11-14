@@ -1,9 +1,9 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\MealPlanMealController::destroy
-* @see app/Http/Controllers/MealPlanMealController.php:26
-* @route '/meal_plan_meals/{id}'
-*/
+ * @see app/Http/Controllers/MealPlanMealController.php:26
+ * @route '/meal_plan_meals/{id}'
+ */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
@@ -16,25 +16,26 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\MealPlanMealController::destroy
-* @see app/Http/Controllers/MealPlanMealController.php:26
-* @route '/meal_plan_meals/{id}'
-*/
+ * @see app/Http/Controllers/MealPlanMealController.php:26
+ * @route '/meal_plan_meals/{id}'
+ */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { id: args }
     }
 
+    
     if (Array.isArray(args)) {
         args = {
-            id: args[0],
-        }
+                    id: args[0],
+                }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        id: args.id,
-    }
+                        id: args.id,
+                }
 
     return destroy.definition.url
             .replace('{id}', parsedArgs.id.toString())
@@ -43,51 +44,19 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\MealPlanMealController::destroy
-* @see app/Http/Controllers/MealPlanMealController.php:26
-* @route '/meal_plan_meals/{id}'
-*/
+ * @see app/Http/Controllers/MealPlanMealController.php:26
+ * @route '/meal_plan_meals/{id}'
+ */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
 /**
-* @see \App\Http\Controllers\MealPlanMealController::destroy
-* @see app/Http/Controllers/MealPlanMealController.php:26
-* @route '/meal_plan_meals/{id}'
-*/
-const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\MealPlanMealController::destroy
-* @see app/Http/Controllers/MealPlanMealController.php:26
-* @route '/meal_plan_meals/{id}'
-*/
-destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-destroy.form = destroyForm
-
-/**
 * @see \App\Http\Controllers\MealPlanMealController::store
-* @see app/Http/Controllers/MealPlanMealController.php:12
-* @route '/meal_plan_meals'
-*/
+ * @see app/Http/Controllers/MealPlanMealController.php:12
+ * @route '/meal_plan_meals'
+ */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
@@ -100,45 +69,22 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\MealPlanMealController::store
-* @see app/Http/Controllers/MealPlanMealController.php:12
-* @route '/meal_plan_meals'
-*/
+ * @see app/Http/Controllers/MealPlanMealController.php:12
+ * @route '/meal_plan_meals'
+ */
 store.url = (options?: RouteQueryOptions) => {
     return store.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\MealPlanMealController::store
-* @see app/Http/Controllers/MealPlanMealController.php:12
-* @route '/meal_plan_meals'
-*/
+ * @see app/Http/Controllers/MealPlanMealController.php:12
+ * @route '/meal_plan_meals'
+ */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
-
-/**
-* @see \App\Http\Controllers\MealPlanMealController::store
-* @see app/Http/Controllers/MealPlanMealController.php:12
-* @route '/meal_plan_meals'
-*/
-const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\MealPlanMealController::store
-* @see app/Http/Controllers/MealPlanMealController.php:12
-* @route '/meal_plan_meals'
-*/
-storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-store.form = storeForm
-
 const MealPlanMealController = { destroy, store }
 
 export default MealPlanMealController

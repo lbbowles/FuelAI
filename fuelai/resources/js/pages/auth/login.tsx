@@ -24,7 +24,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
             </Head>
             <NavbarTop />
 
-            <div className="mt-16 pt-16 min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-base-200 pt-32 lg:pt-32">
                 <div className="container mx-auto px-4 py-8 max-w-7xl">
                     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
                         <div className="w-full max-w-md">

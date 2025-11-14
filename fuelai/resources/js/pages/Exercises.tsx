@@ -219,7 +219,7 @@ export default function Exercise() {
             </Head>
             <NavbarTop />
 
-            <div className="mt-16 pt-16 min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-base-200 pt-32 lg:pt-32">
                 <div className="container mx-auto px-4 py-8 max-w-7xl">
                     {/* Hero Section */}
                     <div className="text-center mb-8">

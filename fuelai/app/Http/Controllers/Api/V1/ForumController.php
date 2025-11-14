@@ -55,17 +55,9 @@ class ForumController extends Controller
             ]);
 
             return response()->json([
-                'message' => 'Post created successfull',
+                'message' => 'Post created successfully',
                 'post_id' => $post->id
             ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to create post',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to create post',

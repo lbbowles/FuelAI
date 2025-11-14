@@ -1,10 +1,10 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
 import posts from './posts'
 /**
 * @see \App\Http\Controllers\ForumController::index
-* @see app/Http/Controllers/ForumController.php:14
-* @route '/forums'
-*/
+ * @see app/Http/Controllers/ForumController.php:14
+ * @route '/forums'
+ */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
@@ -17,75 +17,37 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::index
-* @see app/Http/Controllers/ForumController.php:14
-* @route '/forums'
-*/
+ * @see app/Http/Controllers/ForumController.php:14
+ * @route '/forums'
+ */
 index.url = (options?: RouteQueryOptions) => {
     return index.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ForumController::index
-* @see app/Http/Controllers/ForumController.php:14
-* @route '/forums'
-*/
+ * @see app/Http/Controllers/ForumController.php:14
+ * @route '/forums'
+ */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
 })
-
 /**
 * @see \App\Http\Controllers\ForumController::index
-* @see app/Http/Controllers/ForumController.php:14
-* @route '/forums'
-*/
+ * @see app/Http/Controllers/ForumController.php:14
+ * @route '/forums'
+ */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
 
 /**
-* @see \App\Http\Controllers\ForumController::index
-* @see app/Http/Controllers/ForumController.php:14
-* @route '/forums'
-*/
-const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\ForumController::index
-* @see app/Http/Controllers/ForumController.php:14
-* @route '/forums'
-*/
-indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\ForumController::index
-* @see app/Http/Controllers/ForumController.php:14
-* @route '/forums'
-*/
-indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-index.form = indexForm
-
-/**
 * @see \App\Http\Controllers\ForumController::create
-* @see app/Http/Controllers/ForumController.php:28
-* @route '/forums/create'
-*/
+ * @see app/Http/Controllers/ForumController.php:28
+ * @route '/forums/create'
+ */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: create.url(options),
     method: 'get',
@@ -98,75 +60,37 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::create
-* @see app/Http/Controllers/ForumController.php:28
-* @route '/forums/create'
-*/
+ * @see app/Http/Controllers/ForumController.php:28
+ * @route '/forums/create'
+ */
 create.url = (options?: RouteQueryOptions) => {
     return create.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ForumController::create
-* @see app/Http/Controllers/ForumController.php:28
-* @route '/forums/create'
-*/
+ * @see app/Http/Controllers/ForumController.php:28
+ * @route '/forums/create'
+ */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: create.url(options),
     method: 'get',
 })
-
 /**
 * @see \App\Http\Controllers\ForumController::create
-* @see app/Http/Controllers/ForumController.php:28
-* @route '/forums/create'
-*/
+ * @see app/Http/Controllers/ForumController.php:28
+ * @route '/forums/create'
+ */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: create.url(options),
     method: 'head',
 })
 
 /**
-* @see \App\Http\Controllers\ForumController::create
-* @see app/Http/Controllers/ForumController.php:28
-* @route '/forums/create'
-*/
-const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\ForumController::create
-* @see app/Http/Controllers/ForumController.php:28
-* @route '/forums/create'
-*/
-createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\ForumController::create
-* @see app/Http/Controllers/ForumController.php:28
-* @route '/forums/create'
-*/
-createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-create.form = createForm
-
-/**
 * @see \App\Http\Controllers\ForumController::store
-* @see app/Http/Controllers/ForumController.php:42
-* @route '/forums'
-*/
+ * @see app/Http/Controllers/ForumController.php:42
+ * @route '/forums'
+ */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
@@ -179,50 +103,28 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::store
-* @see app/Http/Controllers/ForumController.php:42
-* @route '/forums'
-*/
+ * @see app/Http/Controllers/ForumController.php:42
+ * @route '/forums'
+ */
 store.url = (options?: RouteQueryOptions) => {
     return store.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ForumController::store
-* @see app/Http/Controllers/ForumController.php:42
-* @route '/forums'
-*/
+ * @see app/Http/Controllers/ForumController.php:42
+ * @route '/forums'
+ */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
 
 /**
-* @see \App\Http\Controllers\ForumController::store
-* @see app/Http/Controllers/ForumController.php:42
-* @route '/forums'
-*/
-const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\ForumController::store
-* @see app/Http/Controllers/ForumController.php:42
-* @route '/forums'
-*/
-storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-store.form = storeForm
-
-/**
 * @see \App\Http\Controllers\ForumController::reply
-* @see app/Http/Controllers/ForumController.php:131
-* @route '/forums/{id}/reply'
-*/
+ * @see app/Http/Controllers/ForumController.php:144
+ * @route '/forums/{id}/reply'
+ */
 export const reply = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: reply.url(args, options),
     method: 'post',
@@ -235,25 +137,26 @@ reply.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::reply
-* @see app/Http/Controllers/ForumController.php:131
-* @route '/forums/{id}/reply'
-*/
+ * @see app/Http/Controllers/ForumController.php:144
+ * @route '/forums/{id}/reply'
+ */
 reply.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { id: args }
     }
 
+    
     if (Array.isArray(args)) {
         args = {
-            id: args[0],
-        }
+                    id: args[0],
+                }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        id: args.id,
-    }
+                        id: args.id,
+                }
 
     return reply.definition.url
             .replace('{id}', parsedArgs.id.toString())
@@ -262,41 +165,19 @@ reply.url = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\ForumController::reply
-* @see app/Http/Controllers/ForumController.php:131
-* @route '/forums/{id}/reply'
-*/
+ * @see app/Http/Controllers/ForumController.php:144
+ * @route '/forums/{id}/reply'
+ */
 reply.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: reply.url(args, options),
     method: 'post',
 })
 
 /**
-* @see \App\Http\Controllers\ForumController::reply
-* @see app/Http/Controllers/ForumController.php:131
-* @route '/forums/{id}/reply'
-*/
-const replyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: reply.url(args, options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\ForumController::reply
-* @see app/Http/Controllers/ForumController.php:131
-* @route '/forums/{id}/reply'
-*/
-replyForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: reply.url(args, options),
-    method: 'post',
-})
-
-reply.form = replyForm
-
-/**
 * @see \App\Http\Controllers\ForumController::aiReply
-* @see app/Http/Controllers/ForumController.php:225
-* @route '/forums/{id}/ai-reply'
-*/
+ * @see app/Http/Controllers/ForumController.php:238
+ * @route '/forums/{id}/ai-reply'
+ */
 export const aiReply = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: aiReply.url(args, options),
     method: 'post',
@@ -309,25 +190,26 @@ aiReply.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::aiReply
-* @see app/Http/Controllers/ForumController.php:225
-* @route '/forums/{id}/ai-reply'
-*/
+ * @see app/Http/Controllers/ForumController.php:238
+ * @route '/forums/{id}/ai-reply'
+ */
 aiReply.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { id: args }
     }
 
+    
     if (Array.isArray(args)) {
         args = {
-            id: args[0],
-        }
+                    id: args[0],
+                }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        id: args.id,
-    }
+                        id: args.id,
+                }
 
     return aiReply.definition.url
             .replace('{id}', parsedArgs.id.toString())
@@ -336,41 +218,19 @@ aiReply.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\ForumController::aiReply
-* @see app/Http/Controllers/ForumController.php:225
-* @route '/forums/{id}/ai-reply'
-*/
+ * @see app/Http/Controllers/ForumController.php:238
+ * @route '/forums/{id}/ai-reply'
+ */
 aiReply.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: aiReply.url(args, options),
     method: 'post',
 })
 
 /**
-* @see \App\Http\Controllers\ForumController::aiReply
-* @see app/Http/Controllers/ForumController.php:225
-* @route '/forums/{id}/ai-reply'
-*/
-const aiReplyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: aiReply.url(args, options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\ForumController::aiReply
-* @see app/Http/Controllers/ForumController.php:225
-* @route '/forums/{id}/ai-reply'
-*/
-aiReplyForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: aiReply.url(args, options),
-    method: 'post',
-})
-
-aiReply.form = aiReplyForm
-
-/**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:341
-* @route '/forums/{id}'
-*/
+ * @see app/Http/Controllers/ForumController.php:354
+ * @route '/forums/{id}'
+ */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
@@ -383,25 +243,26 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:341
-* @route '/forums/{id}'
-*/
+ * @see app/Http/Controllers/ForumController.php:354
+ * @route '/forums/{id}'
+ */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { id: args }
     }
 
+    
     if (Array.isArray(args)) {
         args = {
-            id: args[0],
-        }
+                    id: args[0],
+                }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        id: args.id,
-    }
+                        id: args.id,
+                }
 
     return destroy.definition.url
             .replace('{id}', parsedArgs.id.toString())
@@ -410,51 +271,19 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:341
-* @route '/forums/{id}'
-*/
+ * @see app/Http/Controllers/ForumController.php:354
+ * @route '/forums/{id}'
+ */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
 /**
-* @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:341
-* @route '/forums/{id}'
-*/
-const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\ForumController::destroy
-* @see app/Http/Controllers/ForumController.php:341
-* @route '/forums/{id}'
-*/
-destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-destroy.form = destroyForm
-
-/**
 * @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:71
-* @route '/forums/{id}'
-*/
+ * @see app/Http/Controllers/ForumController.php:71
+ * @route '/forums/{id}'
+ */
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
@@ -467,25 +296,26 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:71
-* @route '/forums/{id}'
-*/
+ * @see app/Http/Controllers/ForumController.php:71
+ * @route '/forums/{id}'
+ */
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { id: args }
     }
 
+    
     if (Array.isArray(args)) {
         args = {
-            id: args[0],
-        }
+                    id: args[0],
+                }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        id: args.id,
-    }
+                        id: args.id,
+                }
 
     return show.definition.url
             .replace('{id}', parsedArgs.id.toString())
@@ -494,70 +324,31 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:71
-* @route '/forums/{id}'
-*/
+ * @see app/Http/Controllers/ForumController.php:71
+ * @route '/forums/{id}'
+ */
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
-
 /**
 * @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:71
-* @route '/forums/{id}'
-*/
+ * @see app/Http/Controllers/ForumController.php:71
+ * @route '/forums/{id}'
+ */
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
-
-/**
-* @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:71
-* @route '/forums/{id}'
-*/
-const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:71
-* @route '/forums/{id}'
-*/
-showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\ForumController::show
-* @see app/Http/Controllers/ForumController.php:71
-* @route '/forums/{id}'
-*/
-showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-show.form = showForm
-
 const forums = {
-    index: Object.assign(index, index),
-    create: Object.assign(create, create),
-    store: Object.assign(store, store),
-    reply: Object.assign(reply, reply),
-    aiReply: Object.assign(aiReply, aiReply),
-    destroy: Object.assign(destroy, destroy),
-    show: Object.assign(show, show),
-    posts: Object.assign(posts, posts),
+    index,
+create,
+store,
+reply,
+aiReply,
+destroy,
+show,
+posts,
 }
 
 export default forums
