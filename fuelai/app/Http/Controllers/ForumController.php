@@ -81,7 +81,9 @@ class ForumController extends Controller
                 'forum_posts.user_id',
                 'forum_posts.created_at',
                 'categories.name as category',
-                'users.username as author'
+                'users.username as author',
+                'users.image_data',
+                'users.mime_type'
             ])
             ->first();
 
@@ -99,18 +101,24 @@ class ForumController extends Controller
                 'forum_threads.user_id',
                 'forum_threads.created_at',
                 'users.username as author',
-                'users.profile_image_url'
+                'users.image_data',
+                'users.mime_type'
             ])
             ->orderBy('forum_threads.created_at', 'asc')
             ->get()
             ->map(function ($thread) {
+                $profileImage = null;
+                if ($thread->image_data && $thread->mime_type) {
+                    $profileImage = "data:{$thread->mime_type};base64,{$thread->image_data}";
+                }
+
                 return [
                     'id' => $thread->id,
                     'content' => $thread->content,
                     'author' => $thread->author,
                     'userId' => $thread->user_id,
                     'authorAvatar' => strtoupper(substr($thread->author, 0, 1)),
-                    'profile_image_url' => $thread->profile_image_url,
+                    'profileImage' => $profileImage,
                     'createdAt' => $this->formatDate($thread->created_at)
                 ];
             });
@@ -123,7 +131,9 @@ class ForumController extends Controller
                 'category' => $post->category,
                 'author' => $post->author,
                 'userId' => $post->user_id,
-                'profile_image_url' => $post->profile_image_url,
+                'profileImage' => ($post->image_data && $post->mime_type)
+                    ? "data:{$post->mime_type};base64,{$post->image_data}"
+                    : null,
                 'createdAt' => $this->formatDate($post->created_at)
             ],
             'threads' => $threads

@@ -266,7 +266,7 @@ export default function Exercise() {
                                                             <input
                                                                 type="radio"
                                                                 name="fitness-level"
-                                                                className="radio radio-primary"
+                                                                className="radio radio-primary checkbox-lg border-2 border-black"
                                                                 value={level.value}
                                                                 checked={fitnessLevel === level.value}
                                                                 onChange={(e) => setFitnessLevel(e.target.value)}
