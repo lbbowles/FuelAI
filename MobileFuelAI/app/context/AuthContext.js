@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from 'react';
-import { Text, SafeAreaView } from 'react-native';
+import {Text, SafeAreaView, Alert} from 'react-native';
 // React native component; inexplicably useful for saving tokens (preventing sign in every time).
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // Import login api function call from authcontroller
@@ -62,7 +62,10 @@ const AuthProvider = ({ children }) => {
             setUser(response.user);
         } catch (error) {
             console.error('Sign in error:', error);
-            throw error;
+            Alert.alert(
+                'Login Failed',
+                'Invalid email or password. Please try again.',
+                [{text: 'OK'}]);
         }
         // Set loading to false, show next route/tab/view.
         setLoading(false);

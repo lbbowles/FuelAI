@@ -27,7 +27,6 @@ export default function SignIn() {
         // If filled, set loading to true so the button can be updated.
         setLoading(true);
         try {
-            console.log('Sign-in attempted:', loginValue);
             // We are obviously using signin function in AuthContext here, but that is really checking our API endpoint and information within DB on Railway
             await signin({login: loginValue, password});
 
@@ -98,6 +97,7 @@ export default function SignIn() {
                         onChangeText={(text) => setLoginValue(text)}
                         autoCapitalize="none"
                         keyboardType="email-address"
+                        style={{ color: isDark ? '#ffffff' : '#000000' }}
                     />
 
                         <Text style={{
@@ -114,6 +114,7 @@ export default function SignIn() {
                         value={password}
                         onChangeText={(text) => setPassword(text)}
                         secureTextEntry
+                        style={{ color: isDark ? '#ffffff' : '#000000' }}
                     />
 
                         {/*If loading, showcase one thing, if not then showcase the other*/}

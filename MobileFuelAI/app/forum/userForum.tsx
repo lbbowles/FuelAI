@@ -92,7 +92,7 @@ export default function UserForum() {
                 contentContainerStyle={{ paddingBottom: 40 }}
             >
                 {/* Back Button */}
-                <TouchableOpacity onPress={() => router.back()} className="mb-4">
+                <TouchableOpacity onPress={() => router.back()} className="mb-6">
                     <Text className={`text-lg ${isDark ? "text-secondary" : "text-primary"}`}>
                         ← Back
                     </Text>
@@ -107,7 +107,9 @@ export default function UserForum() {
                 </Text>
 
                 {/* Stats */}
-                <View className={`rounded-2xl p-4 mb-6 ${isDark ? 'bg-white/5' : 'bg-black/5'}`}>
+                <View className={`rounded-2xl p-4 mb-6 border ${
+                    isDark ? 'bg-secondary/10 border-secondary/15' : 'bg-primary/5 border-primary/10'
+                }`}>
                     <Text className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>
                         {posts.length}
                     </Text>
@@ -118,13 +120,15 @@ export default function UserForum() {
 
                 {/* Posts List */}
                 {posts.length === 0 ? (
-                    <View className={`rounded-2xl p-8 border ${isDark ? "bg-white/5 border-white/10" : "bg-black/5 border-black/10"}`}>
+                    <View className={`rounded-2xl p-8 border ${
+                        isDark ? 'bg-secondary/10 border-secondary/15' : 'bg-primary/5 border-primary/10'
+                    }`}>
                         <Text className={`text-center ${isDark ? "text-white/60" : "text-black/60"} mb-4`}>
                             You haven't created any posts yet
                         </Text>
                         <TouchableOpacity
                             onPress={() => router.push('/(tabs)/forum')}
-                            className="bg-blue-500 rounded-xl p-3"
+                            className={`rounded-xl p-3 ${isDark ? 'bg-dark-100' : 'bg-light-100'}`}
                         >
                             <Text className="text-white text-center font-semibold">
                                 Create Your First Post
@@ -136,7 +140,7 @@ export default function UserForum() {
                         <View
                             key={post.id}
                             className={`mb-4 rounded-2xl p-4 border ${
-                                isDark ? "bg-white/5 border-white/10" : "bg-black/5 border-black/10"
+                                isDark ? 'bg-secondary/10 border-secondary/15' : 'bg-primary/5 border-primary/10'
                             }`}
                         >
                             <TouchableOpacity
@@ -165,7 +169,7 @@ export default function UserForum() {
                             <View className="flex-row gap-2 pt-3 border-t" style={{ borderColor: isDark ? '#ffffff20' : '#00000020' }}>
                                 <TouchableOpacity
                                     onPress={() => router.push(`/forum/${post.id}`)}
-                                    className="flex-1 bg-blue-500 rounded-xl p-3"
+                                    className={`flex-1 rounded-xl p-3 ${isDark ? 'bg-dark-100' : 'bg-light-100'}`}
                                 >
                                     <Text className="text-white text-center font-semibold">View Post</Text>
                                 </TouchableOpacity>

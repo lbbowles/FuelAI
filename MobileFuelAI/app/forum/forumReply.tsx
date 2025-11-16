@@ -99,7 +99,7 @@ export default function forumReply() {
                 onPress={handleSubmit}
                 disabled={loading}
                 style={{
-                    backgroundColor: loading ? '#999' : '#3b82f6',
+                    backgroundColor: loading ? '#999' : (isDark ? '#422ad5' : '#f88f07'),
                     padding: 16,
                     borderRadius: 8,
                     alignItems: 'center'

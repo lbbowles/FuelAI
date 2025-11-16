@@ -78,9 +78,6 @@ export default function GenerateWorkout() {
     Include 6-10 exercises with proper progression. Ensure exercise selection aligns with available equipment and injury considerations. Provide scientifically-backed training principles.`;
 
             const apiKey = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
-
-            console.log('API Key exists:', !!apiKey);
-
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                 method: 'POST',
                 headers: {
@@ -104,16 +101,13 @@ export default function GenerateWorkout() {
                 })
             });
 
-            console.log('Response status:', response.status);
             const data = await response.json();
-            console.log('API Response:', JSON.stringify(data, null, 2));
 
             if (!data.choices || !data.choices[0] || !data.choices[0].message) {
                 throw new Error('Invalid API response structure');
             }
 
             const content = data.choices[0].message.content;
-            console.log('Content:', content);
 
             // Strip markdown code blocks if present
             let cleanContent = content;
@@ -126,7 +120,6 @@ export default function GenerateWorkout() {
             const workoutData = JSON.parse(cleanContent.trim());
             setWorkoutSchedule(workoutData);
         } catch (err) {
-            console.error('Error generating workout:', err);
             setError('Unable to generate personalized workout. Please verify your inputs and try again.');
         } finally {
             setIsLoading(false);
@@ -161,7 +154,7 @@ export default function GenerateWorkout() {
         if (workoutSchedule && currentExercise < workoutSchedule.exercises.length - 1) {
             setCurrentExercise(currentExercise + 1);
         } else if (workoutSchedule && currentExercise === workoutSchedule.exercises.length - 1) {
-            Alert.alert('Workout Complete!', 'Great job finishing your workout! 💪');
+            Alert.alert('Workout Complete!', 'Great job finishing your workout! ');
             setWorkoutStarted(false);
             setCurrentExercise(0);
         }
@@ -179,16 +172,6 @@ export default function GenerateWorkout() {
                 ? prev.filter(i => i !== index)
                 : [...prev, index]
         );
-    };
-
-    const selectAllExercises = () => {
-        if (workoutSchedule) {
-            setSelectedExercises(workoutSchedule.exercises.map((_, index) => index));
-        }
-    };
-
-    const deselectAllExercises = () => {
-        setSelectedExercises([]);
     };
 
     const openTaskModal = () => {
@@ -226,7 +209,6 @@ export default function GenerateWorkout() {
                 { text: 'OK', onPress: () => router.push('/') }
             ]);
         } catch (err) {
-            console.error('Error saving to tasks:', err);
             Alert.alert('Error', 'Failed to save exercises to tasks.');
         } finally {
             setIsSavingToTasks(false);
@@ -318,8 +300,8 @@ export default function GenerateWorkout() {
                             onPress={() => setFitnessLevel(level.value)}
                             style={{
                                 borderWidth: 2,
-                                borderColor: fitnessLevel === level.value ? '#3b82f6' : (isDark ? '#333' : '#ddd'),
-                                backgroundColor: fitnessLevel === level.value ? '#3b82f6' : (isDark ? '#1a1a1a' : '#f5f5f5'),
+                                borderColor: fitnessLevel === level.value ? (isDark ? '#422ad5' : '#f88f07') : (isDark ? '#333' : '#ddd'),
+                                backgroundColor: fitnessLevel === level.value ? (isDark ? '#422ad5' : '#f88f07') : (isDark ? '#1a1a1a' : '#f5f5f5'),
                                 padding: 12,
                                 borderRadius: 8,
                                 marginBottom: 8
@@ -361,8 +343,8 @@ export default function GenerateWorkout() {
                                     paddingHorizontal: 12,
                                     borderRadius: 8,
                                     borderWidth: 2,
-                                    borderColor: workoutType === type.value ? '#3b82f6' : (isDark ? '#333' : '#ddd'),
-                                    backgroundColor: workoutType === type.value ? '#3b82f6' : (isDark ? '#1a1a1a' : '#f5f5f5'),
+                                    borderColor: workoutType === type.value ? (isDark ? '#422ad5' : '#f88f07') : (isDark ? '#333' : '#ddd'),
+                                    backgroundColor: workoutType === type.value ? (isDark ? '#422ad5' : '#f88f07') : (isDark ? '#1a1a1a' : '#f5f5f5'),
                                 }}
                             >
                                 <Text style={{
@@ -396,8 +378,8 @@ export default function GenerateWorkout() {
                                     paddingVertical: 10,
                                     borderRadius: 8,
                                     borderWidth: 2,
-                                    borderColor: availableTime === time ? '#3b82f6' : (isDark ? '#333' : '#ddd'),
-                                    backgroundColor: availableTime === time ? '#3b82f6' : (isDark ? '#1a1a1a' : '#f5f5f5'),
+                                    borderColor: availableTime === time ? (isDark ? '#422ad5' : '#f88f07') : (isDark ? '#333' : '#ddd'),
+                                    backgroundColor: availableTime === time ? (isDark ? '#422ad5' : '#f88f07') : (isDark ? '#1a1a1a' : '#f5f5f5'),
                                     alignItems: 'center'
                                 }}
                             >
@@ -426,8 +408,8 @@ export default function GenerateWorkout() {
                             onPress={() => setEquipment(option.value)}
                             style={{
                                 borderWidth: 2,
-                                borderColor: equipment === option.value ? '#3b82f6' : (isDark ? '#333' : '#ddd'),
-                                backgroundColor: equipment === option.value ? '#3b82f6' : (isDark ? '#1a1a1a' : '#f5f5f5'),
+                                borderColor: equipment === option.value ? (isDark ? '#422ad5' : '#f88f07') : (isDark ? '#333' : '#ddd'),
+                                backgroundColor: equipment === option.value ? (isDark ? '#422ad5' : '#f88f07') : (isDark ? '#1a1a1a' : '#f5f5f5'),
                                 padding: 12,
                                 borderRadius: 8,
                                 marginBottom: 8
@@ -491,7 +473,7 @@ export default function GenerateWorkout() {
                         onPress={generateWorkout}
                         disabled={isLoading || !userGoal.trim()}
                         style={{
-                            backgroundColor: isLoading || !userGoal.trim() ? '#999' : '#3b82f6',
+                            backgroundColor: isLoading || !userGoal.trim() ? '#999' : (isDark ? '#422ad5' : '#f88f07'),
                             padding: 16,
                             borderRadius: 8,
                             alignItems: 'center',
@@ -532,7 +514,7 @@ export default function GenerateWorkout() {
                             {workoutSchedule.description}
                         </Text>
                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-                            <View style={{ backgroundColor: '#3b82f6', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 }}>
+                            <View style={{ backgroundColor: isDark ? '#422ad5' : '#f88f07', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 }}>
                                 <Text style={{ color: '#fff', fontWeight: '600', fontSize: 12 }}>{workoutSchedule.duration}</Text>
                             </View>
                             <View style={{ backgroundColor: '#10b981', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 }}>
@@ -562,44 +544,16 @@ export default function GenerateWorkout() {
                                         onPress={openTaskModal}
                                         disabled={selectedExercises.length === 0}
                                         style={{
-                                            backgroundColor: selectedExercises.length === 0 ? '#999' : '#3b82f6',
+                                            backgroundColor: selectedExercises.length === 0 ? '#999' : (isDark ? '#422ad5' : '#f88f07'),
                                             padding: 12,
                                             borderRadius: 8,
                                             alignItems: 'center'
                                         }}
                                     >
                                         <Text style={{ color: '#fff', fontWeight: '600' }}>
-                                            💾 Save to Tasks ({selectedExercises.length})
+                                            Save to Tasks ({selectedExercises.length})
                                         </Text>
                                     </TouchableOpacity>
-                                    <View style={{ flexDirection: 'row', gap: 8 }}>
-                                        <TouchableOpacity
-                                            onPress={selectAllExercises}
-                                            style={{
-                                                flex: 1,
-                                                borderWidth: 1,
-                                                borderColor: isDark ? '#333' : '#ddd',
-                                                padding: 10,
-                                                borderRadius: 8,
-                                                alignItems: 'center'
-                                            }}
-                                        >
-                                            <Text style={{ color: isDark ? '#fff' : '#000', fontSize: 12 }}>Select All</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            onPress={deselectAllExercises}
-                                            style={{
-                                                flex: 1,
-                                                borderWidth: 1,
-                                                borderColor: isDark ? '#333' : '#ddd',
-                                                padding: 10,
-                                                borderRadius: 8,
-                                                alignItems: 'center'
-                                            }}
-                                        >
-                                            <Text style={{ color: isDark ? '#fff' : '#000', fontSize: 12 }}>Deselect All</Text>
-                                        </TouchableOpacity>
-                                    </View>
                                 </>
                             )}
                             <TouchableOpacity
@@ -624,7 +578,7 @@ export default function GenerateWorkout() {
                             padding: 16,
                             borderRadius: 12
                         }}>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 }}>
                                 <Text style={{
                                     fontSize: 20,
                                     fontWeight: 'bold',
@@ -632,23 +586,13 @@ export default function GenerateWorkout() {
                                 }}>
                                     Active Workout
                                 </Text>
-                                <Text style={{ color: isDark ? '#aaa' : '#666' }}>
+                                <Text style={{
+                                    fontSize: 18,
+                                    fontWeight: '600',
+                                    color: isDark ? '#aaa' : '#666'
+                                }}>
                                     {currentExercise + 1} / {workoutSchedule.exercises.length}
                                 </Text>
-                            </View>
-
-                            <View style={{
-                                height: 8,
-                                backgroundColor: isDark ? '#333' : '#ddd',
-                                borderRadius: 4,
-                                overflow: 'hidden',
-                                marginBottom: 20
-                            }}>
-                                <View style={{
-                                    width: `${((currentExercise + 1) / workoutSchedule.exercises.length) * 100}%`,
-                                    height: '100%',
-                                    backgroundColor: '#3b82f6'
-                                }} />
                             </View>
 
                             {workoutSchedule.exercises[currentExercise] && (
@@ -669,19 +613,25 @@ export default function GenerateWorkout() {
                                         {workoutSchedule.exercises[currentExercise].description}
                                     </Text>
 
-                                    <View style={{ flexDirection: 'row', gap: 8, marginBottom: 20 }}>
-                                        <View style={{ flex: 1, backgroundColor: isDark ? '#222' : '#fff', padding: 12, borderRadius: 8 }}>
-                                            <Text style={{ color: isDark ? '#888' : '#666', fontSize: 12, marginBottom: 4 }}>Sets</Text>
-                                            <Text style={{ color: '#3b82f6', fontSize: 24, fontWeight: 'bold' }}>
-                                                {workoutSchedule.exercises[currentExercise].sets}
-                                            </Text>
-                                        </View>
-                                        <View style={{ flex: 1, backgroundColor: isDark ? '#222' : '#fff', padding: 12, borderRadius: 8 }}>
-                                            <Text style={{ color: isDark ? '#888' : '#666', fontSize: 12, marginBottom: 4 }}>Reps</Text>
-                                            <Text style={{ color: '#10b981', fontSize: 24, fontWeight: 'bold' }}>
-                                                {workoutSchedule.exercises[currentExercise].reps}
-                                            </Text>
-                                        </View>
+                                    <View style={{
+                                        backgroundColor: isDark ? '#222' : '#fff',
+                                        padding: 16,
+                                        borderRadius: 8,
+                                        marginBottom: 20
+                                    }}>
+                                        <Text style={{
+                                            color: isDark ? '#fff' : '#000',
+                                            fontSize: 16,
+                                            marginBottom: 8
+                                        }}>
+                                            <Text style={{ fontWeight: '600' }}>Sets:</Text> {workoutSchedule.exercises[currentExercise].sets}
+                                        </Text>
+                                        <Text style={{
+                                            color: isDark ? '#fff' : '#000',
+                                            fontSize: 16
+                                        }}>
+                                            <Text style={{ fontWeight: '600' }}>Reps:</Text> {workoutSchedule.exercises[currentExercise].reps}
+                                        </Text>
                                     </View>
 
                                     <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -704,7 +654,7 @@ export default function GenerateWorkout() {
                                             onPress={nextExercise}
                                             style={{
                                                 flex: 1,
-                                                backgroundColor: '#3b82f6',
+                                                backgroundColor: isDark ? '#422ad5' : '#f88f07',
                                                 padding: 14,
                                                 borderRadius: 8,
                                                 alignItems: 'center'
@@ -741,52 +691,34 @@ export default function GenerateWorkout() {
                                         borderRadius: 12,
                                         marginBottom: 12,
                                         borderWidth: 2,
-                                        borderColor: selectedExercises.includes(index) ? '#3b82f6' : 'transparent'
+                                        borderColor: selectedExercises.includes(index) ? (isDark ? '#422ad5' : '#f88f07') : 'transparent'
                                     }}
                                 >
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                        <View style={{ flex: 1 }}>
-                                            <Text style={{
-                                                fontSize: 18,
-                                                fontWeight: 'bold',
-                                                color: isDark ? '#fff' : '#000',
-                                                marginBottom: 4
-                                            }}>
-                                                {exercise.name}
-                                            </Text>
-                                            <Text style={{
-                                                color: isDark ? '#aaa' : '#666',
-                                                fontSize: 13,
-                                                marginBottom: 8
-                                            }} numberOfLines={2}>
-                                                {exercise.description}
-                                            </Text>
-                                            <View style={{ flexDirection: 'row', gap: 12 }}>
-                                                <Text style={{ color: isDark ? '#fff' : '#000', fontWeight: '600' }}>
-                                                    {exercise.sets} sets
-                                                </Text>
-                                                <Text style={{ color: isDark ? '#fff' : '#000', fontWeight: '600' }}>
-                                                    {exercise.reps} reps
-                                                </Text>
-                                                <Text style={{ color: getDifficultyColor(exercise.difficulty), fontWeight: '600' }}>
-                                                    {exercise.difficulty}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                        <View style={{
-                                            width: 24,
-                                            height: 24,
-                                            borderRadius: 12,
-                                            borderWidth: 2,
-                                            borderColor: selectedExercises.includes(index) ? '#3b82f6' : (isDark ? '#666' : '#ccc'),
-                                            backgroundColor: selectedExercises.includes(index) ? '#3b82f6' : 'transparent',
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
-                                        }}>
-                                            {selectedExercises.includes(index) && (
-                                                <Text style={{ color: '#fff', fontSize: 16 }}>✓</Text>
-                                            )}
-                                        </View>
+                                    <Text style={{
+                                        fontSize: 18,
+                                        fontWeight: 'bold',
+                                        color: isDark ? '#fff' : '#000',
+                                        marginBottom: 4
+                                    }}>
+                                        {exercise.name}
+                                    </Text>
+                                    <Text style={{
+                                        color: isDark ? '#aaa' : '#666',
+                                        fontSize: 13,
+                                        marginBottom: 8
+                                    }} numberOfLines={2}>
+                                        {exercise.description}
+                                    </Text>
+                                    <View style={{ flexDirection: 'row', gap: 12 }}>
+                                        <Text style={{ color: isDark ? '#fff' : '#000', fontWeight: '600' }}>
+                                            {exercise.sets} sets
+                                        </Text>
+                                        <Text style={{ color: isDark ? '#fff' : '#000', fontWeight: '600' }}>
+                                            {exercise.reps} reps
+                                        </Text>
+                                        <Text style={{ color: getDifficultyColor(exercise.difficulty), fontWeight: '600' }}>
+                                            {exercise.difficulty}
+                                        </Text>
                                     </View>
                                 </TouchableOpacity>
                             ))}
@@ -811,7 +743,7 @@ export default function GenerateWorkout() {
                             </Text>
                             {workoutSchedule.tips.map((tip, index) => (
                                 <View key={index} style={{ flexDirection: 'row', marginBottom: 12, gap: 8 }}>
-                                    <Text style={{ color: '#3b82f6', fontSize: 18 }}>✓</Text>
+                                    <Text style={{ color: isDark ? '#422ad5' : '#f88f07', fontSize: 18 }}>✓</Text>
                                     <Text style={{
                                         flex: 1,
                                         color: isDark ? '#aaa' : '#666',
@@ -900,7 +832,7 @@ export default function GenerateWorkout() {
                                 disabled={isSavingToTasks}
                                 style={{
                                     flex: 1,
-                                    backgroundColor: isSavingToTasks ? '#999' : '#3b82f6',
+                                    backgroundColor: isSavingToTasks ? '#999' : (isDark ? '#422ad5' : '#f88f07'),
                                     padding: 14,
                                     borderRadius: 8,
                                     alignItems: 'center',

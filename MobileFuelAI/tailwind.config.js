@@ -10,14 +10,13 @@ module.exports = {
                 primary: '#030014',
                 // Light mode color
                 secondary: '#e8e5e3',
-                light: {
-                    100: '#422ad5',
-                    200: '#A8B5DF',
-                    300: '#9CA4AB',
-                },
                 dark: {
-                    100: '#221F3D',
-                    200: '#0F0D23',
+                    100: '#422ad5',
+                    200: '#bca8df',
+                },
+                light: {
+                    100: '#f88f07',
+                    200: '#e1b69a',
                 },
                 // Accent color requested by the boyyyy.
                 accent: '#491ebb'

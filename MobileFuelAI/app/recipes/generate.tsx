@@ -184,9 +184,6 @@ const RecipeGenerator = () => {
         const carbs = carbsMatch ? parseInt(carbsMatch[1]) : 0;
         const fat = fatMatch ? parseInt(fatMatch[1]) : 0;
 
-        // Add an alert to verify values are being parsed
-        Alert.alert('Debug', `Parsed: ${calories} cal, ${protein}g protein, ${carbs}g carbs, ${fat}g fat`);
-
         setIsSaving(true);
         try {
             const api = withAuth(session.access_token);
@@ -217,7 +214,7 @@ const RecipeGenerator = () => {
                     >
                         <View className={`w-5 h-5 rounded border-2 mr-2 items-center justify-center ${
                             formData[category].includes(option)
-                                ? 'bg-blue-500 border-blue-500'
+                                ? (isDark ? 'bg-dark-100 border-dark-100' : 'bg-light-100 border-light-100')
                                 : isDark ? 'border-white' : 'border-black'
                         }`}>
                             {formData[category].includes(option) && (
@@ -332,7 +329,7 @@ const RecipeGenerator = () => {
                                             onPress={() => handleInputChange('cookingTime', time)}
                                             className={`px-4 py-2 rounded-full border ${
                                                 formData.cookingTime === time
-                                                    ? 'bg-blue-500 border-blue-500'
+                                                    ? (isDark ? 'bg-dark-100 border-dark-100' : 'bg-light-100 border-light-100')
                                                     : isDark ? 'border-gray-600' : 'border-gray-300'
                                             }`}
                                         >
@@ -356,7 +353,7 @@ const RecipeGenerator = () => {
                                             onPress={() => handleInputChange('servings', num)}
                                             className={`flex-1 px-3 py-3 rounded-xl border ${
                                                 formData.servings === num
-                                                    ? 'bg-blue-500 border-blue-500'
+                                                    ? (isDark ? 'bg-dark-100 border-dark-100' : 'bg-light-100 border-light-100')
                                                     : isDark ? 'border-gray-600' : 'border-gray-300'
                                             }`}
                                         >
@@ -396,7 +393,7 @@ const RecipeGenerator = () => {
                                             onPress={() => handleInputChange('mealType', type)}
                                             className={`px-4 py-2 rounded-full border ${
                                                 formData.mealType === type
-                                                    ? 'bg-blue-500 border-blue-500'
+                                                    ? (isDark ? 'bg-dark-100 border-dark-100' : 'bg-light-100 border-light-100')
                                                     : isDark ? 'border-gray-600' : 'border-gray-300'
                                             }`}
                                         >
@@ -421,7 +418,7 @@ const RecipeGenerator = () => {
                                         onPress={() => handleInputChange('difficulty', level)}
                                         className={`flex-1 px-3 py-3 rounded-xl border ${
                                             formData.difficulty === level
-                                                ? 'bg-blue-500 border-blue-500'
+                                                ? (isDark ? 'bg-dark-100 border-dark-100' : 'bg-light-100 border-light-100')
                                                 : isDark ? 'border-gray-600' : 'border-gray-300'
                                         }`}
                                     >
@@ -457,7 +454,7 @@ const RecipeGenerator = () => {
                             onPress={generateRecipe}
                             disabled={isLoading || !formData.caloriesTarget || !formData.proteinsTarget}
                             className={`rounded-xl p-4 mt-6 ${
-                                isLoading || !formData.caloriesTarget || !formData.proteinsTarget ? 'bg-gray-400' : 'bg-blue-500'
+                                isLoading || !formData.caloriesTarget || !formData.proteinsTarget ? 'bg-gray-400' : (isDark ? 'bg-dark-100' : 'bg-light-100')
                             }`}
                         >
                             {isLoading ? (
@@ -491,7 +488,7 @@ const RecipeGenerator = () => {
 
                         {isLoading && (
                             <View className="py-12 items-center">
-                                <ActivityIndicator size="large" color={isDark ? "#fff" : "#3b82f6"} />
+                                <ActivityIndicator size="large" color={isDark ? "#422ad5" : "#f88f07"} />
                                 <Text className={`text-center mt-4 ${isDark ? "text-white/60" : "text-black/60"}`}>
                                     Creating your perfect recipe...
                                 </Text>
@@ -500,63 +497,63 @@ const RecipeGenerator = () => {
 
                         {generatedRecipe && (
                             <>
-                            <View className={`rounded-xl p-4 mb-4 ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
-                                <Text className={`${isDark ? "text-white/90" : "text-black/90"}`}>
-                                    {generatedRecipe}
-                                </Text>
-                            </View>
-
-                            <View className={`h-px my-4 ${isDark ? 'bg-white/20' : 'bg-black/20'}`} />
-
-                            <View className="flex-row gap-3 justify-end">
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        setGeneratedRecipe('');
-                                    }}
-                                    className={`px-6 py-3 rounded-xl ${isDark ? 'bg-gray-700' : 'bg-gray-300'}`}
-                                >
-                                    <Text className={`font-semibold ${isDark ? "text-white" : "text-black"}`}>
-                                        Clear
+                                <View className={`rounded-xl p-4 mb-4 ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
+                                    <Text className={`${isDark ? "text-white/90" : "text-black/90"}`}>
+                                        {generatedRecipe}
                                     </Text>
-                                </TouchableOpacity>
+                                </View>
 
-                                <TouchableOpacity
-                                    onPress={generateRecipe}
-                                    disabled={isLoading}
-                                    className={`px-6 py-3 rounded-xl border ${
-                                        isDark ? 'border-white/20' : 'border-black/20'
-                                    }`}
-                                >
-                                    <Text className={`font-semibold ${isDark ? "text-white" : "text-black"}`}>
-                                        Regenerate
-                                    </Text>
-                                </TouchableOpacity>
+                                <View className={`h-px my-4 ${isDark ? 'bg-white/20' : 'bg-black/20'}`} />
 
-                                <TouchableOpacity
-                                    onPress={saveRecipeToMeals}
-                                    disabled={isSaving}
-                                    className={`px-6 py-3 rounded-xl ${
-                                        isSaving ? 'bg-gray-400' : 'bg-blue-500'
-                                    }`}
-                                >
-
-                                    {isSaving ? (
-                                        <View className="flex-row items-center">
-                                            <ActivityIndicator size="small" color="white" />
-                                            <Text className="text-white font-semibold ml-2">Saving...</Text>
-                                        </View>
-                                    ) : (
-                                        <Text className="text-white font-semibold">
-                                            Save to Meals
+                                <View className="flex-row gap-3 justify-end">
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            setGeneratedRecipe('');
+                                        }}
+                                        className={`px-6 py-3 rounded-xl ${isDark ? 'bg-gray-700' : 'bg-gray-300'}`}
+                                    >
+                                        <Text className={`font-semibold ${isDark ? "text-white" : "text-black"}`}>
+                                            Clear
                                         </Text>
-                                    )}
-                                </TouchableOpacity>
-                            </View>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        onPress={generateRecipe}
+                                        disabled={isLoading}
+                                        className={`px-6 py-3 rounded-xl border ${
+                                            isDark ? 'border-white/20' : 'border-black/20'
+                                        }`}
+                                    >
+                                        <Text className={`font-semibold ${isDark ? "text-white" : "text-black"}`}>
+                                            Regenerate
+                                        </Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        onPress={saveRecipeToMeals}
+                                        disabled={isSaving}
+                                        className={`px-6 py-3 rounded-xl ${
+                                            isSaving ? 'bg-gray-400' : (isDark ? 'bg-dark-100' : 'bg-light-100')
+                                        }`}
+                                    >
+
+                                        {isSaving ? (
+                                            <View className="flex-row items-center">
+                                                <ActivityIndicator size="small" color="white" />
+                                                <Text className="text-white font-semibold ml-2">Saving...</Text>
+                                            </View>
+                                        ) : (
+                                            <Text className="text-white font-semibold">
+                                                Save to Meals
+                                            </Text>
+                                        )}
+                                    </TouchableOpacity>
+                                </View>
                             </>
                         )}
 
 
-                        </View>
+                    </View>
                 </ScrollView>
             </View>
         </ThemeProvider>
