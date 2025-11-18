@@ -67,3 +67,17 @@ req.txt: Dependencies to be installed
 image_rec.tsx
 working on further training pretrained model using hugging face lib
 figuring out how to deploy the first version of the application to azure or anyother web service
+
+
+### Software Used 
+
+Do "npm install" for all packages 
+
+Laravel
+FullCalendar (https://fullcalendar.io/)
+Aceternity (https://ui.aceternity.com/components)
+DaisyUI (https://daisyui.com/docs/install/)
+Tailwind CSS (https://tailwindcss.com/)
+
+
+
