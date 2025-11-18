@@ -151,15 +151,18 @@ class ForumController extends Controller
             DB::table('forum_threads')->insert([
                 'post_id' => $id,
                 'user_id' => Auth::id(),
+                'title' => '',
                 'content' => $validated['content'],
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
 
-            return back();
+            return back()->with('success', 'Reply posted successfully!');
 
         } catch (\Exception $e) {
-            \Log::error('Reply creation failed: ' . $e->getMessage());
+            \Log::error('Reply creation failed', [
+                'error' => $e->getMessage()
+            ]);
 
             return back()
                 ->withErrors(['error' => 'Failed to post reply: ' . $e->getMessage()])
@@ -428,7 +431,7 @@ class ForumController extends Controller
                     'updated_at' => now()
                 ]);
 
-            return back();
+            return back()->with('success', 'Reply updated successfully!'); // Added success message
 
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Failed to update reply: ' . $e->getMessage()]);
