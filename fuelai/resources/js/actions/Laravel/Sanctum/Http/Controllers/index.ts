@@ -1,6 +1,7 @@
 import CsrfCookieController from './CsrfCookieController'
+
 const Controllers = {
-    CsrfCookieController,
+    CsrfCookieController: Object.assign(CsrfCookieController, CsrfCookieController),
 }
 
 export default Controllers

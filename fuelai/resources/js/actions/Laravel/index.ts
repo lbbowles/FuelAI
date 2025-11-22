@@ -1,6 +1,7 @@
 import Sanctum from './Sanctum'
+
 const Laravel = {
-    Sanctum,
+    Sanctum: Object.assign(Sanctum, Sanctum),
 }
 
 export default Laravel
