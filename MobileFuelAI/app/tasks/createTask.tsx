@@ -120,8 +120,8 @@ export default function CreateTask() {
                             padding: 12,
                             borderRadius: 8,
                             borderWidth: 2,
-                            borderColor: difficulty === diff ? '#3b82f6' : (isDark ? '#333' : '#ddd'),
-                            backgroundColor: difficulty === diff ? '#3b82f6' : (isDark ? '#1a1a1a' : '#f5f5f5'),
+                            borderColor: difficulty === diff ? (isDark ? '#422ad5' : '#f88f07') : (isDark ? '#333' : '#ddd'),
+                            backgroundColor: difficulty === diff ? (isDark ? '#422ad5' : '#f88f07') : (isDark ? '#1a1a1a' : '#f5f5f5'),
                             alignItems: 'center'
                         }}
                     >
@@ -153,8 +153,8 @@ export default function CreateTask() {
                             padding: 10,
                             borderRadius: 8,
                             borderWidth: 2,
-                            borderColor: category === cat ? '#3b82f6' : (isDark ? '#333' : '#ddd'),
-                            backgroundColor: category === cat ? '#3b82f6' : (isDark ? '#1a1a1a' : '#f5f5f5'),
+                            borderColor: category === cat ? (isDark ? '#422ad5' : '#f88f07') : (isDark ? '#333' : '#ddd'),
+                            backgroundColor: category === cat ? (isDark ? '#422ad5' : '#f88f07') : (isDark ? '#1a1a1a' : '#f5f5f5'),
                         }}
                     >
                         <Text style={{
@@ -197,7 +197,7 @@ export default function CreateTask() {
                 onPress={handleSubmit}
                 disabled={loading}
                 style={{
-                    backgroundColor: loading ? '#999' : '#3b82f6',
+                    backgroundColor: loading ? '#999' : (isDark ? '#422ad5' : '#f88f07'),
                     padding: 16,
                     borderRadius: 8,
                     alignItems: 'center',

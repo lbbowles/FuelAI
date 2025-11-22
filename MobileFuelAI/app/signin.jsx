@@ -54,14 +54,14 @@ export default function SignIn() {
     return (
         // Wrap with dark mode if applicable
         <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
-        {/*Actually place the background*/}
+            {/*Actually place the background*/}
             <ImageBackground
                 source={trueBackground}
                 style={{ flex: 1 }}
                 resizeMode="cover"
             >
 
-            <Image source={icons.logo} className="w-20 h-20 mt-16 mx-auto" />
+                <Image source={icons.logo} className="w-20 h-20 mt-16 mx-auto" />
 
                 <ScrollView contentContainerStyle={{ padding: 24, paddingTop: 40 }}>
                     <View style={{
@@ -91,14 +91,14 @@ export default function SignIn() {
                             Email or Username:
                         </Text>
 
-                    <TextInput
-                        placeholder="Enter your email or username..."
-                        value={loginValue}
-                        onChangeText={(text) => setLoginValue(text)}
-                        autoCapitalize="none"
-                        keyboardType="email-address"
-                        style={{ color: isDark ? '#ffffff' : '#000000' }}
-                    />
+                        <TextInput
+                            placeholder="Enter your email or username..."
+                            value={loginValue}
+                            onChangeText={(text) => setLoginValue(text)}
+                            autoCapitalize="none"
+                            keyboardType="email-address"
+                            style={{ color: isDark ? '#ffffff' : '#000000' }}
+                        />
 
                         <Text style={{
                             fontSize: 12,
@@ -109,45 +109,45 @@ export default function SignIn() {
                             Password:
                         </Text>
 
-                    <TextInput
-                        placeholder="Enter your password..."
-                        value={password}
-                        onChangeText={(text) => setPassword(text)}
-                        secureTextEntry
-                        style={{ color: isDark ? '#ffffff' : '#000000' }}
-                    />
+                        <TextInput
+                            placeholder="Enter your password..."
+                            value={password}
+                            onChangeText={(text) => setPassword(text)}
+                            secureTextEntry
+                            style={{ color: isDark ? '#ffffff' : '#000000' }}
+                        />
 
                         {/*If loading, showcase one thing, if not then showcase the other*/}
-                    <TouchableOpacity
-                        onPress={handleSubmit}
-                        disabled={loading}
-                    >
-                        <Text style={{
-                            fontSize: 14,
-                            fontWeight: 'bold',
-                            marginTop: 10,
-                            marginBottom: 15,
-                            color: '#3b82f6',
-                        }}>
-                            {loading ? 'Signing In...' : 'Sign In'}</Text>
-                    </TouchableOpacity>
-
-                    {/* If a user does not have an account, this is the route to registration */}
-                    <View style={{marginTop: 20, alignItems: 'center'}}>
-                        <Text style={{color: isDark ? '#ffffff' : '#000000'}}>
-                            Don't have an account?
-                        </Text>
-                        <TouchableOpacity onPress={() => router.push('/registration')}>
-                            <Text style={{color: '#3b82f6', fontWeight: 'bold', marginTop: 5}}>
-                                Create Account
-                            </Text>
+                        <TouchableOpacity
+                            onPress={handleSubmit}
+                            disabled={loading}
+                        >
+                            <Text style={{
+                                fontSize: 14,
+                                fontWeight: 'bold',
+                                marginTop: 10,
+                                marginBottom: 15,
+                                color: '#3b82f6',
+                            }}>
+                                {loading ? 'Signing In...' : 'Sign In'}</Text>
                         </TouchableOpacity>
+
+                        {/* If a user does not have an account, this is the route to registration */}
+                        <View style={{marginTop: 20, alignItems: 'center'}}>
+                            <Text style={{color: isDark ? '#ffffff' : '#000000'}}>
+                                Don't have an account?
+                            </Text>
+                            <TouchableOpacity onPress={() => router.push('/registration')}>
+                                <Text style={{color: '#3b82f6', fontWeight: 'bold', marginTop: 5}}>
+                                    Create Account
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
                     </View>
+                </ScrollView>
 
-                </View>
-            </ScrollView>
-
-                </ImageBackground>
+            </ImageBackground>
         </ThemeProvider>
     );
 }

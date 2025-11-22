@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    // NOTE: Update this to include the paths to all of your component files.
+    // Allows for accessing colors we will be utilizing across the app anywhere within the application.
     content: ["./app/**/*.{js,jsx,ts,tsx}"],
     presets: [require("nativewind/preset")],
     theme: {
@@ -18,7 +18,6 @@ module.exports = {
                     100: '#f88f07',
                     200: '#e1b69a',
                 },
-                // Accent color requested by the boyyyy.
                 accent: '#491ebb'
             }
         },

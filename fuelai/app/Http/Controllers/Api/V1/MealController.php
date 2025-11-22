@@ -10,13 +10,14 @@ use Illuminate\Support\Facades\DB;
 
 class MealController extends Controller
 {
-    // Get all meals (mobile shows all meals, not just user's)
+
     public function index()
     {
         $meals = Meal::with('nutritionalInfo')
+            ->where('created_by', auth()->id())
             ->orderBy('name', 'asc')
             ->get();
-        
+
         return response()->json([
             'meals' => $meals
         ], 200);
@@ -76,7 +77,7 @@ class MealController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return response()->json([
                 'message' => 'Failed to create meal',
                 'error' => $e->getMessage()

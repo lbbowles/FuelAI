@@ -11,7 +11,7 @@ class Task extends Model
 
     protected $table = 'tasks';
 
-    protected $primaryKey = 'task_id';
+    protected $primaryKey = 'id';  // Changed to match Dump I was given
 
     public $incrementing = true;
 
@@ -21,8 +21,9 @@ class Task extends Model
 
     protected $fillable = [
         'user_id',
-        'title',           // Added title
+        'title',           // Added title, this shouldn't affect anything as this is a nullable property, but needed for the DB schema to match.
         'content',
+        'description',
         'difficulty',
         'category',
         'is_completed',

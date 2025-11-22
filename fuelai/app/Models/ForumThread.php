@@ -24,6 +24,7 @@ class ForumThread extends Model
     protected $fillable = [
         'post_id',
         'user_id',
+        'title',  //Adding this to match the DB schema I was given.
         'content',
     ];
 

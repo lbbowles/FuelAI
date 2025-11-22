@@ -19,6 +19,8 @@ type Meal = {
     nutritional_info?: NutritionalInfo;
 };
 
+//Simple page to view detailed information about a meal from the user.
+
 export default function MealDetail() {
     const { session } = useAuth();
     const { id } = useLocalSearchParams<{ id: string }>();

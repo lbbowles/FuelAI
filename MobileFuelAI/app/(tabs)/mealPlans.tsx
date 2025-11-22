@@ -37,6 +37,7 @@ const MealPlans = () => {
             setLoading(true);
             const api = withAuth(session.access_token);
             const data = await api.getMealPlans();
+
             setMealPlans(data.meal_plans);
         } catch (error) {
             console.error('Failed to fetch meal plans:', error);
@@ -112,23 +113,13 @@ const MealPlans = () => {
 
                     {/* Create Button */}
                     <View className="space-y-3 mb-6">
-                        <TouchableOpacity
-                            onPress={() => router.push('/recipes/generate')}
-                            className="rounded-2xl p-4 bg-blue-500"
-                        >
-                            <Text className="text-center text-lg font-semibold text-white">
-                                Generate with FuelAI
-                            </Text>
-                        </TouchableOpacity>
 
                         <TouchableOpacity
                             onPress={() => setShowCreateModal(true)}
-                            className={`rounded-2xl p-4 border ${
-                                isDark ? 'bg-secondary/10 border-secondary/15' : 'bg-primary/5 border-primary/10'
-                            }`}
+                            className={`rounded-2xl p-4 ${isDark ? 'bg-dark-100' : 'bg-light-100'}`}
                         >
-                            <Text className={`text-center text-lg font-semibold ${isDark ? "text-secondary" : "text-primary"}`}>
-                                Create Plan Manually
+                            <Text className="text-center text-lg font-semibold text-white">
+                                Create Plan
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -156,7 +147,7 @@ const MealPlans = () => {
                             {mealPlans.map((plan) => (
                                 <View
                                     key={plan.id}
-                                    className={`rounded-2xl p-4 border ${
+                                    className={`rounded-2xl p-4 border mb-3 ${
                                         isDark ? 'bg-secondary/10 border-secondary/15' : 'bg-primary/5 border-primary/10'
                                     }`}
                                 >
@@ -173,7 +164,7 @@ const MealPlans = () => {
                                     <View className="flex-row gap-3 mt-4">
                                         <TouchableOpacity
                                             onPress={() => router.push(`/mealPlan/${plan.id}`)}
-                                            className="flex-1 bg-blue-500 rounded-xl p-3"
+                                            className={`flex-1 rounded-xl p-3 ${isDark ? 'bg-dark-100' : 'bg-light-100'}`}
                                         >
                                             <Text className="text-white text-center font-semibold">View Plan</Text>
                                         </TouchableOpacity>
@@ -249,7 +240,7 @@ const MealPlans = () => {
                                     onPress={handleCreateMealPlan}
                                     disabled={isSubmitting || !newPlanName.trim()}
                                     className={`flex-1 rounded-xl p-3 ${
-                                        isSubmitting || !newPlanName.trim() ? 'bg-gray-400' : 'bg-blue-500'
+                                        isSubmitting || !newPlanName.trim() ? 'bg-gray-400' : isDark ? 'bg-dark-100' : 'bg-light-100'
                                     }`}
                                 >
                                     <Text className="text-white text-center font-semibold">

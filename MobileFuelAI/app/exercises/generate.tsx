@@ -154,7 +154,7 @@ export default function GenerateWorkout() {
         if (workoutSchedule && currentExercise < workoutSchedule.exercises.length - 1) {
             setCurrentExercise(currentExercise + 1);
         } else if (workoutSchedule && currentExercise === workoutSchedule.exercises.length - 1) {
-            Alert.alert('Workout Complete!', 'Great job finishing your workout! ');
+            Alert.alert('Workout Complete!', 'Great job finishing your workout!');
             setWorkoutStarted(false);
             setCurrentExercise(0);
         }

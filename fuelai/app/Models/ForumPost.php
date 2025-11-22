@@ -23,6 +23,7 @@ class ForumPost extends Model
      */
     protected $fillable = [
         'forum_id',
+        'category_id',
         'user_id',
         'title',
         'content',
