@@ -43,7 +43,7 @@ export default function Forums({ initialPosts = [], categories = []}) {
         }
     });
 
-    // fuck tailwind
+
     return (
         <>
             <Head title="Forums">

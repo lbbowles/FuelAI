@@ -11,7 +11,7 @@ class Task extends Model
 
     protected $table = 'tasks';
 
-    protected $primaryKey = 'task_id';
+    protected $primaryKey = 'id';
 
     public $incrementing = true;
 
@@ -21,8 +21,8 @@ class Task extends Model
 
     protected $fillable = [
         'user_id',
-        'title',           // Added title
-        'content',
+        'title',
+        'description',
         'difficulty',
         'category',
         'is_completed',
