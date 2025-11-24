@@ -10,6 +10,7 @@ import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native
 import { useAuth } from '@/app/context/AuthContext.js';
 import { icons } from '@/constants/icons';
 
+// Showcase the icons for the tabs depending on if they are pressed.  This is a global document in the sense of everything.
 const TabIcon = ({
                      source,
                      focused,
@@ -28,6 +29,7 @@ const TabIcon = ({
     />
 );
 
+// If authenticated show the tabs and allow user to traverse to it.
 const AuthenticatedLayout = () => {
     const colorScheme = useColorScheme();
 

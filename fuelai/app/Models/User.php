@@ -24,7 +24,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
-         'image_data',
+        'image_data',
     ];
      protected $appends = ['image_base64'];
 
@@ -47,4 +47,8 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public function getAuthPassword()
+    {
+        return $this->password;
+    }
 }

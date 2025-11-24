@@ -82,7 +82,7 @@ export default function CreateAccount() {
                 style={{ flex: 1 }}
                 resizeMode="cover"
             >
-            <Image source={icons.logo} className="w-14 h-14 mt-16 mx-auto" />
+                <Image source={icons.logo} className="w-14 h-14 mt-16 mx-auto" />
 
                 <ScrollView contentContainerStyle={{ padding: 24, paddingTop: 40 }}>
                     <View style={{
@@ -102,7 +102,7 @@ export default function CreateAccount() {
                             Create Account
                         </Text>
 
-                    {/* Username field */}
+                        {/* Username field */}
                         <Text style={{
                             fontSize: 12,
                             fontWeight: 'bold',
@@ -112,14 +112,14 @@ export default function CreateAccount() {
                             Username:
                         </Text>
 
-                    <TextInput
-                        placeholder="Enter your username..."
-                        value={username}
-                        onChangeText={(text) => setUsername(text)}
-                        autoCapitalize="none"
-                    />
+                        <TextInput
+                            placeholder="Enter your username..."
+                            value={username}
+                            onChangeText={(text) => setUsername(text)}
+                            autoCapitalize="none"
+                        />
 
-                    {/* Email field */}
+                        {/* Email field */}
                         <Text style={{
                             fontSize: 12,
                             fontWeight: 'bold',
@@ -129,15 +129,15 @@ export default function CreateAccount() {
                             Email:
                         </Text>
 
-                    <TextInput
-                        placeholder="Enter your email..."
-                        value={email}
-                        onChangeText={(text) => setEmail(text)}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                    />
+                        <TextInput
+                            placeholder="Enter your email..."
+                            value={email}
+                            onChangeText={(text) => setEmail(text)}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                        />
 
-                    {/* Password field */}
+                        {/* Password field */}
                         <Text style={{
                             fontSize: 12,
                             fontWeight: 'bold',
@@ -147,14 +147,14 @@ export default function CreateAccount() {
                             Password:
                         </Text>
 
-                    <TextInput
-                        placeholder="Enter your password..."
-                        value={password}
-                        onChangeText={(text) => setPassword(text)}
-                        secureTextEntry
-                    />
+                        <TextInput
+                            placeholder="Enter your password..."
+                            value={password}
+                            onChangeText={(text) => setPassword(text)}
+                            secureTextEntry
+                        />
 
-                    {/* Password confirmation field */}
+                        {/* Password confirmation field */}
                         <Text style={{
                             fontSize: 12,
                             fontWeight: 'bold',
@@ -164,41 +164,41 @@ export default function CreateAccount() {
                             Confirm Password:
                         </Text>
 
-                    <TextInput
-                        placeholder="Confirm your password..."
-                        value={passwordConfirmation}
-                        onChangeText={(text) => setPasswordConfirmation(text)}
-                        secureTextEntry
-                    />
+                        <TextInput
+                            placeholder="Confirm your password..."
+                            value={passwordConfirmation}
+                            onChangeText={(text) => setPasswordConfirmation(text)}
+                            secureTextEntry
+                        />
 
                         {/*If loading, showcase one thing, if not then showcase the other*/}
-                    <TouchableOpacity
-                        onPress={handleSubmit}
-                        disabled={loading}
-                    >
-                        <Text style={{
-                            fontSize: 14,
-                            fontWeight: 'bold',
-                            marginTop: 10,
-                            marginBottom: 15,
-                            color: '#3b82f6',
-                        }}>{loading ? 'Creating Account...' : 'Create Account'}</Text>
-                    </TouchableOpacity>
-
-                    {/* If a user has an account, this will let them sign in */}
-                    <View style={{marginTop: 20, alignItems: 'center'}}>
-                        <Text style={{color: isDark ? '#ffffff' : '#000000'}}>
-                            Have an account?
-                        </Text>
-                        <TouchableOpacity onPress={() => router.push('/signin')}>
-                            <Text style={{color: '#3b82f6', fontWeight: 'bold', marginTop: 5}}>
-                                Sign In
-                            </Text>
+                        <TouchableOpacity
+                            onPress={handleSubmit}
+                            disabled={loading}
+                        >
+                            <Text style={{
+                                fontSize: 14,
+                                fontWeight: 'bold',
+                                marginTop: 10,
+                                marginBottom: 15,
+                                color: '#3b82f6',
+                            }}>{loading ? 'Creating Account...' : 'Create Account'}</Text>
                         </TouchableOpacity>
-                    </View>
 
-                </View>
-            </ScrollView>
+                        {/* If a user has an account, this will let them sign in */}
+                        <View style={{marginTop: 20, alignItems: 'center'}}>
+                            <Text style={{color: isDark ? '#ffffff' : '#000000'}}>
+                                Have an account?
+                            </Text>
+                            <TouchableOpacity onPress={() => router.push('/signin')}>
+                                <Text style={{color: '#3b82f6', fontWeight: 'bold', marginTop: 5}}>
+                                    Sign In
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
+                    </View>
+                </ScrollView>
             </ImageBackground>
         </ThemeProvider>
     );

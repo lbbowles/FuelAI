@@ -1,9 +1,9 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::index
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:12
- * @route '/api/meal-plans'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:12
+* @route '/api/meal-plans'
+*/
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
@@ -16,37 +16,75 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::index
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:12
- * @route '/api/meal-plans'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:12
+* @route '/api/meal-plans'
+*/
 index.url = (options?: RouteQueryOptions) => {
     return index.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::index
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:12
- * @route '/api/meal-plans'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:12
+* @route '/api/meal-plans'
+*/
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::index
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:12
- * @route '/api/meal-plans'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:12
+* @route '/api/meal-plans'
+*/
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
 
 /**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::index
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:12
+* @route '/api/meal-plans'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::index
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:12
+* @route '/api/meal-plans'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::index
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:12
+* @route '/api/meal-plans'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
+
+/**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::store
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:23
- * @route '/api/meal-plans'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:23
+* @route '/api/meal-plans'
+*/
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
@@ -59,28 +97,50 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::store
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:23
- * @route '/api/meal-plans'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:23
+* @route '/api/meal-plans'
+*/
 store.url = (options?: RouteQueryOptions) => {
     return store.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::store
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:23
- * @route '/api/meal-plans'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:23
+* @route '/api/meal-plans'
+*/
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
 
 /**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::store
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:23
+* @route '/api/meal-plans'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::store
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:23
+* @route '/api/meal-plans'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
+
+/**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::show
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:42
- * @route '/api/meal-plans/{id}'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:42
+* @route '/api/meal-plans/{id}'
+*/
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
@@ -93,26 +153,25 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::show
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:42
- * @route '/api/meal-plans/{id}'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:42
+* @route '/api/meal-plans/{id}'
+*/
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { id: args }
     }
 
-    
     if (Array.isArray(args)) {
         args = {
-                    id: args[0],
-                }
+            id: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        id: args.id,
-                }
+        id: args.id,
+    }
 
     return show.definition.url
             .replace('{id}', parsedArgs.id.toString())
@@ -121,28 +180,66 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::show
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:42
- * @route '/api/meal-plans/{id}'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:42
+* @route '/api/meal-plans/{id}'
+*/
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::show
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:42
- * @route '/api/meal-plans/{id}'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:42
+* @route '/api/meal-plans/{id}'
+*/
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
 /**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::show
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:42
+* @route '/api/meal-plans/{id}'
+*/
+const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::show
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:42
+* @route '/api/meal-plans/{id}'
+*/
+showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::show
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:42
+* @route '/api/meal-plans/{id}'
+*/
+showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+show.form = showForm
+
+/**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::destroy
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:58
- * @route '/api/meal-plans/{id}'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:58
+* @route '/api/meal-plans/{id}'
+*/
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
@@ -155,26 +252,25 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::destroy
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:58
- * @route '/api/meal-plans/{id}'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:58
+* @route '/api/meal-plans/{id}'
+*/
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { id: args }
     }
 
-    
     if (Array.isArray(args)) {
         args = {
-                    id: args[0],
-                }
+            id: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        id: args.id,
-                }
+        id: args.id,
+    }
 
     return destroy.definition.url
             .replace('{id}', parsedArgs.id.toString())
@@ -183,19 +279,51 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::destroy
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:58
- * @route '/api/meal-plans/{id}'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:58
+* @route '/api/meal-plans/{id}'
+*/
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
 /**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::destroy
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:58
+* @route '/api/meal-plans/{id}'
+*/
+const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::destroy
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:58
+* @route '/api/meal-plans/{id}'
+*/
+destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
+
+/**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::addMeal
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:71
- * @route '/api/meal-plans/{id}/add-meal'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:71
+* @route '/api/meal-plans/{id}/add-meal'
+*/
 export const addMeal = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: addMeal.url(args, options),
     method: 'post',
@@ -208,26 +336,25 @@ addMeal.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::addMeal
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:71
- * @route '/api/meal-plans/{id}/add-meal'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:71
+* @route '/api/meal-plans/{id}/add-meal'
+*/
 addMeal.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { id: args }
     }
 
-    
     if (Array.isArray(args)) {
         args = {
-                    id: args[0],
-                }
+            id: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        id: args.id,
-                }
+        id: args.id,
+    }
 
     return addMeal.definition.url
             .replace('{id}', parsedArgs.id.toString())
@@ -236,19 +363,41 @@ addMeal.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::addMeal
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:71
- * @route '/api/meal-plans/{id}/add-meal'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:71
+* @route '/api/meal-plans/{id}/add-meal'
+*/
 addMeal.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: addMeal.url(args, options),
     method: 'post',
 })
 
 /**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::addMeal
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:71
+* @route '/api/meal-plans/{id}/add-meal'
+*/
+const addMealForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: addMeal.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::addMeal
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:71
+* @route '/api/meal-plans/{id}/add-meal'
+*/
+addMealForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: addMeal.url(args, options),
+    method: 'post',
+})
+
+addMeal.form = addMealForm
+
+/**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::removeMeal
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:117
- * @route '/api/meal-plans-meals/{id}'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:136
+* @route '/api/meal-plans-meals/{id}'
+*/
 export const removeMeal = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: removeMeal.url(args, options),
     method: 'delete',
@@ -261,26 +410,25 @@ removeMeal.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::removeMeal
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:117
- * @route '/api/meal-plans-meals/{id}'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:136
+* @route '/api/meal-plans-meals/{id}'
+*/
 removeMeal.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { id: args }
     }
 
-    
     if (Array.isArray(args)) {
         args = {
-                    id: args[0],
-                }
+            id: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        id: args.id,
-                }
+        id: args.id,
+    }
 
     return removeMeal.definition.url
             .replace('{id}', parsedArgs.id.toString())
@@ -289,13 +437,46 @@ removeMeal.url = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Api\V1\MealPlanController::removeMeal
- * @see app/Http/Controllers/Api/V1/MealPlanController.php:117
- * @route '/api/meal-plans-meals/{id}'
- */
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:136
+* @route '/api/meal-plans-meals/{id}'
+*/
 removeMeal.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: removeMeal.url(args, options),
     method: 'delete',
 })
+
+/**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::removeMeal
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:136
+* @route '/api/meal-plans-meals/{id}'
+*/
+const removeMealForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: removeMeal.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Api\V1\MealPlanController::removeMeal
+* @see app/Http/Controllers/Api/V1/MealPlanController.php:136
+* @route '/api/meal-plans-meals/{id}'
+*/
+removeMealForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: removeMeal.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+removeMeal.form = removeMealForm
+
 const MealPlanController = { index, store, show, destroy, addMeal, removeMeal }
 
 export default MealPlanController

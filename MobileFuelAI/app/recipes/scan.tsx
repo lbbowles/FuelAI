@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView, ActivityIndicator, Alert, useColorScheme } from "react-native";
 import { ThemeProvider, DarkTheme, DefaultTheme } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system/legacy';
 import { router } from "expo-router";
 import { useAuth } from "../context/AuthContext";
 import { withAuth } from "@/services/api";
@@ -33,6 +34,7 @@ export default function ScanMeal() {
     const [llmLoading, setLlmLoading] = useState(false);
     const [mealData, setMealData] = useState<MealData | null>(null);
     const [saving, setSaving] = useState(false);
+    const [deepThinkLoading, setDeepThinkLoading] = useState(false);
 
     const OPENROUTER_API_KEY = process.env.EXPO_PUBLIC_OPENROUTER_API_KEY;
 
@@ -78,7 +80,7 @@ export default function ScanMeal() {
                 name: "meal.jpg",
             } as any);
 
-            // Call teammate's ML API for food recognition
+            // Call Steven's ML API for food recognition
             const response = await fetch("https://web-production-c0e3d.up.railway.app/predict_food", {
                 method: "POST",
                 body: formData,
@@ -96,6 +98,67 @@ export default function ScanMeal() {
             Alert.alert("Error", "Failed to analyze image");
         } finally {
             setLoading(false);
+        }
+    };
+
+    /**
+     * DEEPTHINK: Use OpenRouter's vision model to identify the food
+     * This is called when ML predictions are inaccurate
+     */
+    const useDeepThink = async () => {
+        if (!imageUri) return;
+
+        setDeepThinkLoading(true);
+        try {
+            // Convert image to base64
+            const base64 = await FileSystem.readAsStringAsync(imageUri, {
+                encoding: 'base64',
+            });
+
+            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    model: "openai/gpt-4o",
+                    messages: [
+                        {
+                            role: "user",
+                            content: [
+                                {
+                                    type: "text",
+                                    text: "Identify the food item in this image. Respond with ONLY the name of the food item, nothing else. Be as specific as possible."
+                                },
+                                {
+                                    type: "image_url",
+                                    image_url: {
+                                        url: `data:image/jpeg;base64,${base64}`
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    temperature: 0.3,
+                }),
+            });
+
+            const data = await response.json();
+            const foodName = data.choices?.[0]?.message?.content?.trim();
+
+            if (foodName) {
+                // Automatically fetch meal data with the DeepThink result
+                await fetchMealDataFromLLM(foodName);
+                Alert.alert("DeepThink Result", `Identified as: ${foodName}`);
+            } else {
+                Alert.alert("Error", "Could not identify food from image");
+            }
+        } catch (error) {
+            console.error('DeepThink Error:', error);
+            Alert.alert("Error", "DeepThink analysis failed");
+        } finally {
+            setDeepThinkLoading(false);
         }
     };
 
@@ -260,7 +323,7 @@ export default function ScanMeal() {
                             <TouchableOpacity
                                 key={index}
                                 onPress={() => fetchMealDataFromLLM(pred.label)}
-                                disabled={llmLoading}
+                                disabled={llmLoading || deepThinkLoading}
                                 className={`mb-3 rounded-xl p-4 border ${
                                     isDark ? "bg-white/5 border-white/10" : "bg-black/5 border-black/10"
                                 }`}
@@ -275,6 +338,30 @@ export default function ScanMeal() {
                                 </View>
                             </TouchableOpacity>
                         ))}
+
+                        {/* DeepThink Button */}
+                        <View className="mt-4">
+                            <Text className={`text-center ${isDark ? "text-white/60" : "text-black/60"} mb-3`}>
+                                Don't see the right match?
+                            </Text>
+                            <TouchableOpacity
+                                onPress={useDeepThink}
+                                disabled={deepThinkLoading || llmLoading}
+                                className={`rounded-xl p-4 border-2 ${
+                                    deepThinkLoading
+                                        ? 'bg-gray-400 border-gray-400'
+                                        : isDark
+                                            ? 'bg-purple-900/30 border-purple-500'
+                                            : 'bg-purple-100 border-purple-500'
+                                }`}
+                            >
+                                <Text className={`text-center font-bold text-lg ${
+                                    deepThinkLoading ? 'text-white' : 'text-purple-500'
+                                }`}>
+                                    {deepThinkLoading ? 'Thinking deeply...' : 'Use DeepThink'}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 )}
 
@@ -284,6 +371,16 @@ export default function ScanMeal() {
                         <ActivityIndicator size="large" color={isDark ? "#422ad5" : "#f88f07"} />
                         <Text className={`mt-4 ${isDark ? "text-white" : "text-black"}`}>
                             Generating meal details...
+                        </Text>
+                    </View>
+                )}
+
+                {/* DeepThink Loading */}
+                {deepThinkLoading && (
+                    <View className="items-center py-8">
+                        <ActivityIndicator size="large" color="#a855f7" />
+                        <Text className={`mt-4 ${isDark ? "text-white" : "text-black"}`}>
+                            DeepThink is analyzing your image...
                         </Text>
                     </View>
                 )}

@@ -11,7 +11,7 @@ class Task extends Model
 
     protected $table = 'tasks';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'id';  // Changed to match Dump I was given
 
     public $incrementing = true;
 

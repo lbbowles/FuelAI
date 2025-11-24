@@ -14,7 +14,6 @@ use App\Http\Controllers\MealController;
 use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\MealPlanMealController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Auth\ProfileController;
 
 
 
@@ -57,8 +56,6 @@ Route::middleware('auth')->group(function () {
 
 });
 
-
-
 // Allow for user who aren't logged in to view forums
 Route::get('/forums', [ForumController::class, 'index'])->name('forums.index');
 
@@ -69,17 +66,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/forums/{id}/ai-reply', [ForumController::class, 'aiReply'])->name('forums.ai-reply');
     Route::delete('/forums/{id}', [ForumController::class, 'destroy'])->name('forums.destroy');
     Route::get('/forums/{id}', [ForumController::class, 'show'])->name('forums.show');
-    Route::delete('/forums/{threadId}/threads/{postId}', [ForumController::class, 'destroyThread'])->name('forums.threads.destroy');
-    Route::put('/forums/{threadId}/threads/{postId}', [ForumController::class, 'updateThread'])->name('forums.threads.update');
+    Route::delete('/forums/{threadId}/posts/{postId}', [ForumController::class, 'destroyPost'])->name('forums.posts.destroy');
+    Route::put('/forums/{threadId}/posts/{postId}', [ForumController::class, 'updatePost'])->name('forums.posts.update');
 });
 
 
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
-
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::post('/profile/update', [ProfileController::class, 'update']) ->name('profile.update');
 });
 
 Route::get('/exercises', function () {
