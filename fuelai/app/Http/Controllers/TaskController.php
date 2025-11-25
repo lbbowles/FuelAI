@@ -24,7 +24,6 @@ class TaskController extends Controller
 
 
     //Store a new task
-
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -79,7 +78,6 @@ class TaskController extends Controller
     }
 
 
-    // Bulk store exercises as tasks
     // Bulk store exercises as tasks
     public function storeWorkout(Request $request)
     {

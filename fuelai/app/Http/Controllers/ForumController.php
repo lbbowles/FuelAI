@@ -431,7 +431,7 @@ class ForumController extends Controller
                     'updated_at' => now()
                 ]);
 
-            return back()->with('success', 'Reply updated successfully!'); // Added success message
+            return back()->with('success', 'Reply updated successfully!');
 
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Failed to update reply: ' . $e->getMessage()]);

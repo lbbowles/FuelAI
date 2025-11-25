@@ -114,24 +114,24 @@ export default function ImageRecognition() {
             const base64Image = await convert(img);
 
             const prompt = `
-You are an expert nutritionist and chef.
-Analyze the attached food image and return ONLY valid JSON.
+                You are an expert nutritionist and chef.
+                Analyze the attached food image and return ONLY valid JSON.
 
-{
-  "meal": { 
-    "title": "String",
-    "description": "String",
-    "instruction": "String"
-  },
-  "nutrition": {
-    "calories": number,
-    "protein": number,
-    "carb": number,
-    "fat": number,
-    "fiber": number,
-    "sugar": number
-  }
-}`;
+                {
+                  "meal": {
+                    "title": "String",
+                    "description": "String",
+                    "instruction": "String"
+                  },
+                  "nutrition": {
+                    "calories": number,
+                    "protein": number,
+                    "carb": number,
+                    "fat": number,
+                    "fiber": number,
+                    "sugar": number
+                  }
+                }`;
 
             const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                 method: "POST",
@@ -200,7 +200,7 @@ Analyze the attached food image and return ONLY valid JSON.
 Given the food item "${label}", respond ONLY with JSON:
 
 {
-  "meal": { 
+  "meal": {
     "title": "String",
     "description": "String",
     "instruction": "String"
