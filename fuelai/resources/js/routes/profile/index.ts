@@ -141,21 +141,6 @@ update.form = updateForm
 * @see app/Http/Controllers/Settings/ProfileController.php:30
 * @route '/settings/profile'
 */
-export const update = (options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
-    url: update.url(options),
-    method: 'patch',
-})
-
-update.definition = {
-    methods: ["patch"],
-    url: '/settings/profile',
-} satisfies RouteDefinition<["patch"]>
-
-/**
-* @see \App\Http\Controllers\Settings\ProfileController::update
-* @see app/Http/Controllers/Settings/ProfileController.php:30
-* @route '/settings/profile'
-*/
 update.url = (options?: RouteQueryOptions) => {
     return update.definition.url + queryParams(options)
 }
@@ -170,20 +155,6 @@ update.patch = (options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     method: 'patch',
 })
 
-/**
-* @see \App\Http\Controllers\Settings\ProfileController::update
-* @see app/Http/Controllers/Settings/ProfileController.php:30
-* @route '/settings/profile'
-*/
-const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
 
 /**
 * @see \App\Http\Controllers\Settings\ProfileController::update
