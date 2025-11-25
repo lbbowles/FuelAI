@@ -30,6 +30,6 @@ As no login is included to get access to the admin page, you must change the rol
 
 Get your openrouter key from:
 
-https://openrouter.ai/ 
+[https://openrouter.ai/](https://openrouter.ai/settings/keys)
 
 and fill it in the VITE_OPENROUTER_API_KEY slot in the .env file
