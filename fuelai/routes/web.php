@@ -14,6 +14,7 @@ use App\Http\Controllers\MealController;
 use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\MealPlanMealController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\ProfileController;
 
 
 
@@ -112,6 +113,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/forum-replies', [AdminController::class, 'getForumReplies'])->name('forum.replies');
     Route::delete('/forum-replies/{thread}', [AdminController::class, 'deleteForumReply'])->name('forum.replies.destroy');
+});
+//profile routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile/update', [ProfileController::class, 'update']) ->name('profile.update');
 });
 
 
